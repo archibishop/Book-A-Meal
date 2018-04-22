@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make Order</title>
+    <link rel="stylesheet" type="text/css" href="styles1.css">
+    <script type="text/javascript" src="index.js"></script>
+</head>
+<body>
+    <div class="topnav">
+  <a href="#">BOOK-A-MEAL</a>
+  <a href="#">Your Orders</a>
+  <a class="active" href="#">Place an Order</a>
+  <a href="#" style="float:right">Log Out</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card">
+      <p><strong>You can make an order now:</strong></p>
+
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, 'all_meals')">All Meals</button>
+    </div>
+
+    <div id="all_meals" class="tabcontent">
+      <br>
+      <div class="row">
+        <div class="col">
+          <button class="buttons" onclick='addItem()'>Add  To Cart</button>
+        </div>
+        <div class="col2">
+          <p id="dishname1"><strong>ROLEX</strong></p>
+          <p>A Ugandan Fast Food</p>
+        </div>
+
+        <div class="col3">
+          <input type="number" id="Thing1" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span id="testValue1" name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+         <button class="buttons" onclick='addItem()'>Add  To Cart</button>
+        </div>
+        <div class="col2">
+          <p id="dishname1"><strong>RICE AND BEANS</strong></p>
+          <p>A delcious one</p>
+        </div>
+
+        <div class="col3">
+          <input type="number" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+          <button class="buttons" onclick='addItem()'>Add  To Cart</button>
+        </div>
+        <div class="col2">
+          <p id="dishname1"><strong>LASNIA</strong></p>
+          <p>An eloquent Italian Dish</p>
+        </div>
+
+        <div class="col3">
+          <input type="number" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="Paris" class="tabcontent">
+      <h3>Lunch</h3>
+      <p>Paris is the capital of France.</p> 
+    </div>
+
+    <div id="Tokyo" class="tabcontent">
+      <h3>Supper</h3>
+      <p>Tokyo is the capital of Japan.</p>
+    </div>
+    </div>
+  </div>
+  <div class="rightcolumn">
+    <div class="card">
+      <h2>Your cart</h2>
+      <div id='cart'></div>
+      <p><button id="myBtn" class="button-edit">ORDER NOW</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="footer">
+  <h2>Footer</h2>
+</div> -->
+
+<script>
+    function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+</body>
+</html>
