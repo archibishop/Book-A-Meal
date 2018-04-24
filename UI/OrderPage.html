@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make Order</title>
+    <link rel="stylesheet" type="text/css" href="./css/styles1.css">
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body>
+    <div class="topnav">
+  <a href="#">BOOK-A-MEAL</a>
+  <a class="active" href="./OrderPage.html">Place an Order</a>
+  <a href="./YourOrders.html">Your Orders</a>
+  <a href="./login.html" style="float:right">Log Out</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card">
+      <p><strong>You can make an order now:</strong></p>
+
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, 'all_meals')">All Meals</button>
+    </div>
+
+    <div id="all_meals" class="tabcontent">
+      <br>
+      <div class="row">
+        <div class="col">
+          <!-- <button class="buttons" onclick='addItem("dishname1")'>Add  To Cart</button> -->
+          <img src="./img/rolex.jpg" class="fakeimg">
+        </div>
+        <div class="col2">
+          <p id="dishname1"><strong>ROLEX</strong></p>
+          <p>A Ugandan Fast Food</p>
+        </div>
+        <div class="col3">
+          <input type="number" id="Thing1" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span id="testValue1" name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+        <div class="col4">
+          <button class="buttons" onclick='addItem("dishname1")'>Add  To Cart</button>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+         <!-- <button class="buttons" onclick='addItem("dishname2")'>Add  To Cart</button> -->
+         <img src="./img/ricebeans.jpg" class="fakeimg">
+        </div>
+        <div class="col2">
+          <p id="dishname2"><strong>RICE AND BEANS</strong></p>
+          <p>A delcious one</p>
+        </div>
+
+        <div class="col3">
+          <input type="number" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+        <div class="col4">
+          <button class="buttons" onclick='addItem("dishname2")'>Add  To Cart</button>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+          <!-- <button class="buttons" onclick='addItem("dishname3")'>Add  To Cart</button> -->
+          <img src="./img/lasagna.jpg" class="fakeimg">
+        </div>
+        <div class="col2">
+          <p id="dishname3"><strong>LASAGNA</strong></p>
+          <p>An eloquent Italian Dish</p>
+        </div>
+
+        <div class="col3">
+          <input type="number" name="Thing" value="0" min="0" max="99" class="qtyinput">
+        </div>
+
+        <div class="col">
+          <p>Price : <span name='testValue1'>0</span></p>
+          <p>Quantity : <span name='testVal1'>0</span></p>
+        </div>
+        <div class="col4">
+          <button class="buttons" onclick='addItem("dishname3")'>Add  To Cart</button>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+  <div class="rightcolumn">
+    <div class="card">
+      <h2>Your Order</h2>
+      <div id='cart'></div>
+      <p><button id="myBtn" class="button-edit">ORDER NOW</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="footer">
+  <h2>Footer</h2>
+</div> -->
+
+<script>
+    function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+</body>
+</html>

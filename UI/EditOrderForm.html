@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Orders</title>
+    <link rel="stylesheet" type="text/css" href="./css/styles1.css">
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body>
+<div class="topnav">
+  <a href="#">BOOK-A-MEAL</a>
+  <a  href="./OrderPage.html">Place an Order</a>
+  <a class="active" href="./YourOrders.html">Your Orders</a>
+  <a href="./login.html" style="float:right">Log Out</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn1">
+    <div class="card">
+
+    <div id="all_meals" >
+      <div class="row">
+
+        <h1>Edit Order</h1>
+
+        <div class="form">
+          <form action="./dashboard.html">
+            <label for="fname">Meal</label>
+            <select>
+              <option value="australia">Rolex</option>
+              <option value="canada">Rice And Beans</option>
+              <option value="usa">Lasagna</option>
+            </select>
+
+            <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" value="0" min="0" max="99" class="qtyinput">
+
+            <label for="lname">Price(each)</label>
+            <input type="text" id="lname" name="lastname" value="2000" disabled>
+          
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+
+      
+      </div>
+      </div>  
+    </div>
+    </div>
+</div>
+
+<!-- <div class="footer">
+  <h2>Footer</h2>
+</div> -->
+
+</body>
+</html>
