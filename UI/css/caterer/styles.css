@@ -1,5 +1,13 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;}
+    font-family: Arial, Helvetica, sans-serif;
+    }
+
+.bodyImage{
+    background: url(../../img/image3.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}   
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -119,7 +127,7 @@ h1{
 .form{
     /* Hidden By default */
     /**/border-radius: 5px;
-    background-color: #f2f2f2;
+    /*background-color: #f2f2f2;*/
     padding: 20px;
     border-radius: 4px;
     height: 200px;
@@ -131,7 +139,7 @@ h1{
 .form1{
     /* Hidden By default */
     /**/border-radius: 5px;
-    background-color: #f2f2f2;
+    /*background-color: #f2f2f2;*/
     padding: 20px;
     border-radius: 4px;
     height: 550px;
