@@ -4,8 +4,8 @@ iprice = []
 
 
 
-function addItem(){
-    inames.push(document.getElementById('dishname1').innerHTML)
+function addItem(x){
+    inames.push(document.getElementById(x).innerHTML)
     iqtyp.push(document.getElementById('Thing1').value)
     iprice.push(parseInt(document.getElementById('testValue1').innerHTML))
     displayCart()  

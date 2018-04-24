@@ -6,9 +6,9 @@ body {
     font-family: Arial;
     padding: 10px;
     background: #f1f1f1;
-    background: url(../img/image.jpg);
+    /*background: url(../img/image.jpg);
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat*/;
 }
 
 h1{
@@ -79,22 +79,19 @@ h1{
 
 .col3{
     float: left;
-    width: 30%;
+    width: 25%;
 }
 
 .colt1{
     float: left;
-    width: 30%;
+    width: 25%;
 }
 
-.colt2{
+.colt4{
     float: left;
-    width: 40%;
+    width: 15%;
 }
 
-.colt3{
-    width: 30%;
-}
 
 /* Right column */
 .rightcolumn {
@@ -107,8 +104,8 @@ h1{
 /* Fake image */
 .fakeimg {
     background-color: #aaa;
-    width: 100%;
-    padding: 20px;
+    width: 80%;
+    /*padding: 20px;*/
 }
 
 /* Add a card effect for articles */
@@ -165,7 +162,7 @@ h1{
 
 /* Style the tab content */
 .tabcontent {
-    display: none;
+    /*display: none;*/
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
