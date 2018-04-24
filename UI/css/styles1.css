@@ -6,6 +6,9 @@ body {
     font-family: Arial;
     padding: 10px;
     background: #f1f1f1;
+    background: url(../img/image.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 h1{
@@ -97,7 +100,7 @@ h1{
 .rightcolumn {
     float: left;
     width: 30%;
-    background-color: #f1f1f1;
+    /*background-color: #f1f1f1;*/
     padding-left: 20px;
 }
 
