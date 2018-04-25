@@ -3,6 +3,9 @@ from app import app
 import unittest
 import json
 
+BASE_URL = 'http://127.0.0.1:5000/bookmealapi/v1.0/meals/'
+UPDATE_ITEM_URL = '{}/2'.format(BASE_URL)
+DELETE_ITEM_URL = '{}/1'.format(BASE_URL)
 
 
 class ApiTestCase(unittest.TestCase):
@@ -106,18 +109,29 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(data['transaction']['price'], 2000)
         self.assertEqual(data['transaction']['user_id'], 2)  
 
-        #correct values
-        details = {"mealname":"katogo", "price": 2000, "userId": 2} 
-        response = self.app.post("/bookmealapi/v1.0/orders", data=json.dumps(details), content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        data = json.loads(response.get_data())
-        self.assertEqual(data['transaction']['id'], 4)
+        
 
     def test_set_menu(self):
         #correct values
         details = {"mealname":"katogo", "price": 2000} 
         response = self.app.post("/bookmealapi/v1.0/menu", data=json.dumps(details), content_type='application/json')
-        self.assertEqual(response.status_code, 201)    
+        self.assertEqual(response.status_code, 201)   
+
+    def test_update_meal_option(self):
+        #missing values
+        details = {"mealname":"katogo"} 
+        response = self.app.post("/bookmealapi/v1.0/meals/<mealId>", data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 400)  
+
+    def test_delete_meal_option(self):
+        #Non existant value
+        response = self.app.delete('/bookmealapi/v1.0/meals/10')
+        self.assertEqual(response.status_code, 404)
+        
+        #Actual Value
+        response = self.app.delete('/bookmealapi/v1.0/meals/1')
+        self.assertEqual(response.status_code, 204)
+
         
 
 

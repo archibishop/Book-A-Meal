@@ -134,7 +134,7 @@ def addMeal():
     meals.append(meal)
     return jsonify({'meal': meal}), 201
 
-# Add Meal
+# Select Meal
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 def selectMeal():
     if not request.json or 'mealname' not in request.json or 'price' not in request.json or 'userId' not in request.json:
@@ -158,7 +158,7 @@ def selectMeal():
     return jsonify({'transaction': transaction}), 201
 
 
-# Add Meal
+# set Meal Option
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 def setMenu():
     mealname = request.json.get('mealname')
@@ -173,7 +173,20 @@ def setMenu():
     menuDay.append(meal)
     return jsonify({'message': 'Successfully Added'}), 201
 
+# # update Meal Option
+# @app.route('/bookmealapi/v1.0/meals/<mealId> ', methods=['PUT'])
+# def updateMealOption(mealId):
+#     pass   
 
+# delete Meal Option
+@app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['DELETE'])
+def updateMealOption(mealId):
+    for meal in meals:
+        if meal['id'] == int(mealId):
+            meals.remove(meal)
+            return jsonify({}), 204
+    return jsonify({'id': '' + mealId}), 404
+            
 
 
 
