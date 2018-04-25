@@ -99,7 +99,7 @@ def loginIn():
     password = request.json.get('password')
 
     for user in users:
-        if user['email'] ==  email and user['password'] ==  email :
+        if user['email'] ==  email and user['password'] ==  password:
             return jsonify({'message': "Successfully login"}), 200   
         else:
             return jsonify({'message': "User Not Found"}), 400  
