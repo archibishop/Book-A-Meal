@@ -1,3 +1,4 @@
+import datetime
 
 class User():
     def __init__(self):
@@ -8,6 +9,8 @@ class User():
         user = data
         self.counter =  self.counter + 1
         user['id'] = self.counter
+        user['created_at'] = datetime.datetime.now()
+        user['updated_at'] = datetime.datetime.now()
         self.users.append(user)
         return "Successfully Added"
 
@@ -29,6 +32,7 @@ class User():
 
     def updateUser(self, value, data):
         user = self.getUser(value)
+        user['updated_at'] = datetime.datetime.now()
         user = data 
         return user
 
