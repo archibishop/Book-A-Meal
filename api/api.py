@@ -47,13 +47,44 @@ transactions = [
     },
     {
         'id': 2,
+        'mealname': "lasagna",
+        'price': 10000,
+        'user_id': 2
+    },
+    {
+        'id': 3,
         'mealname': 'rolex',
         'price': 4000,
         'user_id' : 1
     }
 ]
 
-menuDay = []
+menuDay = [
+    {
+        'id': 1,
+        'mealname': "ricebeans",
+        'price': 3000,
+        'type1': "lunch"
+    },
+    {
+        'id': 2,
+        'mealname': "lasagna",
+        'price': 10000,
+        'type1': "breakfast"
+    },
+    {
+        'id': 3,
+        'mealname': "Rice and Matooke",
+        'price': 10000,
+        'type1': "lunch"
+    },
+    {
+        'id': 4,
+        'mealname': 'rolex',
+        'price': 4000,
+        'type1' : "lunch"
+    }
+]
 
 
 
@@ -158,7 +189,7 @@ def selectMeal():
     return jsonify({'transaction': transaction}), 201
 
 
-# set Meal Option
+# set Meal Options
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 def setMenu():
     mealname = request.json.get('mealname')
@@ -171,16 +202,13 @@ def setMenu():
        "type1":type1
     }
     menuDay.append(meal)
-    return jsonify({'message': 'Successfully Added'}), 201
+    return jsonify({'menuDay': 'menuDay'}), 201
 
-# # update Meal Option
-# @app.route('/bookmealapi/v1.0/meals/<mealId> ', methods=['PUT'])
-# def updateMealOption(mealId):
-#     pass   
+   
 
 # delete Meal Option
 @app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['DELETE'])
-def updateMealOption(mealId):
+def deleteMealOption(mealId):
     for meal in meals:
         if meal['id'] == int(mealId):
             meals.remove(meal)
@@ -188,7 +216,25 @@ def updateMealOption(mealId):
     return jsonify({'id': '' + mealId}), 404
             
 
+# # update Meal Option
+# @app.route('/bookmealapi/v1.0/meals/<mealId> ', methods=['PUT'])
+# def updateMealOption(mealId):
+#     pass
 
+ # get all meals
+@app.route('/bookmealapi/v1.0/meals', methods=['GET'])
+def getAllMeals():
+    return jsonify({'meals': meals}), 200
+
+  # get all orders
+@app.route('/bookmealapi/v1.0/orders', methods=['GET'])
+def getAllOrders():  
+    return jsonify({'transactions': transactions}), 200 
+
+# get menu of the day
+@app.route('/bookmealapi/v1.0/menu', methods=['GET'])
+def getMenu():  
+    return jsonify({'menuDay': menuDay}), 200    
 
 
 

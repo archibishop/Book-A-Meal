@@ -104,7 +104,7 @@ class ApiTestCase(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/orders", data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
-        self.assertEqual(data['transaction']['id'], 3)
+        self.assertEqual(data['transaction']['id'], 4)
         self.assertEqual(data['transaction']['mealname'], "katogo")
         self.assertEqual(data['transaction']['price'], 2000)
         self.assertEqual(data['transaction']['user_id'], 2)  
@@ -117,11 +117,7 @@ class ApiTestCase(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/menu", data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 201)   
 
-    def test_update_meal_option(self):
-        #missing values
-        details = {"mealname":"katogo"} 
-        response = self.app.post("/bookmealapi/v1.0/meals/<mealId>", data=json.dumps(details), content_type='application/json')
-        self.assertEqual(response.status_code, 400)  
+     
 
     def test_delete_meal_option(self):
         #Non existant value
@@ -132,9 +128,31 @@ class ApiTestCase(unittest.TestCase):
         response = self.app.delete('/bookmealapi/v1.0/meals/1')
         self.assertEqual(response.status_code, 204)
 
-        
+    # METHOD NOT ALLOWED
+    # def test_update_meal_option(self):
+    #    
+    #     details = {"mealname":"katogo"} 
+    #     response = self.app.put("/bookmealapi/v1.0/meals/2", data=json.dumps(details), content_type='application/json')
+    #     self.assertEqual(response.status_code, 200)     
 
+    def test_get_all_meals(self):
+        response = self.app.get('/bookmealapi/v1.0/meals')
+        data = json.loads(response.get_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['meals']), 2)
+    
+    def test_get_all_orders(self):
+        response = self.app.get('/bookmealapi/v1.0/orders')
+        data = json.loads(response.get_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['transactions']), 3)
 
+    def test_get_menu_day(self):
+        response = self.app.get('/bookmealapi/v1.0/menu')
+        data = json.loads(response.get_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['menuDay']), 4)
+            
 
     
        
