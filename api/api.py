@@ -54,19 +54,21 @@ transactions = [
         'id': 1,
         'mealname': "ricebeans",
         'price': 3000,
-        'user_id': 1
+        'user_id': 1,
+        'created_at': "2018-04-26 10:55:55.423844",
+        'process_status':"pending"
     },
     {
         'id': 2,
         'mealname': "lasagna",
         'price': 10000,
-        'user_id': 2
+        'user_id': 2,
     },
     {
         'id': 3,
         'mealname': 'rolex',
         'price': 4000,
-        'user_id': 1
+        'user_id': 1,
     }
 ]
 

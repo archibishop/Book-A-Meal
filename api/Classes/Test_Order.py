@@ -2,6 +2,8 @@ import unittest
 
 from Order import Order
 
+import datetime
+
 
 class TestOrder(unittest.TestCase):
     def test_add_order(self):
@@ -11,6 +13,8 @@ class TestOrder(unittest.TestCase):
             "mealId": 1,
             "customerId": 2,
             "price": 2000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         self.assertEqual(order.placeOrder(data), "Successfully Made Order")
 
@@ -21,12 +25,16 @@ class TestOrder(unittest.TestCase):
             "mealId": 1,
             "customerId": 2,
             "price": 2000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         data2 = {
             "id": 2,
             "mealId": 1,
             "customerId": 3,
             "price": 4000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
 
         self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
@@ -42,18 +50,24 @@ class TestOrder(unittest.TestCase):
             "mealId": 1,
             "customerId": 2,
             "price": 2000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         data2 = {
             "id": 2,
             "mealId": 1,
             "customerId": 3,
             "price": 4000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         data3 = {
             "id": 2,
             "mealId": 1,
             "customerId": 2,
             "price": 4000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
 
         self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
@@ -70,12 +84,16 @@ class TestOrder(unittest.TestCase):
             "mealId": 1,
             "customerId": 2,
             "price": 2000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         data2 = {
             "id": 2,
             "mealId": 1,
             "customerId": 3,
             "price": 4000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
         self.assertEqual(order.placeOrder(data2), "Successfully Made Order")
@@ -90,15 +108,21 @@ class TestOrder(unittest.TestCase):
             "mealId": 1,
             "customerId": 2,
             "price": 2000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         data2 = {
             "id": 2,
             "mealId": 1,
             "customerId": 3,
             "price": 4000,
+            "created_at": "2018-04-26 10:55:55.423844",
+            "process_status":"pending"
         }
         self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
         self.assertEqual(order.updateOrder(1, data2), data2)
+
+  
 
 
 if __name__ == '__main__':
