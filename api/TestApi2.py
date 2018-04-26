@@ -3,6 +3,7 @@ from app import app
 import unittest
 import json
 
+
 BASE_URL = 'http://127.0.0.1:5000/bookmealapi/v1.0/meals/'
 UPDATE_ITEM_URL = '{}/2'.format(BASE_URL)
 DELETE_ITEM_URL = '{}/1'.format(BASE_URL)
@@ -78,7 +79,7 @@ class ApiTestCase(unittest.TestCase):
         # invalid details
         details = {"email" : "fresh@gmail.com", "password":"12345"}
         response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
-        # self.assertEqual(response.status_code, 400) 
+        self.assertEqual(response.status_code, 400) 
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "User Not Found")
 
@@ -169,7 +170,7 @@ class ApiTestCase(unittest.TestCase):
         response = self.app.delete('/bookmealapi/v1.0/meals/1')
         self.assertEqual(response.status_code, 204)
 
-    def test_update_meal_option(self): 
+    def test_update_meal_option(self):
         #Authicate session First
         details = {"email" : "steven@gmail.com", "password":"54321"}
         response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
@@ -222,23 +223,38 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(data['transaction']['price'], 8000)    
 
     def test_get_all_meals(self):
+        #Authicate session First
+        details = {"email" : "steven@gmail.com", "password":"54321"}
+        response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
         response = self.app.get('/bookmealapi/v1.0/meals')
-        # data = json.loads(response.get_data())
+        data = json.loads(response.get_data())
 
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(len(data['meals']), 2) when you add authentication
+        self.assertEqual(len(data['meals']), 2) 
     
     def test_get_all_orders(self):
-        response = self.app.get('/bookmealapi/v1.0/orders')
-        # data = json.loads(response.get_data())
+        #Authicate session First
+        details = {"email" : "steven@gmail.com", "password":"54321"}
+        response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(len(data['transactions']), 3) when you add authentication
+
+        response = self.app.get('/bookmealapi/v1.0/orders')
+        data = json.loads(response.get_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['transactions']), 3) 
 
     def test_get_menu_day(self):
-        response = self.app.get('/bookmealapi/v1.0/menu')
-        # data = json.loads(response.get_data())
+        # correct details
+        details = {"email" : "lubega@gmail.com", "password":"12345"}
+        response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(len(data['menuDay']), 4) when you add authentication
+
+        response = self.app.get('/bookmealapi/v1.0/menu')
+        data = json.loads(response.get_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['menuDay']), 4) 
             
 
     

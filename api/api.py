@@ -131,15 +131,15 @@ def is_admin(f):
 # Registering a User
 @app.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
 def signUp():
-    if not request.json or 'fname' not in request.json or 'lname' not in request.json or 'email' not in request.json or 'password' not in request.json or 'cnfmpassword' not in request.json:
+    if not request.get_json() or 'fname' not in request.get_json() or 'lname' not in request.get_json() or 'email' not in request.get_json() or 'password' not in request.get_json() or 'cnfmpassword' not in request.get_json():
         abort(400)
 
     user_id = users[-1].get("id") + 1
-    firstname = request.json.get('fname')
-    lastname = request.json.get('lname')
-    email = request.json.get('email')
-    password = request.json.get('password')
-    cnfmpassword = request.json.get('cnfmpassword')
+    firstname = request.get_json().get('fname')
+    lastname = request.get_json().get('lname')
+    email = request.get_json().get('email')
+    password = request.get_json().get('password')
+    cnfmpassword = request.get_json().get('cnfmpassword')
 
     if password != cnfmpassword:
         abort(400)
@@ -164,11 +164,11 @@ def signUp():
 
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def loginIn():
-    if not request.json or 'email' not in request.json or 'password' not in request.json:
+    if not request.get_json() or 'email' not in request.get_json() or 'password' not in request.get_json():
         abort(400)
     
-    email = request.json.get('email')
-    password = request.json.get('password')
+    email = request.get_json().get('email')
+    password = request.get_json().get('password')
 
     for user in users:
         if user['email'] == email:
@@ -196,12 +196,12 @@ def loginIn():
 @is_loged_in
 @is_admin
 def addMeal():
-    if not request.json or 'mealname' not in request.json or 'price' not in request.json or 'type1' not in request.json:
+    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json() or 'type1' not in request.get_json():
         abort(400)
 
-    mealname = request.json.get('mealname')
-    price = request.json.get('price')
-    type1 = request.json.get('type1')
+    mealname = request.get_json().get('mealname')
+    price = request.get_json().get('price')
+    type1 = request.get_json().get('type1')
 
     meal_id = meals[-1].get('id') + 1
 
@@ -229,11 +229,11 @@ def addMeal():
 @is_loged_in
 @is_user
 def selectMeal():
-    if not request.json or 'mealname' not in request.json or 'price' not in request.json or 'userId' not in request.json:
+    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json() or 'userId' not in request.get_json():
         abort(400)
-    mealname = request.json.get('mealname')
-    price = request.json.get('price')
-    user_id = request.json.get('userId')
+    mealname = request.get_json().get('mealname')
+    price = request.get_json().get('price')
+    user_id = request.get_json().get('userId')
 
     if type(price) is not int and type(user_id) is not int:
         abort(400)
@@ -255,11 +255,11 @@ def selectMeal():
 @is_loged_in
 @is_admin
 def setMenu():
-    if not request.json:
+    if not request.get_json():
         abort(400)
-    mealname = request.json.get('mealname')
-    price = request.json.get('price')
-    type1 = request.json.get('type1')
+    mealname = request.get_json().get('mealname')
+    price = request.get_json().get('price')
+    type1 = request.get_json().get('type1')
 
     meal = {
         "mealname": mealname,
@@ -276,11 +276,11 @@ def setMenu():
 @is_loged_in
 @is_admin
 def updateMealOption(mealId):
-    if not request.json or 'mealname' not in request.json or 'type1' not in request.json:
+    if not request.get_json() or 'mealname' not in request.get_json() or 'type1' not in request.get_json():
         abort(400)
-    mealname = request.json.get('mealname')
-    price = request.json.get('price')
-    type1 = request.json.get('type1')
+    mealname = request.get_json().get('mealname')
+    price = request.get_json().get('price')
+    type1 = request.get_json().get('type1')
 
     if type(price) is not int:
         abort(400)
@@ -299,11 +299,11 @@ def updateMealOption(mealId):
 @app.route('/bookmealapi/v1.0/orders/<orderId>', methods=['PUT'])
 @is_loged_in
 def updateOrder(orderId):
-    if not request.json or 'mealname' not in request.json or 'price' not in request.json:
+    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json():
         abort(400)
 
-    mealname = request.json.get('mealname')
-    price = request.json.get('price')
+    mealname = request.get_json().get('mealname')
+    price = request.get_json().get('price')
 
     if type(price) is not int:
         abort(400)
