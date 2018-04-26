@@ -1,5 +1,6 @@
 import datetime
 
+
 class Admin():
     def __init__(self):
         self.admins = []
@@ -7,7 +8,7 @@ class Admin():
 
     def addAdmin(self, data):
         admin = data
-        self.counter =  self.counter + 1
+        self.counter = self.counter + 1
         admin['id'] = self.counter
         admin['created_at'] = datetime.datetime.now()
         admin['updated_at'] = datetime.datetime.now()
@@ -18,7 +19,7 @@ class Admin():
         for admin in self.admins:
             if admin['id'] == value:
                 return admin
-        return "No Admin Found"   
+        return "No Admin Found"
 
     def removeAdmin(self, value):
         for admin in self.admins:
@@ -30,7 +31,5 @@ class Admin():
     def updateAdmin(self, value, data):
         admin = self.getAdmin(value)
         admin['updated_at'] = datetime.datetime.now()
-        admin = data 
+        admin = data
         return admin
-
-

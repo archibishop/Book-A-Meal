@@ -4,7 +4,7 @@ from functools import wraps
 app = Flask(__name__)
 
 app.testing = True
-app.secret_key='secret123'
+app.secret_key = 'secret123'
 
 users = [
     {
@@ -24,14 +24,14 @@ users = [
 ]
 
 admin = {
-        'id': 1,
-        'businessname': 'HAPPY FOODS',
-        'location': 'NAKULABYE',
-        'firstname': 'steven',
-        'lastname': 'walube',
-        'email': 'steven@gmail.com',
-        'password': '54321', 
-    }
+    'id': 1,
+    'businessname': 'HAPPY FOODS',
+    'location': 'NAKULABYE',
+    'firstname': 'steven',
+    'lastname': 'walube',
+    'email': 'steven@gmail.com',
+    'password': '54321',
+}
 
 meals = [
     {
@@ -97,7 +97,9 @@ menuDay = [
     }
 ]
 
-#Check if user is logged
+# Check if user is logged
+
+
 def is_loged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -107,7 +109,9 @@ def is_loged_in(f):
             return jsonify({'message': "Unauthorized Access, Please Login"})
     return wrap
 
-#Check if user
+# Check if user
+
+
 def is_user(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -117,7 +121,9 @@ def is_user(f):
             return jsonify({'message': "Unauthorized Access, You are not an admin"})
     return wrap
 
-#Check if Admin
+# Check if Admin
+
+
 def is_admin(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -125,7 +131,7 @@ def is_admin(f):
             return f(*args, **kwargs)
         else:
             return jsonify({'message': "Unauthorized Access, You are not an admin"})
-    return wrap     
+    return wrap
 
 
 # Registering a User
@@ -166,7 +172,7 @@ def signUp():
 def loginIn():
     if not request.get_json() or 'email' not in request.get_json() or 'password' not in request.get_json():
         abort(400)
-    
+
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
@@ -178,7 +184,7 @@ def loginIn():
                 return jsonify({'message': "Successfully login"}), 200
             else:
                 return jsonify({'message': "Wrong Password", 'users': users}), 400
-    
+
     if admin['email'] == email:
         if admin['password'] == password:
             session['logged_in'] = True
@@ -186,7 +192,6 @@ def loginIn():
             return jsonify({'message': "Successfully login"}), 200
         else:
             return jsonify({'message': "Wrong Password", 'admin': admin}), 400
-
 
     return jsonify({'message': "User Not Found", 'users': users}), 400
 

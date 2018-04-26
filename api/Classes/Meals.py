@@ -1,5 +1,6 @@
 import datetime
 
+
 class Meals():
     def __init__(self):
         self.meals = []
@@ -7,7 +8,7 @@ class Meals():
 
     def addMeals(self, data):
         meals = data
-        self.counter =  self.counter + 1
+        self.counter = self.counter + 1
         meals['id'] = self.counter
         meals['created_at'] = datetime.datetime.now()
         meals['updated_at'] = datetime.datetime.now()
@@ -18,7 +19,7 @@ class Meals():
         for meals in self.meals:
             if meals['id'] == value:
                 return meals
-        return "No Meals Found"   
+        return "No Meals Found"
 
     def removeMeals(self, value):
         for meals in self.meals:
@@ -30,7 +31,5 @@ class Meals():
     def updateMeals(self, value, data):
         meals = self.getMeals(value)
         meals['updated_at'] = datetime.datetime.now()
-        meals = data 
+        meals = data
         return meals
-
-

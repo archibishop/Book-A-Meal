@@ -1,5 +1,6 @@
 import datetime
 
+
 class User():
     def __init__(self):
         self.users = []
@@ -7,7 +8,7 @@ class User():
 
     def addUser(self, data):
         user = data
-        self.counter =  self.counter + 1
+        self.counter = self.counter + 1
         user['id'] = self.counter
         user['created_at'] = datetime.datetime.now()
         user['updated_at'] = datetime.datetime.now()
@@ -21,7 +22,7 @@ class User():
         return "No User Found"
 
     def getAllUsers(self):
-        return self.users    
+        return self.users
 
     def removeUser(self, value):
         for user in self.users:
@@ -33,7 +34,5 @@ class User():
     def updateUser(self, value, data):
         user = self.getUser(value)
         user['updated_at'] = datetime.datetime.now()
-        user = data 
+        user = data
         return user
-
-
