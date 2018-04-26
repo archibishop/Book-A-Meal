@@ -118,7 +118,7 @@ def signUp():
 
 
     users.append(user)
-    return jsonify({'user': user}), 201  
+    return jsonify({'user': user, 'users': users}), 201  
 
 # Login
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
@@ -133,7 +133,7 @@ def loginIn():
         if user['email'] ==  email and user['password'] ==  password:
             return jsonify({'message': "Successfully login"}), 200   
         else:
-            return jsonify({'message': "User Not Found"}), 400  
+            return jsonify({'message': "User Not Found", 'users': users}), 400  
 
 
 # Add Meal
@@ -219,7 +219,7 @@ def updateMealOption(mealId):
 
     if type(price) is not int:
         abort(400)
-        
+
     for meal in meals:
         if meal['id'] == int(mealId):
             meal['mealname'] = mealname
@@ -253,7 +253,7 @@ def deleteMealOption(mealId):
     for meal in meals:
         if meal['id'] == int(mealId):
             meals.remove(meal)
-            return jsonify({}), 204
+            return jsonify({'Meals': meals}), 204
     return jsonify({'id': '' + mealId}), 404
             
 
