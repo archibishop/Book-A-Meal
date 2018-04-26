@@ -169,7 +169,7 @@ def addMeal():
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 def selectMeal():
     if not request.json or 'mealname' not in request.json or 'price' not in request.json or 'userId' not in request.json:
-        abort(400)
+       abort(400)
     mealname = request.json.get('mealname')
     price = request.json.get('price')
     user_id = request.json.get('userId')
@@ -192,6 +192,8 @@ def selectMeal():
 # set Meal Options
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 def setMenu():
+    if not request.json:
+        abort(400)
     mealname = request.json.get('mealname')
     price = request.json.get('price') 
     type1 = request.json.get('type1')  
@@ -202,9 +204,48 @@ def setMenu():
        "type1":type1
     }
     menuDay.append(meal)
-    return jsonify({'menuDay': 'menuDay'}), 201
+    return jsonify({'menuDay': menuDay}), 201
 
-   
+  
+
+  # update Meal Option
+@app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['PUT'])
+def updateMealOption(mealId):
+    if not request.json or 'mealname' not in request.json or 'type1' not in request.json:
+        abort(400)
+    mealname = request.json.get('mealname')
+    price = request.json.get('price')
+    type1 = request.json.get('type1')
+
+    if type(price) is not int:
+        abort(400)
+        
+    for meal in meals:
+        if meal['id'] == int(mealId):
+            meal['mealname'] = mealname
+            meal['price'] = price
+            meal['type1'] = type1
+            return jsonify({'meal': meal}), 201 
+    abort(404) 
+
+# Modify Order
+@app.route('/bookmealapi/v1.0/orders/<orderId>', methods=['PUT'])
+def updateOrder(orderId):
+    if not request.json or 'mealname' not in request.json or 'price' not in request.json:
+        abort(400)
+
+    mealname = request.json.get('mealname')
+    price = request.json.get('price')
+
+    if type(price) is not int:
+        abort(400)
+
+    for transaction in transactions:
+        if transaction['id'] == int(orderId):
+            transaction['mealname'] = mealname
+            transaction['price'] = price
+            return jsonify({'transaction': transaction}), 201 
+    abort(404)   
 
 # delete Meal Option
 @app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['DELETE'])
@@ -216,10 +257,7 @@ def deleteMealOption(mealId):
     return jsonify({'id': '' + mealId}), 404
             
 
-# # update Meal Option
-# @app.route('/bookmealapi/v1.0/meals/<mealId> ', methods=['PUT'])
-# def updateMealOption(mealId):
-#     pass
+
 
  # get all meals
 @app.route('/bookmealapi/v1.0/meals', methods=['GET'])
