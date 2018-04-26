@@ -54,6 +54,20 @@ class ApiTestCase(unittest.TestCase):
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "Successfully login")
 
+        # correct details
+        details = {"email" : "atlas@gmail.com", "password":"12345"}
+        response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 200) 
+        data = json.loads(response.get_data())
+        self.assertEqual(data['message'], "Successfully login")
+
+        # Invalid Password
+        details = {"email" : "lubega@gmail.com", "password":"54321"}
+        response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 400) 
+        data = json.loads(response.get_data())
+        self.assertEqual(data['message'], "Wrong Password")
+
         # invalid details
         details = {"email" : "fresh@gmail.com", "password":"12345"}
         response = self.app.post("/bookmealapi/v1.0/auth/login", data=json.dumps(details), content_type='application/json')

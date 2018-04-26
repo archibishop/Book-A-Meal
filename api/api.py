@@ -130,10 +130,13 @@ def loginIn():
     password = request.json.get('password')
 
     for user in users:
-        if user['email'] ==  email and user['password'] ==  password:
-            return jsonify({'message': "Successfully login"}), 200   
-        else:
-            return jsonify({'message': "User Not Found", 'users': users}), 400  
+        if user['email'] ==  email:
+            if user['password'] ==  password:
+                return jsonify({'message': "Successfully login"}), 200
+            else:
+                return jsonify({'message': "Wrong Password", 'users': users}), 400    
+        
+    return jsonify({'message': "User Not Found", 'users': users}), 400  
 
 
 # Add Meal
