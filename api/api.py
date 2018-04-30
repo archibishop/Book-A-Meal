@@ -9,15 +9,15 @@ app.secret_key = 'secret123'
 users = [
     {
         'id': 1,
-        'firstname': 'dennis',
-        'lastname': 'lubega',
+        'first_name': 'dennis',
+        'last_name': 'lubega',
         'email': 'lubega@gmail.com',
         'password': '12345',
     },
     {
         'id': 2,
-        'firstname': 'atlas',
-        'lastname': 'Tegz',
+        'first_name': 'atlas',
+        'last_name': 'Tegz',
         'email': 'atlas@gmail.com',
         'password': '12345',
     }
@@ -25,10 +25,10 @@ users = [
 
 admin = {
     'id': 1,
-    'businessname': 'HAPPY FOODS',
+    'business_name': 'HAPPY FOODS',
     'location': 'NAKULABYE',
-    'firstname': 'steven',
-    'lastname': 'walube',
+    'first_name': 'steven',
+    'last_name': 'walube',
     'email': 'steven@gmail.com',
     'password': '54321',
 }
@@ -36,15 +36,15 @@ admin = {
 meals = [
     {
         'id': 1,
-        'mealname': "ricebeans",
+        'meal_name': "ricebeans",
         'price': 3000,
-        'type1': "lunch"
+        'meal_type': "lunch"
     },
     {
         'id': 2,
-        'mealname': 'rolex',
+        'meal_name': 'rolex',
         'price': 4000,
-        'type1': 'lunch'
+        'meal_type': 'lunch'
     }
 ]
 
@@ -52,50 +52,50 @@ meals = [
 transactions = [
     {
         'id': 1,
-        'mealname': "ricebeans",
+        'meal_name': "ricebeans",
         'price': 3000,
         'user_id': 1,
         'created_at': "2018-04-26 10:55:55.423844",
-        'process_status':"pending"
+        'process_status': "pending"
     },
     {
         'id': 2,
-        'mealname': "lasagna",
+        'meal_name': "lasagna",
         'price': 10000,
         'user_id': 2,
     },
     {
         'id': 3,
-        'mealname': 'rolex',
+        'meal_name': 'rolex',
         'price': 4000,
         'user_id': 1,
     }
 ]
 
-menuDay = [
+menu_day = [
     {
         'id': 1,
-        'mealname': "ricebeans",
+        'meal_name': "ricebeans",
         'price': 3000,
-        'type1': "lunch"
+        'meal_type': "lunch"
     },
     {
         'id': 2,
-        'mealname': "lasagna",
+        'meal_name': "lasagna",
         'price': 10000,
-        'type1': "breakfast"
+        'meal_type': "breakfast"
     },
     {
         'id': 3,
-        'mealname': "Rice and Matooke",
+        'meal_name': "Rice and Matooke",
         'price': 10000,
-        'type1': "lunch"
+        'meal_type': "lunch"
     },
     {
         'id': 4,
-        'mealname': 'rolex',
+        'meal_name': 'rolex',
         'price': 4000,
-        'type1': "lunch"
+        'meal_type': "lunch"
     }
 ]
 
@@ -138,19 +138,18 @@ def is_admin(f):
 
 # Registering a User
 @app.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
-def signUp():
-    if not request.get_json() or 'fname' not in request.get_json() or 'lname' not in request.get_json() or 'email' not in request.get_json() or 'password' not in request.get_json() or 'cnfmpassword' not in request.get_json():
+def sign_up():
+    """ Regisrering User """
+    if not request.get_json() or 'fname' not in request.get_json()\
+    or 'lname' not in request.get_json() or 'email' not in request.get_json()\
+    or 'password' not in request.get_json():
         abort(400)
 
     user_id = users[-1].get("id") + 1
-    firstname = request.get_json().get('fname')
-    lastname = request.get_json().get('lname')
+    first_name = request.get_json().get('fname')
+    last_name = request.get_json().get('lname')
     email = request.get_json().get('email')
     password = request.get_json().get('password')
-    cnfmpassword = request.get_json().get('cnfmpassword')
-
-    if password != cnfmpassword:
-        abort(400)
 
     for user in users:
         if user["email"] == email:
@@ -158,8 +157,8 @@ def signUp():
 
     user = {
         'id': user_id,
-        'firstname': firstname,
-        'lastname': lastname,
+        'first_name': first_name,
+        'last_name': last_name,
         'email': email,
         'password': password,
     }
@@ -171,8 +170,10 @@ def signUp():
 
 
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
-def loginIn():
-    if not request.get_json() or 'email' not in request.get_json() or 'password' not in request.get_json():
+def login():
+    """ login  """
+    if not request.get_json() or 'email' not in request.get_json()\
+     or 'password' not in request.get_json():
         abort(400)
 
     email = request.get_json().get('email')
@@ -202,28 +203,30 @@ def loginIn():
 @app.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_loged_in
 @is_admin
-def addMeal():
-    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json() or 'type1' not in request.get_json():
+def add_meal():
+    """ Adding meal  """
+    if not request.get_json() or 'meal_name' not in request.get_json()\
+    or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
         abort(400)
 
-    mealname = request.get_json().get('mealname')
+    meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
-    type1 = request.get_json().get('type1')
+    meal_type = request.get_json().get('meal_type')
 
     meal_id = meals[-1].get('id') + 1
 
-    if type(price) is not int:
+    if isinstance(price, int):
         abort(400)
 
     for meal in meals:
-        if meal['mealname'] == mealname:
+        if meal['meal_name'] == meal_name:
             abort(400)
 
     meal = {
         'id': meal_id,
-        'mealname': mealname,
+        'meal_name': meal_name,
         'price': price,
-        'type1': type1
+        'meal_type': meal_type
     }
 
     meals.append(meal)
@@ -235,21 +238,23 @@ def addMeal():
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @is_loged_in
 @is_user
-def selectMeal():
-    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json() or 'userId' not in request.get_json():
+def select_meal():
+    """ Selecting Meal """
+    if not request.get_json() or 'meal_name' not in request.get_json()\
+    or 'price' not in request.get_json() or 'userId' not in request.get_json():
         abort(400)
-    mealname = request.get_json().get('mealname')
+    meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
     user_id = request.get_json().get('userId')
 
-    if type(price) is not int and type(user_id) is not int:
+    if isinstance(price, int) and isinstance(user_id, int):
         abort(400)
 
-    transactionId = transactions[-1].get('id') + 1
+    transaction_id = transactions[-1].get('id') + 1
 
     transaction = {
-        'id': transactionId,
-        'mealname': mealname,
+        'id': transaction_id,
+        'meal_name': meal_name,
         'price': price,
         'user_id': user_id
     }
@@ -261,63 +266,68 @@ def selectMeal():
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 @is_loged_in
 @is_admin
-def setMenu():
+def set_menu():
+    """ Setting menu """
     if not request.get_json():
         abort(400)
-    mealname = request.get_json().get('mealname')
+    meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
-    type1 = request.get_json().get('type1')
+    meal_type = request.get_json().get('meal_type')
 
     meal = {
-        "mealname": mealname,
+        "meal_name": meal_name,
         "price": price,
-        "type1": type1
+        "meal_type": meal_type
     }
-    menuDay.append(meal)
-    return jsonify({'menuDay': menuDay}), 201
+    menu_day.append(meal)
+    return jsonify({'menuDay': menu_day}), 201
 
   # update Meal Option
 
 
-@app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['PUT'])
+@app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
-def updateMealOption(mealId):
-    if not request.get_json() or 'mealname' not in request.get_json() or 'type1' not in request.get_json():
+def update_meal_option(meal_id):
+    """ Updating meals """
+    if not request.get_json() or 'meal_name' not in request.get_json()\
+    or 'meal_type' not in request.get_json():
         abort(400)
-    mealname = request.get_json().get('mealname')
+    meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
-    type1 = request.get_json().get('type1')
+    meal_type = request.get_json().get('meal_type')
 
-    if type(price) is not int:
+    if isinstance(price, int):
         abort(400)
 
     for meal in meals:
-        if meal['id'] == int(mealId):
-            meal['mealname'] = mealname
+        if meal['id'] == int(meal_id):
+            meal['meal_name'] = meal_name
             meal['price'] = price
-            meal['type1'] = type1
+            meal['meal_type'] = meal_type
             return jsonify({'meal': meal}), 201
     abort(404)
 
 # Modify Order
 
 
-@app.route('/bookmealapi/v1.0/orders/<orderId>', methods=['PUT'])
+@app.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
 @is_loged_in
-def updateOrder(orderId):
-    if not request.get_json() or 'mealname' not in request.get_json() or 'price' not in request.get_json():
+def update_order(order_id):
+    """ Modify Order """
+    if not request.get_json() or 'meal_name' not in request.get_json()\
+    or 'price' not in request.get_json():
         abort(400)
 
-    mealname = request.get_json().get('mealname')
+    meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
 
-    if type(price) is not int:
+    if isinstance(price, int):
         abort(400)
 
     for transaction in transactions:
-        if transaction['id'] == int(orderId):
-            transaction['mealname'] = mealname
+        if transaction['id'] == int(order_id):
+            transaction['meal_name'] = meal_name
             transaction['price'] = price
             return jsonify({'transaction': transaction}), 201
     abort(404)
@@ -325,15 +335,16 @@ def updateOrder(orderId):
 # delete Meal Option
 
 
-@app.route('/bookmealapi/v1.0/meals/<mealId>', methods=['DELETE'])
+@app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in
 @is_admin
-def deleteMealOption(mealId):
+def delete_meal_option(meal_id):
+    """ Deleting Meal Option """
     for meal in meals:
-        if meal['id'] == int(mealId):
+        if meal['id'] == int(meal_id):
             meals.remove(meal)
             return jsonify({'Meals': meals}), 204
-    return jsonify({'id': '' + mealId}), 404
+    return jsonify({'id': '' + meal_id}), 404
 
  # get all meals
 
@@ -341,7 +352,8 @@ def deleteMealOption(mealId):
 @app.route('/bookmealapi/v1.0/meals', methods=['GET'])
 @is_loged_in
 @is_admin
-def getAllMeals():
+def get_all_meals():
+    """ Get all Meals """
     return jsonify({'meals': meals}), 200
 
   # get all orders
@@ -350,7 +362,8 @@ def getAllMeals():
 @app.route('/bookmealapi/v1.0/orders', methods=['GET'])
 @is_loged_in
 @is_admin
-def getAllOrders():
+def get_all_orders():
+    """ Get all orders """
     return jsonify({'transactions': transactions}), 200
 
 # get menu of the day
@@ -359,5 +372,6 @@ def getAllOrders():
 @app.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @is_loged_in
 @is_user
-def getMenu():
-    return jsonify({'menuDay': menuDay}), 200
+def get_menu():
+    """ Get menu for the day """
+    return jsonify({'menu_day': menu_day}), 200
