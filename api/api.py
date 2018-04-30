@@ -215,7 +215,7 @@ def add_meal():
 
     meal_id = meals[-1].get('id') + 1
 
-    if isinstance(price, int):
+    if type(price) is not int:
         abort(400)
 
     for meal in meals:
@@ -247,7 +247,7 @@ def select_meal():
     price = request.get_json().get('price')
     user_id = request.get_json().get('userId')
 
-    if isinstance(price, int) and isinstance(user_id, int):
+    if type(price) is not int and type(user_id) is not int:
         abort(400)
 
     transaction_id = transactions[-1].get('id') + 1
@@ -297,7 +297,7 @@ def update_meal_option(meal_id):
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
 
-    if isinstance(price, int):
+    if type(price) is not int:
         abort(400)
 
     for meal in meals:
@@ -322,7 +322,7 @@ def update_order(order_id):
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
 
-    if isinstance(price, int):
+    if type(price) is not int:
         abort(400)
 
     for transaction in transactions:
