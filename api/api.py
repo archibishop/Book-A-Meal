@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, request, abort, session
 from functools import wraps
 
+from flasgger import Swagger
+
 app = Flask(__name__)
 
 app.testing = True
 app.secret_key = 'secret123'
+
+Swagger(app)
 
 users = [
     {
@@ -55,7 +59,6 @@ transactions = [
         'meal_name': "ricebeans",
         'price': 3000,
         'user_id': 1,
-        'created_at': "2018-04-26 10:55:55.423844",
         'process_status': "pending"
     },
     {
@@ -139,6 +142,54 @@ def is_admin(f):
 # Registering a User
 @app.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
 def sign_up():
+    """
+    sign up
+    BOOK-A-MEAL API
+    Register a user
+    ---
+    tags:
+      - user
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: register
+          required:
+            - fname
+            - lname
+            - email
+            - password
+          properties:
+            fname:
+              type: string
+              description: first name
+              default: felix
+            lname:
+              type: string
+              description: last name
+              default: journey  
+            email:
+              type: string
+              description: user email
+              default: test@gmail.com
+            password:
+              type: string
+              description: password
+              default: "12345"
+    responses:
+      400:
+        description: User Not Found
+      201:
+        description: Successfully Registration
+        schema:
+          id: registermessage
+          properties:
+            message:
+              type: string
+              description: success message
+              default: User created
+
+    """
     """ Regisrering User """
     if not request.get_json() or 'fname' not in request.get_json()\
     or 'lname' not in request.get_json() or 'email' not in request.get_json()\
@@ -164,13 +215,51 @@ def sign_up():
     }
 
     users.append(user)
-    return jsonify({'user': user, 'users': users}), 201
+    return jsonify({'meassage':'User Created','user': user, 'users': users}), 201
 
 # Login
 
 
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
+    """
+    login
+    BOOK-A-MEAL API
+    Send login credentials to api
+    ---
+    tags:
+      - user
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: login
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+              description: user email
+              default: test@gmail.com
+            password:
+              type: string
+              description: password
+              default: "12345"
+    responses:
+      400:
+        description: User Not Found
+      200:
+        description: Successfully Login
+        schema:
+          id: awesome
+          properties:
+            message:
+              type: string
+              description: The language name
+              default: Successfully login
+
+    """
     """ login  """
     if not request.get_json() or 'email' not in request.get_json()\
      or 'password' not in request.get_json():
@@ -204,6 +293,61 @@ def login():
 @is_loged_in
 @is_admin
 def add_meal():
+    """
+    add meal
+    BOOK-A-MEAL API
+    Adding meal
+    ---
+    tags:
+      - meals
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: add_meal
+          required:
+            - meal_name
+            - price
+            - meal_type
+          properties:
+            meal_name:
+              type: string
+              description: meal_name
+              default: frenchbeans
+            price:
+              type: integer
+              description: price for meal
+              default: 5000 
+            meal_type:
+              type: string
+              description: meal category
+              default: lunch
+    responses:
+      400:
+        description:
+      201:
+        description: Meal Added
+        schema:
+          id: adding_meal_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: meal_name
+              default: frenchbeans
+            price:
+              type: integer
+              description: price for meal
+              default: 5000 
+            meal_type:
+              type: string
+              description: meal category
+              default: lunch
+
+    """
     """ Adding meal  """
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
@@ -239,6 +383,61 @@ def add_meal():
 @is_loged_in
 @is_user
 def select_meal():
+    """
+    select meal
+    BOOK-A-MEAL API
+    Selecting meal
+    ---
+    tags:
+      - orders
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: select_meal
+          required:
+            - meal_name
+            - price
+            - user_id
+          properties:
+            meal_name:
+              type: string
+              description: meal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            userId:
+              type: integer
+              description: user id
+              default: 1
+    responses:
+      400:
+        description: 
+      201:
+        description: Order Made
+        schema:
+          id: select_meal_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: mwal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            userId:
+              type: integer
+              description: user id
+              default: 1
+
+    """
     """ Selecting Meal """
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'userId' not in request.get_json():
@@ -267,6 +466,61 @@ def select_meal():
 @is_loged_in
 @is_admin
 def set_menu():
+    """
+    setting meal
+    BOOK-A-MEAL API
+    Set menu for the day
+    ---
+    tags:
+      - meals
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: set_menu
+          required:
+            - meal_name
+            - price
+            - user_id
+          properties:
+            meal_name:
+              type: string
+              description: meal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: breakfast
+    responses:
+      400:
+        description: 
+      201:
+        description: Order Made
+        schema:
+          id: set_menu_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: mwal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: brakfast
+
+    """
     """ Setting menu """
     if not request.get_json():
         abort(400)
@@ -289,6 +543,67 @@ def set_menu():
 @is_loged_in
 @is_admin
 def update_meal_option(meal_id):
+    """
+    Update Meal Option
+    BOOK-A-MEAL API
+    Set menu for the day
+    ---
+    tags:
+      - meals
+    parameters:
+      - name: meal_id
+        in: path
+        type: integer
+        required: true
+        description: meal option to be modified
+        default: 2
+      - in: body
+        name: body
+        schema:
+          id: update_meal_option
+          required:
+            - meal_name
+            - price
+            - user_id
+          properties:
+            meal_name:
+              type: string
+              description: meal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: breakfast
+    responses:
+      400:
+        description: 
+      201:
+        description: Meal Updated
+        schema:
+          id: update_meal_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: mwel name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: breakfast
+
+    """
     """ Updating meals """
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'meal_type' not in request.get_json():
@@ -314,6 +629,67 @@ def update_meal_option(meal_id):
 @app.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
 @is_loged_in
 def update_order(order_id):
+    """
+    Modify order
+    BOOK-A-MEAL API
+    modify order
+    ---
+    tags:
+      - orders
+    parameters:
+      - name: order_id
+        in: path
+        type: integer
+        required: true
+        description: oder to be modified
+        default: 2
+      - in: body
+        name: body
+        schema:
+          id: modify_order
+          required:
+            - meal_name
+            - price
+            - user_id
+          properties:
+            meal_name:
+              type: string
+              description: meal name
+              default: spinach
+            price:
+              type: integer
+              description: price for meal
+              default: 2500 
+            meal_type:
+              type: string
+              description: meal type
+              default: lunch
+    responses:
+      400:
+        description: 
+      201:
+        description: Order Modified
+        schema:
+          id: set_menu_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: meal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: breakfast
+
+    """
     """ Modify Order """
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json():
@@ -339,12 +715,40 @@ def update_order(order_id):
 @is_loged_in
 @is_admin
 def delete_meal_option(meal_id):
+    """
+    delete meal option
+    BOOK-A-MEAL API
+    delete meal option
+    ---
+    tags:
+      - meals
+    parameters:
+    - name: meal_id
+      in: path
+      type: integer
+      required: true
+      description: meal id to be deleted
+      default: 2
+    responses:
+      404:
+        description: Meal Not found
+      200:
+        description: Meal Option Deleted
+        schema:
+          id: delete_message
+          properties:
+            id:
+              type: integer
+              description: meal id
+              default: 3
+
+    """
     """ Deleting Meal Option """
     for meal in meals:
         if meal['id'] == int(meal_id):
             meals.remove(meal)
             return jsonify({'Meals': meals}), 204
-    return jsonify({'id': '' + meal_id}), 404
+    return jsonify({'message':'Meal Not Found','id': '' + meal_id}), 404
 
  # get all meals
 
@@ -353,7 +757,35 @@ def delete_meal_option(meal_id):
 @is_loged_in
 @is_admin
 def get_all_meals():
-    """ Get all Meals """
+    """
+    Get all meals
+    BOOK-A-MEAL API
+    Call this api url and it will return the all the meals in the system
+    ---
+    tags:
+      - meals
+    responses:
+      500:
+        description: Error The language is not awesome!
+      200:
+        description: All meals returned
+        schema:
+          id: meal
+          properties:
+            meals:
+              type: array
+              description: The awesomeness list
+              items:
+                type: string
+              default: [{
+                            'id': 1,
+                            'meal_name': "ricebeans",
+                            'price': 3000,
+                            'meal_type': "lunch"
+                        }]
+
+    """
+
     return jsonify({'meals': meals}), 200
 
   # get all orders
@@ -363,6 +795,34 @@ def get_all_meals():
 @is_loged_in
 @is_admin
 def get_all_orders():
+    """
+    Get all orders
+    BOOK-A-MEAL API
+    All the orders in the system
+    ---
+    tags:
+      - orders
+    responses:
+      400:
+        description:  
+      200:
+        description: All meals returned
+        schema:
+          id: order
+          properties:
+            orders:
+              type: array
+              description: TA ll orders
+              items:
+                type: string
+              default: [{
+                            'id': 1,
+                            'meal_name': "ricebeans",
+                            'price': 3000,
+                            'meal_type': "lunch"
+                        }]
+
+    """
     """ Get all orders """
     return jsonify({'transactions': transactions}), 200
 
@@ -373,5 +833,33 @@ def get_all_orders():
 @is_loged_in
 @is_user
 def get_menu():
+    """
+    Get menu for the day
+    BOOK-A-MEAL API
+    Call this api url and it will return the menu for the day
+    ---
+    tags:
+      - meals
+    responses:
+      400:
+        description: 
+      200:
+        description: menu returned
+        schema:
+          id: menu_day
+          properties:
+            menu:
+              type: array
+              description: The awesomeness list
+              items:
+                type: string
+              default: [{
+                            'id': 1,
+                            'meal_name': "ricebeans",
+                            'price': 3000,
+                            'meal_type': "lunch"
+                        }]
+
+    """
     """ Get menu for the day """
     return jsonify({'menu_day': menu_day}), 200
