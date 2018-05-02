@@ -1,6 +1,8 @@
 import unittest
 
-from meals import Meals
+import context
+
+from models.meals import Meals
 
 
 class meal_tests(unittest.TestCase):

@@ -1,6 +1,8 @@
 import unittest
 
-from order import Order
+import context
+
+from models.order import Order
 
 import datetime
 

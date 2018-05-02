@@ -1,6 +1,8 @@
 import unittest
 
-from admin import Admin
+import context
+
+from models.admin import Admin
 
 
 class admin_tests(unittest.TestCase):

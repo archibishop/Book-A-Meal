@@ -1,6 +1,8 @@
 import unittest
 
-from user import User
+import context
+
+from models.user import User
 
 
 class user_tests(unittest.TestCase):
