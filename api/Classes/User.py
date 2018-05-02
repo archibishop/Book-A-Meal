@@ -6,7 +6,7 @@ class User():
         self.users = []
         self.counter = 0
 
-    def addUser(self, data):
+    def add_user(self, data):
         user = data
         self.counter = self.counter + 1
         user['id'] = self.counter
@@ -15,24 +15,24 @@ class User():
         self.users.append(user)
         return "Successfully Added"
 
-    def getUser(self, value):
+    def get_user(self, value):
         for user in self.users:
             if user['id'] == value:
                 return user
         return "No User Found"
 
-    def getAllUsers(self):
+    def get_all_users(self):
         return self.users
 
-    def removeUser(self, value):
+    def remove_user(self, value):
         for user in self.users:
             if user['id'] == value:
                 self.users.remove(user)
                 return "Successfully Removed"
         return "No User Found"
 
-    def updateUser(self, value, data):
-        user = self.getUser(value)
+    def update_user(self, value, data):
+        user = self.get_user(value)
         user['updated_at'] = datetime.datetime.now()
         user = data
         return user

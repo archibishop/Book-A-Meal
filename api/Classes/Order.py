@@ -6,7 +6,7 @@ class Order():
         self.orders = []
         self.counter = 0
 
-    def placeOrder(self, data):
+    def place_order(self, data):
         order = data
         self.counter = self.counter + 1
         order['id'] = self.counter
@@ -15,13 +15,13 @@ class Order():
         self.orders.append(order)
         return "Successfully Made Order"
 
-    def getOrder(self, value):
+    def get_order(self, value):
         for order in self.orders:
             if order['id'] == value:
                 return order
         return "No Order Found"
 
-    def getOrdersUser(self, value):
+    def get_orders_user(self, value):
         ordersUser = []
         for order in self.orders:
             if order['customerId'] == value:
@@ -32,15 +32,15 @@ class Order():
             return ordersUser
 
 
-    def removeOrder(self, value):
+    def remove_order(self, value):
         for order in self.orders:
             if order['id'] == value:
                 self.orders.remove(order)
                 return "Successfully Removed"
         return "No Order Found"
 
-    def updateOrder(self, value, data):
-        order = self.getOrder(value)
+    def update_order(self, value, data):
+        order = self.get_order(value)
         order = data
         order['updated_at'] = datetime.datetime.now()
         return order

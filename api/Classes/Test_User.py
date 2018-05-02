@@ -1,9 +1,9 @@
 import unittest
 
-from User import User
+from user import User
 
 
-class TestUser(unittest.TestCase):
+class user_tests(unittest.TestCase):
     def test_add_user(self):
         user = User()
         data = {
@@ -12,7 +12,7 @@ class TestUser(unittest.TestCase):
             "email": "craig@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(user.addUser(data), "Successfully Added")
+        self.assertEqual(user.add_user(data), "Successfully Added")
 
     def test_get_user(self):
         user = User()
@@ -34,13 +34,13 @@ class TestUser(unittest.TestCase):
             "email": "lap@gmail.com",
             "password": "12233"
         }
-        self.assertEqual(user.addUser(data1), "Successfully Added")
-        self.assertEqual(user.addUser(data2), "Successfully Added")
-        self.assertEqual(user.addUser(data3), "Successfully Added")
-        self.assertEqual(user.getUser(2), data2)
-        self.assertEqual(user.getUser(1), data1)
-        self.assertEqual(user.getUser(3), data3)
-        self.assertEqual(user.getUser(6), "No User Found")
+        self.assertEqual(user.add_user(data1), "Successfully Added")
+        self.assertEqual(user.add_user(data2), "Successfully Added")
+        self.assertEqual(user.add_user(data3), "Successfully Added")
+        self.assertEqual(user.get_user(2), data2)
+        self.assertEqual(user.get_user(1), data1)
+        self.assertEqual(user.get_user(3), data3)
+        self.assertEqual(user.get_user(6), "No User Found")
 
     def test_get_all_user(self):
         user = User()
@@ -66,12 +66,12 @@ class TestUser(unittest.TestCase):
         test.append(data1)
         test.append(data2)
         test.append(data3)
-        self.assertEqual(user.addUser(data1), "Successfully Added")
-        self.assertEqual(user.addUser(data2), "Successfully Added")
-        self.assertEqual(len(user.getAllUsers()), 2)
-        self.assertEqual(user.addUser(data3), "Successfully Added")
-        self.assertEqual(len(user.getAllUsers()), 3)
-        self.assertEqual((user.getAllUsers()), test)
+        self.assertEqual(user.add_user(data1), "Successfully Added")
+        self.assertEqual(user.add_user(data2), "Successfully Added")
+        self.assertEqual(len(user.get_all_users()), 2)
+        self.assertEqual(user.add_user(data3), "Successfully Added")
+        self.assertEqual(len(user.get_all_users()), 3)
+        self.assertEqual((user.get_all_users()), test)
 
     def test_remove_user(self):
         user = User()
@@ -87,11 +87,11 @@ class TestUser(unittest.TestCase):
             "email": "drinkwater@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(user.addUser(data1), "Successfully Added")
-        self.assertEqual(user.addUser(data2), "Successfully Added")
-        self.assertEqual(user.removeUser(1), "Successfully Removed")
-        self.assertEqual(user.getUser(1), "No User Found")
-        self.assertEqual(user.getUser(2), data2)
+        self.assertEqual(user.add_user(data1), "Successfully Added")
+        self.assertEqual(user.add_user(data2), "Successfully Added")
+        self.assertEqual(user.remove_user(1), "Successfully Removed")
+        self.assertEqual(user.get_user(1), "No User Found")
+        self.assertEqual(user.get_user(2), data2)
 
     def test_update_user(self):
         user = User()
@@ -107,8 +107,8 @@ class TestUser(unittest.TestCase):
             "email": "drinkwater@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(user.addUser(data1), "Successfully Added")
-        self.assertEqual(user.updateUser(1, data2), data2)
+        self.assertEqual(user.add_user(data1), "Successfully Added")
+        self.assertEqual(user.update_user(1, data2), data2)
 
 
 if __name__ == '__main__':

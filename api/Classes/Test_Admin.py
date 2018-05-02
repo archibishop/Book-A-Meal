@@ -1,9 +1,9 @@
 import unittest
 
-from Admin import Admin
+from admin import Admin
 
 
-class TestAdmin(unittest.TestCase):
+class admin_tests(unittest.TestCase):
     def test_add_admin(self):
         admin = Admin()
         data = {
@@ -14,7 +14,7 @@ class TestAdmin(unittest.TestCase):
             "email": "phillip@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(admin.addAdmin(data), "Successfully Added")
+        self.assertEqual(admin.add_admin(data), "Successfully Added")
 
     def test_get_admin(self):
         admin = Admin()
@@ -35,11 +35,11 @@ class TestAdmin(unittest.TestCase):
             "password": "1234"
         }
 
-        self.assertEqual(admin.addAdmin(data1), "Successfully Added")
-        self.assertEqual(admin.addAdmin(data2), "Successfully Added")
-        self.assertEqual(admin.getAdmin(2), data2)
-        self.assertEqual(admin.getAdmin(1), data1)
-        self.assertEqual(admin.getAdmin(3), "No Admin Found")
+        self.assertEqual(admin.add_admin(data1), "Successfully Added")
+        self.assertEqual(admin.add_admin(data2), "Successfully Added")
+        self.assertEqual(admin.get_admin(2), data2)
+        self.assertEqual(admin.get_admin(1), data1)
+        self.assertEqual(admin.get_admin(3), "No Admin Found")
 
     def test_remove_admin(self):
         admin = Admin()
@@ -59,11 +59,11 @@ class TestAdmin(unittest.TestCase):
             "email": "pfriend@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(admin.addAdmin(data1), "Successfully Added")
-        self.assertEqual(admin.addAdmin(data2), "Successfully Added")
-        self.assertEqual(admin.removeAdmin(1), "Successfully Removed")
-        self.assertEqual(admin.getAdmin(1), "No Admin Found")
-        self.assertEqual(admin.getAdmin(2), data2)
+        self.assertEqual(admin.add_admin(data1), "Successfully Added")
+        self.assertEqual(admin.add_admin(data2), "Successfully Added")
+        self.assertEqual(admin.remove_admin(1), "Successfully Removed")
+        self.assertEqual(admin.get_admin(1), "No Admin Found")
+        self.assertEqual(admin.get_admin(2), data2)
 
     def test_update_admin(self):
         admin = Admin()
@@ -83,8 +83,8 @@ class TestAdmin(unittest.TestCase):
             "email": "pfriend@gmail.com",
             "password": "1234"
         }
-        self.assertEqual(admin.addAdmin(data1), "Successfully Added")
-        self.assertEqual(admin.updateAdmin(1, data2), data2)
+        self.assertEqual(admin.add_admin(data1), "Successfully Added")
+        self.assertEqual(admin.update_admin(1, data2), data2)
 
 
 if __name__ == '__main__':

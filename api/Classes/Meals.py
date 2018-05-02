@@ -6,7 +6,7 @@ class Meals():
         self.meals = []
         self.counter = 0
 
-    def addMeals(self, data):
+    def add_meals(self, data):
         meals = data
         self.counter = self.counter + 1
         meals['id'] = self.counter
@@ -15,21 +15,21 @@ class Meals():
         self.meals.append(meals)
         return "Successfully Added"
 
-    def getMeals(self, value):
+    def get_meals(self, value):
         for meals in self.meals:
             if meals['id'] == value:
                 return meals
         return "No Meals Found"
 
-    def removeMeals(self, value):
+    def remove_meals(self, value):
         for meals in self.meals:
             if meals['id'] == value:
                 self.meals.remove(meals)
                 return "Successfully Removed"
         return "No meals Found"
 
-    def updateMeals(self, value, data):
-        meals = self.getMeals(value)
+    def update_meals(self, value, data):
+        meals = self.get_meals(value)
         meals['updated_at'] = datetime.datetime.now()
         meals = data
         return meals

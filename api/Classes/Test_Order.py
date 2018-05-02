@@ -1,11 +1,11 @@
 import unittest
 
-from Order import Order
+from order import Order
 
 import datetime
 
 
-class TestOrder(unittest.TestCase):
+class order_tests(unittest.TestCase):
     def test_add_order(self):
         order = Order()
         data = {
@@ -16,7 +16,7 @@ class TestOrder(unittest.TestCase):
             "created_at": "2018-04-26 10:55:55.423844",
             "process_status":"pending"
         }
-        self.assertEqual(order.placeOrder(data), "Successfully Made Order")
+        self.assertEqual(order.place_order(data), "Successfully Made Order")
 
     def test_get_order(self):
         order = Order()
@@ -37,11 +37,11 @@ class TestOrder(unittest.TestCase):
             "process_status":"pending"
         }
 
-        self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
-        self.assertEqual(order.placeOrder(data2), "Successfully Made Order")
-        self.assertEqual(order.getOrder(2), data2)
-        self.assertEqual(order.getOrder(1), data1)
-        self.assertEqual(order.getOrder(3), "No Order Found")
+        self.assertEqual(order.place_order(data1), "Successfully Made Order")
+        self.assertEqual(order.place_order(data2), "Successfully Made Order")
+        self.assertEqual(order.get_order(2), data2)
+        self.assertEqual(order.get_order(1), data1)
+        self.assertEqual(order.get_order(3), "No Order Found")
 
     def test_get_order_users(self):
         order = Order()
@@ -70,12 +70,12 @@ class TestOrder(unittest.TestCase):
             "process_status":"pending"
         }
 
-        self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
-        self.assertEqual(order.placeOrder(data2), "Successfully Made Order")
-        self.assertEqual(order.placeOrder(data3), "Successfully Made Order")
-        self.assertEqual(len(order.getOrdersUser(2)), 2)
-        self.assertEqual(len(order.getOrdersUser(3)), 1)
-        self.assertEqual(len(order.getOrdersUser(10)), 0)    
+        self.assertEqual(order.place_order(data1), "Successfully Made Order")
+        self.assertEqual(order.place_order(data2), "Successfully Made Order")
+        self.assertEqual(order.place_order(data3), "Successfully Made Order")
+        self.assertEqual(len(order.get_orders_user(2)), 2)
+        self.assertEqual(len(order.get_orders_user(3)), 1)
+        self.assertEqual(len(order.get_orders_user(10)), 0)    
 
     def test_remove_order(self):
         order = Order()
@@ -95,11 +95,11 @@ class TestOrder(unittest.TestCase):
             "created_at": "2018-04-26 10:55:55.423844",
             "process_status":"pending"
         }
-        self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
-        self.assertEqual(order.placeOrder(data2), "Successfully Made Order")
-        self.assertEqual(order.removeOrder(1), "Successfully Removed")
-        self.assertEqual(order.getOrder(1), "No Order Found")
-        self.assertEqual(order.getOrder(2), data2)
+        self.assertEqual(order.place_order(data1), "Successfully Made Order")
+        self.assertEqual(order.place_order(data2), "Successfully Made Order")
+        self.assertEqual(order.remove_order(1), "Successfully Removed")
+        self.assertEqual(order.get_order(1), "No Order Found")
+        self.assertEqual(order.get_order(2), data2)
 
     def test_update_order(self):
         order = Order()
@@ -119,8 +119,8 @@ class TestOrder(unittest.TestCase):
             "created_at": "2018-04-26 10:55:55.423844",
             "process_status":"pending"
         }
-        self.assertEqual(order.placeOrder(data1), "Successfully Made Order")
-        self.assertEqual(order.updateOrder(1, data2), data2)
+        self.assertEqual(order.place_order(data1), "Successfully Made Order")
+        self.assertEqual(order.update_order(1, data2), data2)
 
   
 
