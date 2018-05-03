@@ -5,8 +5,7 @@ import json
 
 
 BASE_URL = 'http://127.0.0.1:5000/bookmealapi/v1.0/meals/'
-UPDATE_ITEM_URL = '{}/2'.format(BASE_URL)
-DELETE_ITEM_URL = '{}/1'.format(BASE_URL)
+
 
 
 class api_test_case(unittest.TestCase):
