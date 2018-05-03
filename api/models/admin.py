@@ -53,6 +53,19 @@ class Admin():
 
     def update_admin(self, value, data):
         admin = self.get_admin(value)
+        data2 = {
+            "business": "HAPPY FOOD",
+            "location": "Kawempe",
+            "firstname": "friend",
+            "lastname": "stuart",
+            "email": "pfriend@gmail.com",
+            "password": "1234"
+        }
         admin['updated_at'] = datetime.datetime.now()
-        admin = data
+        admin['business'] = data['business']
+        admin['location'] = data['location']
+        admin['firstname'] = data['firstname']
+        admin['lastname'] = data['lastname']
+        admin['email'] = data['email']
+        admin['password'] = data['password']
         return admin

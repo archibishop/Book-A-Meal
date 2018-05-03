@@ -52,7 +52,7 @@ class Order():
     def get_orders_user(self, value):
         ordersUser = []
         for order in self.orders:
-            if order['customerId'] == value:
+            if order['user_id'] == value:
                 ordersUser.append(order)
         if ordersUser != []:
             return ordersUser
