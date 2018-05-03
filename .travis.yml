@@ -12,8 +12,6 @@ script:
   # - nosetests --with-coverage
   - pytest --cov=./ # or py.test for Python versions 3.5 and below
 after_success:
-<<<<<<< HEAD
-  - coveralls
-=======
-  - coveralls
->>>>>>> develop
+  -coveralls
+
+
