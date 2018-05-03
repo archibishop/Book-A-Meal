@@ -1,1 +1,6 @@
-[]
+[
+  "test_admin.py::admin_tests::test_add_admin",
+  "test_admin.py::admin_tests::test_get_admin",
+  "test_admin.py::admin_tests::test_remove_admin",
+  "test_admin.py::admin_tests::test_update_admin"
+]

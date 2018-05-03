@@ -179,10 +179,6 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "Meal Successfully Added")
-        # self.assertEqual(data['meal']['id'], 3)
-        # self.assertEqual(data['meal']['meal_name'], "katogo")
-        # self.assertEqual(data['meal']['price'], 2000)
-        # self.assertEqual(data['meal']['meal_type'], "breakfast")
 
         #same meal name
         details = {
@@ -245,11 +241,6 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/orders",\
             data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        # data = json.loads(response.get_data())
-        # self.assertEqual(data['transaction']['id'], 4)
-        # self.assertEqual(data['transaction']['meal_name'], "katogo")
-        # self.assertEqual(data['transaction']['price'], 2000)
-        # self.assertEqual(data['transaction']['user_id'], 2)
 
     def test_set_menu(self):
         """ setting the menu """
