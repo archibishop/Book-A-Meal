@@ -1,0 +1,19 @@
+{
+  "tests/test_api.py::api_test_case::test_add_meal": true,
+  "tests/test_api.py::api_test_case::test_add_meal_price_is_string": true,
+  "tests/test_api.py::api_test_case::test_add_meal_valid": true,
+  "tests/test_api.py::api_test_case::test_delete_meal_option_non_existant_data": true,
+  "tests/test_api.py::api_test_case::test_get_all_meals": true,
+  "tests/test_api.py::api_test_case::test_get_all_orders": true,
+  "tests/test_api.py::api_test_case::test_login_valid_details_admin": true,
+  "tests/test_api.py::api_test_case::test_set_menu": true,
+  "tests/test_api.py::api_test_case::test_update_meal_option": true,
+  "tests/test_api.py::api_test_case::test_update_meal_option_price_string": true,
+  "tests/test_api.py::api_test_case::test_update_meal_option_valid": true,
+  "tests/test_api.py::api_test_case::test_update_order_missing_values": true,
+  "tests/test_api.py::api_test_case::test_update_order_price_string": true,
+  "tests/test_api.py::api_test_case::test_update_order_valid": true,
+  "tests/test_order.py::order_tests::test_get_order": true,
+  "tests/test_user.py::user_tests::test_get_all_user": true,
+  "tests/test_user.py::user_tests::test_get_user": true
+}

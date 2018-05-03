@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request, abort, session
 from functools import wraps
 
+from models.user import User
+from models.admin import Admin
+from models.meals import Meals
+from models.order import Order
+
 from flasgger import Swagger
 
 app = Flask(__name__)
@@ -10,100 +15,7 @@ app.secret_key = 'secret123'
 
 Swagger(app)
 
-users = [
-    {
-        'id': 1,
-        'first_name': 'dennis',
-        'last_name': 'lubega',
-        'email': 'lubega@gmail.com',
-        'password': '12345',
-    },
-    {
-        'id': 2,
-        'first_name': 'atlas',
-        'last_name': 'Tegz',
-        'email': 'atlas@gmail.com',
-        'password': '12345',
-    }
-]
-
-admin = {
-    'id': 1,
-    'business_name': 'HAPPY FOODS',
-    'location': 'NAKULABYE',
-    'first_name': 'steven',
-    'last_name': 'walube',
-    'email': 'steven@gmail.com',
-    'password': '54321',
-}
-
-meals = [
-    {
-        'id': 1,
-        'meal_name': "ricebeans",
-        'price': 3000,
-        'meal_type': "lunch"
-    },
-    {
-        'id': 2,
-        'meal_name': 'rolex',
-        'price': 4000,
-        'meal_type': 'lunch'
-    }
-]
-
-# Need add date to this
-transactions = [
-    {
-        'id': 1,
-        'meal_name': "ricebeans",
-        'price': 3000,
-        'user_id': 1,
-        'process_status': "pending"
-    },
-    {
-        'id': 2,
-        'meal_name': "lasagna",
-        'price': 10000,
-        'user_id': 2,
-    },
-    {
-        'id': 3,
-        'meal_name': 'rolex',
-        'price': 4000,
-        'user_id': 1,
-    }
-]
-
-menu_day = [
-    {
-        'id': 1,
-        'meal_name': "ricebeans",
-        'price': 3000,
-        'meal_type': "lunch"
-    },
-    {
-        'id': 2,
-        'meal_name': "lasagna",
-        'price': 10000,
-        'meal_type': "breakfast"
-    },
-    {
-        'id': 3,
-        'meal_name': "Rice and Matooke",
-        'price': 10000,
-        'meal_type': "lunch"
-    },
-    {
-        'id': 4,
-        'meal_name': 'rolex',
-        'price': 4000,
-        'meal_type': "lunch"
-    }
-]
-
 # Check if user is logged
-
 
 def is_loged_in(f):
     @wraps(f)
@@ -123,7 +35,8 @@ def is_user(f):
         if 'userV' in session:
             return f(*args, **kwargs)
         else:
-            return jsonify({'message': "Unauthorized Access, You are not an admin"})
+            return jsonify({'message': "Unauthorized Access,\
+             You are not an admin"})
     return wrap
 
 # Check if Admin
@@ -135,7 +48,8 @@ def is_admin(f):
         if 'admin' in session:
             return f(*args, **kwargs)
         else:
-            return jsonify({'message': "Unauthorized Access, You are not an admin"})
+            return jsonify({'message':\
+             "Unauthorized Access, You are not an admin"})
     return wrap
 
 
@@ -189,37 +103,34 @@ def sign_up():
               description: success message
               default: User created
 
+
     """
     """ Regisrering User """
+    user = User()
     if not request.get_json() or 'fname' not in request.get_json()\
     or 'lname' not in request.get_json() or 'email' not in request.get_json()\
     or 'password' not in request.get_json():
         abort(400)
 
-    user_id = users[-1].get("id") + 1
     first_name = request.get_json().get('fname')
     last_name = request.get_json().get('lname')
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
-    for user in users:
-        if user["email"] == email:
-            abort(400)
-
-    user = {
-        'id': user_id,
+    user_data = {
         'first_name': first_name,
         'last_name': last_name,
         'email': email,
         'password': password,
     }
+    message = user.add_user(user_data)
 
-    users.append(user)
-    return jsonify({'meassage':'User Created','user': user, 'users': users}), 201
-
+    if message == "Email Exists":
+        return jsonify({'message':'Email Already Exists'}), 400
+    else: 
+        return jsonify({'meassage':'User Created','user': message}), 201
+           
 # Login
-
-
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
     """
@@ -261,6 +172,8 @@ def login():
 
     """
     """ login  """
+    user = User()
+    admin = Admin()
     if not request.get_json() or 'email' not in request.get_json()\
      or 'password' not in request.get_json():
         abort(400)
@@ -268,24 +181,21 @@ def login():
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
-    for user in users:
-        if user['email'] == email:
-            if user['password'] == password:
-                session['logged_in'] = True
-                session['userV'] = True
-                return jsonify({'message': "Successfully login"}), 200
-            else:
-                return jsonify({'message': "Wrong Password", 'users': users}), 400
+    
+    message_user = user.check_user_email_password(email, password)
 
-    if admin['email'] == email:
-        if admin['password'] == password:
+    if message_user == True:
+        session['logged_in'] = True
+        session['userV'] = True
+        return jsonify({'message': "Successfully login"}), 200
+    else:
+        message_admin = admin.check_admin_email_password(email, password)
+        if message_admin == True:
             session['logged_in'] = True
             session['admin'] = True
-            return jsonify({'message': "Successfully login"}), 200
+            return jsonify({'message': "Successfully login"}), 200 
         else:
-            return jsonify({'message': "Wrong Password", 'admin': admin}), 400
-
-    return jsonify({'message': "User Not Found", 'users': users}), 400
+            return jsonify({'message': "User Not Found"}), 400
 
 
 # Add Meal
@@ -349,6 +259,7 @@ def add_meal():
 
     """
     """ Adding meal  """
+    meals = Meals()
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
         abort(400)
@@ -357,24 +268,18 @@ def add_meal():
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
 
-    meal_id = meals[-1].get('id') + 1
-
-    if type(price) is not int:
-        abort(400)
-
-    for meal in meals:
-        if meal['meal_name'] == meal_name:
-            abort(400)
-
     meal = {
-        'id': meal_id,
+       
         'meal_name': meal_name,
         'price': price,
         'meal_type': meal_type
     }
 
-    meals.append(meal)
-    return jsonify({'meal': meal}), 201
+    meal_add = meals.add_meals(meal)
+    if meal_add == "Successfully Added Meal":
+        return jsonify({'message': "Meal Successfully Added"}), 201
+    else:
+        abort(400)    
 
 # Select Meal
 
@@ -439,6 +344,7 @@ def select_meal():
 
     """
     """ Selecting Meal """
+    order = Order()
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'userId' not in request.get_json():
         abort(400)
@@ -449,16 +355,13 @@ def select_meal():
     if type(price) is not int and type(user_id) is not int:
         abort(400)
 
-    transaction_id = transactions[-1].get('id') + 1
-
-    transaction = {
-        'id': transaction_id,
+    transaction = {      
         'meal_name': meal_name,
         'price': price,
         'user_id': user_id
     }
-    transactions.append(transaction)
-    return jsonify({'transaction': transaction}), 201
+    message_order = order.place_order(transaction)
+    return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 
 # set Meal Options
@@ -522,19 +425,19 @@ def set_menu():
 
     """
     """ Setting menu """
+    meals = Meals()
     if not request.get_json():
         abort(400)
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
 
-    meal = {
-        "meal_name": meal_name,
-        "price": price,
-        "meal_type": meal_type
-    }
-    menu_day.append(meal)
-    return jsonify({'menuDay': menu_day}), 201
+    if meals.get_meals_name(meal_name) == "No Meals Found":
+        return jsonify({'message':'Meal Does Not Exist'}), 404
+
+    else:  
+        menu = meals.update_meals_availability(meal_name)
+        return jsonify({'message':'Meal Successfully Added to Menu','menu': menu}), 201
 
   # update Meal Option
 
@@ -605,6 +508,7 @@ def update_meal_option(meal_id):
 
     """
     """ Updating meals """
+    meals = Meals()
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'meal_type' not in request.get_json():
         abort(400)
@@ -615,13 +519,17 @@ def update_meal_option(meal_id):
     if type(price) is not int:
         abort(400)
 
-    for meal in meals:
-        if meal['id'] == int(meal_id):
-            meal['meal_name'] = meal_name
-            meal['price'] = price
-            meal['meal_type'] = meal_type
-            return jsonify({'meal': meal}), 201
-    abort(404)
+    data = {
+         'meal_name' : meal_name,
+         'price' : price,
+         'meal_type' : meal_type
+    }    
+    
+    if meals.get_meals(int(meal_id)) == "No Meals Found":
+        abort(404)
+
+    meal = meals.update_meals(int(meal_id), data)
+    return jsonify({'meal': meal}), 201
 
 # Modify Order
 
@@ -691,6 +599,7 @@ def update_order(order_id):
 
     """
     """ Modify Order """
+    order = Order()
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json():
         abort(400)
@@ -701,16 +610,18 @@ def update_order(order_id):
     if type(price) is not int:
         abort(400)
 
-    for transaction in transactions:
-        if transaction['id'] == int(order_id):
-            transaction['meal_name'] = meal_name
-            transaction['price'] = price
-            return jsonify({'transaction': transaction}), 201
-    abort(404)
+    data = {
+         'meal_name' : meal_name,  
+         'price' : price 
+    }     
+
+    if order.get_order(int(order_id)) == "No Order Found":
+        return jsonify({'message': "Meal Does Not Exist"}), 404
+    else:      
+        order_update = order.update_order(int(order_id), data)
+        return jsonify({'order': order_update}), 201    
 
 # delete Meal Option
-
-
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in
 @is_admin
@@ -744,11 +655,13 @@ def delete_meal_option(meal_id):
 
     """
     """ Deleting Meal Option """
-    for meal in meals:
-        if meal['id'] == int(meal_id):
-            meals.remove(meal)
-            return jsonify({'Meals': meals}), 204
-    return jsonify({'message':'Meal Not Found','id': '' + meal_id}), 404
+    meals = Meals()        
+    meal_id = int(meal_id)
+    message_meal = meals.remove_meals(meal_id) 
+    if message_meal == "Successfully Removed":
+        return jsonify({'Meals': meals.get_all_meals()}), 200
+    else:               
+        return jsonify({'message':'Meal Not Found','id': ''+ str(meal_id)}), 404
 
  # get all meals
 
@@ -785,8 +698,8 @@ def get_all_meals():
                         }]
 
     """
-
-    return jsonify({'meals': meals}), 200
+    meals = Meals()
+    return jsonify({'meals': meals.get_all_meals()}), 200
 
   # get all orders
 
@@ -824,14 +737,15 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    return jsonify({'transactions': transactions}), 200
+    order = Order()
+    return jsonify({'transactions': order.get_all_orders()}), 200
 
 # get menu of the day
 
 
 @app.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @is_loged_in
-@is_user
+# @is_user
 def get_menu():
     """
     Get menu for the day
@@ -862,4 +776,5 @@ def get_menu():
 
     """
     """ Get menu for the day """
-    return jsonify({'menu_day': menu_day}), 200
+    meals = Meals()
+    return jsonify({'menu_day': meals.menu_meals()}), 200
