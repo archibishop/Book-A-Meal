@@ -1,1 +1,3 @@
-{}
+{
+  "test_user.py::user_tests": true
+}

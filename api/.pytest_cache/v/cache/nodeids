@@ -1,8 +1,4 @@
 [
-  "tests/test_admin.py::admin_tests::test_add_admin",
-  "tests/test_admin.py::admin_tests::test_get_admin",
-  "tests/test_admin.py::admin_tests::test_remove_admin",
-  "tests/test_admin.py::admin_tests::test_update_admin",
   "tests/test_api.py::api_test_case::test_add_meal",
   "tests/test_api.py::api_test_case::test_add_meal_price_is_string",
   "tests/test_api.py::api_test_case::test_add_meal_valid",
@@ -28,20 +24,5 @@
   "tests/test_api.py::api_test_case::test_update_meal_option_valid",
   "tests/test_api.py::api_test_case::test_update_order_missing_values",
   "tests/test_api.py::api_test_case::test_update_order_price_string",
-  "tests/test_api.py::api_test_case::test_update_order_valid",
-  "tests/test_meal.py::meal_tests::test_add_Meals",
-  "tests/test_meal.py::meal_tests::test_get_Meals",
-  "tests/test_meal.py::meal_tests::test_remove_meals",
-  "tests/test_meal.py::meal_tests::test_set_availabilty",
-  "tests/test_meal.py::meal_tests::test_update_meals",
-  "tests/test_order.py::order_tests::test_add_order",
-  "tests/test_order.py::order_tests::test_get_order",
-  "tests/test_order.py::order_tests::test_get_order_users",
-  "tests/test_order.py::order_tests::test_remove_order",
-  "tests/test_order.py::order_tests::test_update_order",
-  "tests/test_user.py::user_tests::test_add_user",
-  "tests/test_user.py::user_tests::test_get_all_user",
-  "tests/test_user.py::user_tests::test_get_user",
-  "tests/test_user.py::user_tests::test_remove_user",
-  "tests/test_user.py::user_tests::test_update_user"
+  "tests/test_api.py::api_test_case::test_update_order_valid"
 ]

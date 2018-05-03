@@ -18,7 +18,7 @@ users = [
 ]
 
 
-class User(object):
+class User():
     def __init__(self):
         self.users = users
         self.counter = 0

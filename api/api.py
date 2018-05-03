@@ -13,6 +13,12 @@ app = Flask(__name__)
 app.testing = True
 app.secret_key = 'secret123'
 
+user = User()
+admin = Admin()
+meals = Meals()
+order = Order()
+
+
 Swagger(app)
 
 # Check if user is logged
@@ -106,7 +112,7 @@ def sign_up():
 
     """
     """ Regisrering User """
-    user = User()
+    
     if not request.get_json() or 'fname' not in request.get_json()\
     or 'lname' not in request.get_json() or 'email' not in request.get_json()\
     or 'password' not in request.get_json():
@@ -172,8 +178,8 @@ def login():
 
     """
     """ login  """
-    user = User()
-    admin = Admin()
+    
+    
     if not request.get_json() or 'email' not in request.get_json()\
      or 'password' not in request.get_json():
         abort(400)
@@ -259,7 +265,7 @@ def add_meal():
 
     """
     """ Adding meal  """
-    meals = Meals()
+    
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
         abort(400)
@@ -344,7 +350,7 @@ def select_meal():
 
     """
     """ Selecting Meal """
-    order = Order()
+    
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'userId' not in request.get_json():
         abort(400)
@@ -425,7 +431,7 @@ def set_menu():
 
     """
     """ Setting menu """
-    meals = Meals()
+    
     if not request.get_json():
         abort(400)
     meal_name = request.get_json().get('meal_name')
@@ -508,7 +514,7 @@ def update_meal_option(meal_id):
 
     """
     """ Updating meals """
-    meals = Meals()
+    
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'meal_type' not in request.get_json():
         abort(400)
@@ -599,7 +605,7 @@ def update_order(order_id):
 
     """
     """ Modify Order """
-    order = Order()
+    
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json():
         abort(400)
@@ -655,7 +661,7 @@ def delete_meal_option(meal_id):
 
     """
     """ Deleting Meal Option """
-    meals = Meals()        
+            
     meal_id = int(meal_id)
     message_meal = meals.remove_meals(meal_id) 
     if message_meal == "Successfully Removed":
@@ -698,7 +704,7 @@ def get_all_meals():
                         }]
 
     """
-    meals = Meals()
+    
     return jsonify({'meals': meals.get_all_meals()}), 200
 
   # get all orders
@@ -737,7 +743,7 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    order = Order()
+    
     return jsonify({'transactions': order.get_all_orders()}), 200
 
 # get menu of the day
@@ -776,5 +782,5 @@ def get_menu():
 
     """
     """ Get menu for the day """
-    meals = Meals()
+    
     return jsonify({'menu_day': meals.menu_meals()}), 200
