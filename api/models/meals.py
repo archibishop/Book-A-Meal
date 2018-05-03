@@ -1,25 +1,59 @@
 import datetime
 
+meals = [
+    {
+        'id': 1,
+        'meal_name': "ricebeans",
+        'price': 3000,
+        'meal_type': "lunch",
+        'availability': 0
+    },
+    {
+        'id': 2,
+        'meal_name': 'rolex',
+        'price': 4000,
+        'meal_type': 'lunch',
+        'availability': 0
+    }
+]
 
 class Meals():
     def __init__(self):
-        self.meals = []
+        self.meals = meals
         self.counter = 0
 
     def add_meals(self, data):
-        meals = data
-        self.counter = self.counter + 1
-        meals['id'] = self.counter
-        meals['created_at'] = datetime.datetime.now()
-        meals['updated_at'] = datetime.datetime.now()
-        self.meals.append(meals)
-        return "Successfully Added"
+        meal_add = data
+        for meal in self.meals:
+            if meal["meal_name"] == meal_add['meal_name']:
+                return "Meal Name Exists"
+        if len(self.meals) == 0:
+            new_id = 1
+        else:    
+            new_id = self.meals[-1].get("id") + 1
+        meal_add['id'] = new_id
+        meal_add['created_at'] = datetime.datetime.now()
+        meal_add['updated_at'] = datetime.datetime.now()
+        meal_add['availability'] = 0
+        self.meals.append(meal_add)
+        return "Successfully Added Meal"
 
     def get_meals(self, value):
-        for meals in self.meals:
-            if meals['id'] == value:
-                return meals
+        for meal in self.meals:
+            if meal['id'] == value:
+                return meal
         return "No Meals Found"
+
+    def get_all_meals(self):
+        return self.meals
+                
+
+#Test Case for this
+    def get_meals_name(self, value):
+        for meal in self.meals:
+            if meal['meal_name'] == value:
+                return meal
+        return "No Meals Found"    
 
     def remove_meals(self, value):
         for meals in self.meals:
@@ -29,7 +63,24 @@ class Meals():
         return "No meals Found"
 
     def update_meals(self, value, data):
-        meals = self.get_meals(value)
-        meals['updated_at'] = datetime.datetime.now()
-        meals = data
-        return meals
+        meal = self.get_meals(value)
+        meal['updated_at'] = datetime.datetime.now()
+        meal['meal_name'] = data['meal_name']
+        meal['price'] = data['price']
+        meal['meal_type'] = data['meal_type']
+        return meal
+
+    def update_meals_availability(self, value):
+        meal = self.get_meals_name(value)
+        meal['updated_at'] = datetime.datetime.now()
+        meal['availability'] = 1
+        return meal
+
+    def menu_meals(self):
+        output = []
+        for meal in self.meals:
+            if meal['availability'] == 1:
+                output.append(meal)
+        return output
+
+    

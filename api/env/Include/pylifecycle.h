@@ -64,15 +64,14 @@ int _Py_CheckPython3();
 #endif
 
 /* In their own files */
-PyAPI_FUNC(const char *) Anaconda_GetVersion(void);
 PyAPI_FUNC(const char *) Py_GetVersion(void);
 PyAPI_FUNC(const char *) Py_GetPlatform(void);
 PyAPI_FUNC(const char *) Py_GetCopyright(void);
 PyAPI_FUNC(const char *) Py_GetCompiler(void);
 PyAPI_FUNC(const char *) Py_GetBuildInfo(void);
 #ifndef Py_LIMITED_API
-PyAPI_FUNC(const char *) _Py_hgidentifier(void);
-PyAPI_FUNC(const char *) _Py_hgversion(void);
+PyAPI_FUNC(const char *) _Py_gitidentifier(void);
+PyAPI_FUNC(const char *) _Py_gitversion(void);
 #endif
 
 /* Internal -- various one-time initializations */
