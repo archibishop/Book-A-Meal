@@ -532,7 +532,7 @@ def update_meal_option(meal_id):
     }    
     
     if meals.get_meals(int(meal_id)) == "No Meals Found":
-        abort(404)
+        return jsonify({'message':'Meal Does Not Exist'}), 404
 
     meal = meals.update_meals(int(meal_id), data)
     return jsonify({'meal': meal}), 201

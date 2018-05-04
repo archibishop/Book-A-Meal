@@ -6,19 +6,27 @@ transactions = [
         'meal_name': "ricebeans",
         'price': 3000,
         'user_id': 1,
-        'process_status': "pending"
+        'process_status': "pending",
+        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
     },
     {
         'id': 2,
         'meal_name': "lasagna",
         'price': 10000,
         'user_id': 2,
+        'process_status': "pending",
+        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
     },
     {
         'id': 3,
         'meal_name': 'rolex',
         'price': 4000,
         'user_id': 1,
+        'process_status': "pending",
+        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
     }
 ]
 

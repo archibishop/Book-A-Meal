@@ -6,14 +6,18 @@ meals = [
         'meal_name': "ricebeans",
         'price': 3000,
         'meal_type': "lunch",
-        'availability': 0
+        'availability': 0,
+        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
     },
     {
         'id': 2,
         'meal_name': 'rolex',
         'price': 4000,
         'meal_type': 'lunch',
-        'availability': 0
+        'availability': 0,
+        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
     }
 ]
 
