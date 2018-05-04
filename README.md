@@ -11,11 +11,11 @@ The following instructions will enable you run this project on your git hub mach
 
 # Prerequisites
 You need to have python installed on your machine. If not got to https://www.python.org/downloads/ to get an installer for your machine. You should also install pip to your machine.
-Then download a virtualenv using ```shpip install virtualenv.```
+Then download a virtualenv using ``` pip install virtualenv.```
 
 # Installation
-Clone the project https://github.com/archibishop/Book-A-Meal.git and have a copy on your local machine. Create a virtual environment using ```sh virtualenv env ``` command to create one in the folder.
-Activate the virtual environment using ```sh scripts\activate ``` command and the then run
+Clone the project https://github.com/archibishop/Book-A-Meal.git and have a copy on your local machine. Create a virtual environment using ``` virtualenv env ``` command to create one in the folder.
+Activate the virtual environment using ``` scripts\activate ``` command and the then run
 pip install -r requirements.txt. This will install the packages required for the project.
 The project is now ready to use.
 
