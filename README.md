@@ -20,7 +20,7 @@ pip install -r requirements.txt. This will install the packages required for the
 The project is now ready to use.
 
 # Running the tests
-Navigate to the api directory in your command and run the command pytest tests. This will run all the test file in that folder.
+Navigate to the api directory in your command and run the command ``` pytest tests ``` . This will run all the test file in that folder.
 
 
 # Built with
