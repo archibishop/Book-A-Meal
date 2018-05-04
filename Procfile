@@ -1,1 +1,1 @@
-web: sh -c 'cd ./api/' && gunicorn app:app'
+web: sh -c 'cd ./api/ && gunicorn app:app'
