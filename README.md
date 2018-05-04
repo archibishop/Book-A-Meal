@@ -7,7 +7,7 @@ A repository for a web application for booking meals
 
 
 # Getting Started
-The following instructions will enable you run this project on your git hub machine.
+The following instructions will enable you run this project on your local machine.
 
 # Prerequisites
 You need to have python installed on your machine. If not got to https://www.python.org/downloads/ to get an installer for your machine. You should also install pip to your machine.
