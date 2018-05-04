@@ -1,5 +1,0 @@
-{
-  "tests/test_api.py::api_test_case": true,
-  "tests/test_order.py::order_tests::test_get_order": true,
-  "tests/test_user.py::user_tests::test_get_all_user": true
-}
