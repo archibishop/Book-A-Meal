@@ -34,7 +34,7 @@ class Admin():
                 return admin
         return "No Admin Found"
 
-#add email test class
+    """ add email test class """
     def check_admin_email_password(self, email, password):
         for admin in self.admins:
             if admin['email'] == email:

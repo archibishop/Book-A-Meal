@@ -46,7 +46,7 @@ class User():
                 return user
         return "No User Found"
 
-#We need to add test for this
+    """ We need to add test for this """
     def check_user_email_password(self, email, password):
         for user in self.users:
             if user['email'] == email:

@@ -52,7 +52,7 @@ class Meals():
         return self.meals
                 
 
-#Test Case for this
+    """ Test Case for this """
     def get_meals_name(self, value):
         for meal in self.meals:
             if meal['meal_name'] == value:

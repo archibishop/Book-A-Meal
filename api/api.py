@@ -21,7 +21,7 @@ order = Order()
 
 Swagger(app)
 
-# Check if user is logged
+""" Check if user is logged """
 
 def is_loged_in(f):
     @wraps(f)
@@ -32,7 +32,7 @@ def is_loged_in(f):
             return jsonify({'message': "Unauthorized Access, Please Login"})
     return wrap
 
-# Check if user
+""" Check if user """
 
 
 def is_user(f):
@@ -45,7 +45,7 @@ def is_user(f):
              You are not an admin"})
     return wrap
 
-# Check if Admin
+""" Check if Admin """
 
 
 def is_admin(f):
@@ -59,7 +59,7 @@ def is_admin(f):
     return wrap
 
 
-# Registering a User
+""" Registering a User """
 @app.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
 def sign_up():
     """
@@ -136,7 +136,7 @@ def sign_up():
     else: 
         return jsonify({'meassage':'User Created','user': message}), 201
            
-# Login
+""" Login """
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
     """
@@ -204,7 +204,7 @@ def login():
             return jsonify({'message': "User Not Found"}), 400
 
 
-# Add Meal
+""" Add Meal """
 @app.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_loged_in
 @is_admin
@@ -287,7 +287,7 @@ def add_meal():
     else:
         abort(400)    
 
-# Select Meal
+""" Select Meal """
 
 
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
@@ -370,7 +370,7 @@ def select_meal():
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 
-# set Meal Options
+""" set Meal Options """
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 @is_loged_in
 @is_admin
@@ -444,8 +444,6 @@ def set_menu():
     else:  
         menu = meals.update_meals_availability(meal_name)
         return jsonify({'message':'Meal Successfully Added to Menu','menu': menu}), 201
-
-  # update Meal Option
 
 
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
@@ -537,7 +535,7 @@ def update_meal_option(meal_id):
     meal = meals.update_meals(int(meal_id), data)
     return jsonify({'meal': meal}), 201
 
-# Modify Order
+""" Modify Order """
 
 
 @app.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
@@ -627,7 +625,7 @@ def update_order(order_id):
         order_update = order.update_order(int(order_id), data)
         return jsonify({'order': order_update}), 201    
 
-# delete Meal Option
+""" delete Meal Option """
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in
 @is_admin
@@ -669,7 +667,7 @@ def delete_meal_option(meal_id):
     else:               
         return jsonify({'message':'Meal Not Found','id': ''+ str(meal_id)}), 404
 
- # get all meals
+""" get all meals """
 
 
 @app.route('/bookmealapi/v1.0/meals', methods=['GET'])
@@ -707,7 +705,7 @@ def get_all_meals():
     
     return jsonify({'meals': meals.get_all_meals()}), 200
 
-  # get all orders
+""" get all orders """
 
 
 @app.route('/bookmealapi/v1.0/orders', methods=['GET'])
@@ -746,12 +744,11 @@ def get_all_orders():
     
     return jsonify({'transactions': order.get_all_orders()}), 200
 
-# get menu of the day
+""" get menu of the day """
 
 
 @app.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @is_loged_in
-# @is_user
 def get_menu():
     """
     Get menu for the day
