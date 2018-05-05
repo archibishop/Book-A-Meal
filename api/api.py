@@ -292,7 +292,7 @@ def add_meal():
 
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @is_loged_in
-@is_user
+
 def select_meal():
     """
     select meal
@@ -781,3 +781,16 @@ def get_menu():
     """ Get menu for the day """
     
     return jsonify({'menu_day': meals.menu_meals()}), 200
+
+
+@app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
+@is_loged_in
+def delete_order_item(order_id):
+    message = order.remove_order(int(order_id))
+    if message == "No Order Found":
+        return jsonify({'message':'Meal Does Not Exist'}), 404
+    else:
+        return jsonify({'message':'Order Removed'}), 200  
+
+
+    

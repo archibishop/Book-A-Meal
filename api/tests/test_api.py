@@ -1,4 +1,4 @@
-# import context 
+import context 
 from app import app
 import unittest
 import json
@@ -282,6 +282,7 @@ class api_test_case(unittest.TestCase):
 
         response = self.app.delete('/bookmealapi/v1.0/meals/1')
         self.assertEqual(response.status_code, 200)
+    
 
     def test_update_meal_option(self):
         """ # missing values """
@@ -437,6 +438,30 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(data['menu_day']), 0)
 
+    def test_delete_order_non_existant_data(self):
+        """ Deleting a value that doesnt exist """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+
+        response = self.app.delete('/bookmealapi/v1.0/orders/10')
+        self.assertEqual(response.status_code, 404)
+
+    """
+    def test_delete_order_data_exists(self):
+         Deleting a value that exists 
+         details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+
+        response = self.app.delete('/bookmealapi/v1.0/orders/1')
+         self.assertEqual(response.status_code, 200)"""
 
 if __name__ == '__main__':
     unittest.main()
