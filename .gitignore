@@ -1,3 +1,4 @@
 env
 *.pyc
 .coveralls.yml
+*.__pycache__
