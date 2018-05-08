@@ -1,4 +1,4 @@
-# import context 
+import context 
 from app import app
 import unittest
 import json
@@ -248,10 +248,15 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
 
+        # details = {
+        #     "meal_name": "rolex", 
+        #     "price": 2000, 
+        #     "meal_type": "breakfast"
+        # }
+
         details = {
-            "meal_name": "rolex", 
-            "price": 2000, 
-            "meal_type": "breakfast"
+            "meal_ids": [1, 2, 3, 4],
+            "user_id": 2
         }
         response = self.app.post("/bookmealapi/v1.0/menu",
                                  data=json.dumps(details), content_type='application/json')

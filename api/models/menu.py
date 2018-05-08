@@ -9,7 +9,7 @@ class Menu():
         self.menu = []
         self.counter = 0
 
-    def add_meal_menu(self, data):
+    def add_meals_menu(self, data):
         """ Menu Class """
         menu_item = data
         self.counter = self.counter + 1

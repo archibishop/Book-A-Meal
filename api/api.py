@@ -5,6 +5,7 @@ from models.user import User
 from models.admin import Admin
 from models.meals import Meals
 from models.order import Order
+from models.menu import Menu
 
 from utils import is_loged_in
 from utils import is_user
@@ -21,6 +22,7 @@ user = User()
 admin = Admin()
 meals = Meals()
 order = Order()
+menu = Menu()
 
 
 Swagger(app)
@@ -399,18 +401,37 @@ def set_menu():
     """
     """ Setting menu """
     
-    if not request.get_json():
+    if not request.get_json() or 'meal_ids' not in request.get_json()\
+    or 'user_id' not in request.get_json():
         abort(400)
+    """    
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
+    """
 
-    if meals.get_meals_name(meal_name) == "No Meals Found":
-        return jsonify({'message':'Meal Does Not Exist'}), 404
+    """ We need to check if the id exist in the meals"""
 
-    else:  
-        menu = meals.update_meals_availability(meal_name)
-        return jsonify({'message':'Meal Successfully Added to Menu','menu': menu}), 201
+    meal_ids = request.get_json().get('meal_ids')
+    user_id = request.get_json().get('user_id')
+
+    if len(meal_ids) == 0:
+        return jsonify({'message':'No meals sent for menu'}), 400
+    
+    # for meal_id in meal_ids:
+    #     return jsonify({'message':'Testng Code'}), 400
+
+    # if meals.get_meals_name(meal_name) == "No Meals Found":
+    #     return jsonify({'message':'Meal Does Not Exist'}), 404
+
+    # else:  
+    #     menu = meals.update_meals_availability(meal_name)
+    menu_data = {
+        'meal_ids': meal_ids,
+        'user_id': user_id
+    }
+    menu_details = menu.add_meals_menu(menu_data)
+    return jsonify({'message':'Menu Successfully Created','menu': menu_details}), 201
 
 
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
@@ -747,7 +768,8 @@ def get_menu():
     """
     """ Get menu for the day """
     
-    return jsonify({'menu_day': meals.menu_meals()}), 200
+    # return jsonify({'menu_day': meals.menu_meals()}), 200
+    return jsonify({'menu_day': menu.get_full_menu()}), 200
 
 
 @app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
