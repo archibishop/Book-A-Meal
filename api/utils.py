@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import session
+from flask import session, jsonify
 """ Check if user is logged """
 
 def is_loged_in(f):

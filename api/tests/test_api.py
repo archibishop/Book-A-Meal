@@ -248,11 +248,13 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
 
-        # details = {
-        #     "meal_name": "rolex", 
-        #     "price": 2000, 
-        #     "meal_type": "breakfast"
-        # }
+        """
+        details = {
+            "meal_name": "rolex", 
+            "price": 2000, 
+            "meal_type": "breakfast"
+        }
+        """
 
         details = {
             "meal_ids": [1, 2, 3, 4],
@@ -465,6 +467,18 @@ class api_test_case(unittest.TestCase):
 
         response = self.app.delete('/bookmealapi/v1.0/orders/1')
          self.assertEqual(response.status_code, 200)"""
+
+    # def test_delete_menu_exists(self):
+    #     """ Deleting a value that exists """
+    #     details = {
+    #         "email": "steven@gmail.com", 
+    #         "password": "54321"
+    #     }
+    #     response = self.app.post("/bookmealapi/v1.0/auth/login",\
+    #         data=json.dumps(details), content_type='application/json')
+
+    #     response = self.app.delete('/bookmealapi/v1.0/menu/1')
+    #     self.assertEqual(response.status_code, 200)     
 
 if __name__ == '__main__':
     unittest.main()

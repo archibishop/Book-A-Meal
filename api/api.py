@@ -775,11 +775,23 @@ def get_menu():
 @app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @is_loged_in
 def delete_order_item(order_id):
+    """ Documentation for deleting an order"""
     message = order.remove_order(int(order_id))
     if message == "No Order Found":
         return jsonify({'message':'Meal Does Not Exist'}), 404
     else:
         return jsonify({'message':'Order Removed'}), 200  
+
+@app.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
+@is_loged_in
+def delete_menu(menu_id):
+    """ Documentation for deleting a enu"""
+    message = menu.remove_meal_menu(int(menu_id))
+    if message == "Menu Not Found":
+        return jsonify({'message':'Menu Does Not Exist'}), 404
+    else:
+        return jsonify({'message':'Menu Successfully removed'}), 200 
+
 
 
     
