@@ -39,9 +39,10 @@ class Menu():
         self.menu.remove(menu_item)
         return "Menu Successfully removed"    
 
-    def update__meal_menu(self, value, data):
+    def update_meal_menu(self, value, data):
         """ Update Meal In The Menu """
         menu_item = self.get_meal_menu(value)
         menu_item['updated_at'] = datetime.datetime.now()
-        menu_item = data
-        return "Meal has been Updated in the menu" 
+        menu_item['meal_ids'] = data['meal_ids']
+        menu_item['user_id'] = data['user_id']
+        return menu_item 

@@ -613,6 +613,93 @@ def update_order(order_id):
         order_update = order.update_order(int(order_id), data)
         return jsonify({'order': order_update}), 201    
 
+@app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
+@is_loged_in
+def update_menu(menu_id):
+    """
+    Modify order
+    BOOK-A-MEAL API
+    modify order
+    ---
+    tags:
+      - orders
+    parameters:
+      - name: order_id
+        in: path
+        type: integer
+        required: true
+        description: oder to be modified
+        default: 2
+      - in: body
+        name: body
+        schema:
+          id: modify_order
+          required:
+            - meal_name
+            - price
+            - user_id
+          properties:
+            meal_name:
+              type: string
+              description: meal name
+              default: spinach
+            price:
+              type: integer
+              description: price for meal
+              default: 2500 
+            meal_type:
+              type: string
+              description: meal type
+              default: lunch
+    responses:
+      400:
+        description: 
+      201:
+        description: Order Modified
+        schema:
+          id: set_menu_message
+          properties:
+            id:
+              type: integer
+              description: price for meal
+              default: 3
+            meal_name:
+              type: string
+              description: meal name
+              default: katogo
+            price:
+              type: integer
+              description: price for meal
+              default: 3000 
+            meal_type:
+              type: string
+              description: meal type
+              default: breakfast
+
+    """
+    """ Modify Order """
+    
+    if not request.get_json() or 'meal_ids' not in request.get_json()\
+    or 'user_id' not in request.get_json():
+        abort(400)
+
+    meal_ids = request.get_json().get('meal_ids')
+    user_id = request.get_json().get('user_id')
+
+    if type(user_id) is not int:
+        abort(400)
+
+    data = {
+         'meal_ids' : meal_ids,  
+         'user_id' : user_id  
+    }     
+
+    if menu.get_meal_menu(int(menu_id)) == "Menu Not Found":
+        return jsonify({'message': "Menu Does Not Exist"}), 404
+    else:      
+        menu_update = menu.update_meal_menu(int(menu_id), data)
+        return jsonify({'message': "Meal has been Updated in the menu",'menu': menu_update}), 201            
+
 """ delete Meal Option """
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in

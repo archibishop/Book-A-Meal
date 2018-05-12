@@ -401,6 +401,26 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(data['order']['meal_name'], "katogo")
         self.assertEqual(data['order']['price'], 8000)
 
+    def test_update_menu_valid(self):
+        """ Update Order """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+        details = {
+            "meal_ids": [6, 2, 7, 4],
+            "user_id": 3
+        }
+        response = self.app.put("/bookmealapi/v1.0/menu/1",
+                                data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        data = json.loads(response.get_data())
+        # self.assertEqual(data['order']['id'], 2)
+        # self.assertEqual(data['order']['meal_name'], "katogo")
+        # self.assertEqual(data['order']['price'], 8000)
+
     def test_get_all_meals(self):
         """ Get all meals """
         details = {
