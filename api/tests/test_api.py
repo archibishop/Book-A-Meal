@@ -401,8 +401,41 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(data['order']['meal_name'], "katogo")
         self.assertEqual(data['order']['price'], 8000)
 
+    def test_update_menu_missing_value(self):
+        """ Incomplete json sent """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+        details = {
+            "user_id": 3
+        }
+        response = self.app.put("/bookmealapi/v1.0/menu/1",
+                                data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 400) 
+
+    def test_update_menu_nonexistant(self):
+        """ Incomplete json sent """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+        details = {
+            "meal_ids": [6, 2, 7, 4],
+            "user_id": 3
+        }
+        response = self.app.put("/bookmealapi/v1.0/menu/10",
+                                data=json.dumps(details), content_type='application/json')
+        self.assertEqual(response.status_code, 404) 
+        data = json.loads(response.get_data())
+        self.assertEqual(data['message'], "Menu Does Not Exist")     
+
     def test_update_menu_valid(self):
-        """ Update Order """
+        """ Update Menu """
         details = {
             "email": "steven@gmail.com", 
             "password": "54321"
@@ -417,9 +450,8 @@ class api_test_case(unittest.TestCase):
                                 data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
-        # self.assertEqual(data['order']['id'], 2)
-        # self.assertEqual(data['order']['meal_name'], "katogo")
-        # self.assertEqual(data['order']['price'], 8000)
+        self.assertEqual(data['menu']['meal_ids'], [6, 2, 7, 4])
+        
 
     def test_get_all_meals(self):
         """ Get all meals """
@@ -447,7 +479,7 @@ class api_test_case(unittest.TestCase):
         response = self.app.get('/bookmealapi/v1.0/orders')
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(data['transactions']), 3)
+        self.assertEqual(len(data['transactions']), 2)
 
     def test_get_menu_day(self):
         """ Get menu  for the day """
@@ -461,10 +493,10 @@ class api_test_case(unittest.TestCase):
         response = self.app.get('/bookmealapi/v1.0/menu')
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(data['menu_day']), 0)
+        self.assertEqual(len(data['menu_day']), 1)
 
     def test_delete_order_non_existant_data(self):
-        """ Deleting a value that doesnt exist """
+        """ Deleting order that doesnt exist """
         details = {
             "email": "steven@gmail.com", 
             "password": "54321"
@@ -475,10 +507,10 @@ class api_test_case(unittest.TestCase):
         response = self.app.delete('/bookmealapi/v1.0/orders/10')
         self.assertEqual(response.status_code, 404)
 
-    """
+    
     def test_delete_order_data_exists(self):
-         Deleting a value that exists 
-         details = {
+        """ Deleting an order """
+        details = {
             "email": "steven@gmail.com", 
             "password": "54321"
         }
@@ -486,19 +518,31 @@ class api_test_case(unittest.TestCase):
             data=json.dumps(details), content_type='application/json')
 
         response = self.app.delete('/bookmealapi/v1.0/orders/1')
-         self.assertEqual(response.status_code, 200)"""
+        self.assertEqual(response.status_code, 200)
 
-    # def test_delete_menu_exists(self):
-    #     """ Deleting a value that exists """
-    #     details = {
-    #         "email": "steven@gmail.com", 
-    #         "password": "54321"
-    #     }
-    #     response = self.app.post("/bookmealapi/v1.0/auth/login",\
-    #         data=json.dumps(details), content_type='application/json')
+    def test_delete_menu_exists(self):
+        """ Deleting a value that exists """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
 
-    #     response = self.app.delete('/bookmealapi/v1.0/menu/1')
-    #     self.assertEqual(response.status_code, 200)     
+        response = self.app.delete('/bookmealapi/v1.0/menu/2')
+        self.assertEqual(response.status_code, 200)  
+
+    def test_delete_menu_non_existant_data(self):
+        """ Deleting menu that doesnt exist """
+        details = {
+            "email": "steven@gmail.com", 
+            "password": "54321"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/login",\
+            data=json.dumps(details), content_type='application/json')
+
+        response = self.app.delete('/bookmealapi/v1.0/menu/10')
+        self.assertEqual(response.status_code, 404)       
 
 if __name__ == '__main__':
     unittest.main()

@@ -431,7 +431,8 @@ def set_menu():
         'user_id': user_id
     }
     menu_details = menu.add_meals_menu(menu_data)
-    return jsonify({'message':'Menu Successfully Created','menu': menu_details}), 201
+    return jsonify({'message':'Menu Successfully Created',\
+      'menu': menu_details}), 201
 
 
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
@@ -615,69 +616,8 @@ def update_order(order_id):
 
 @app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
 @is_loged_in
+@is_admin
 def update_menu(menu_id):
-    """
-    Modify order
-    BOOK-A-MEAL API
-    modify order
-    ---
-    tags:
-      - orders
-    parameters:
-      - name: order_id
-        in: path
-        type: integer
-        required: true
-        description: oder to be modified
-        default: 2
-      - in: body
-        name: body
-        schema:
-          id: modify_order
-          required:
-            - meal_name
-            - price
-            - user_id
-          properties:
-            meal_name:
-              type: string
-              description: meal name
-              default: spinach
-            price:
-              type: integer
-              description: price for meal
-              default: 2500 
-            meal_type:
-              type: string
-              description: meal type
-              default: lunch
-    responses:
-      400:
-        description: 
-      201:
-        description: Order Modified
-        schema:
-          id: set_menu_message
-          properties:
-            id:
-              type: integer
-              description: price for meal
-              default: 3
-            meal_name:
-              type: string
-              description: meal name
-              default: katogo
-            price:
-              type: integer
-              description: price for meal
-              default: 3000 
-            meal_type:
-              type: string
-              description: meal type
-              default: breakfast
-
-    """
-    """ Modify Order """
     
     if not request.get_json() or 'meal_ids' not in request.get_json()\
     or 'user_id' not in request.get_json():
@@ -698,7 +638,8 @@ def update_menu(menu_id):
         return jsonify({'message': "Menu Does Not Exist"}), 404
     else:      
         menu_update = menu.update_meal_menu(int(menu_id), data)
-        return jsonify({'message': "Meal has been Updated in the menu",'menu': menu_update}), 201            
+        return jsonify({'message': "Meal has been Updated in the menu",\
+          'menu': menu_update}), 201            
 
 """ delete Meal Option """
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])

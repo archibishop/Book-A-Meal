@@ -2,18 +2,47 @@
 import datetime
 
 
+menu = [
+    {
+            "created_at": "Sun, 13 May 2018 05:24:15 GMT",
+            "id": 1,
+            "meal_ids": [
+                6,
+                5,
+                4
+            ],
+            "updated_at": "Sun, 13 May 2018 05:24:15 GMT",
+            "user_id": 1
+    },
+    {
+            "created_at": "Sun, 13 May 2018 05:24:15 GMT",
+            "id": 2,
+            "meal_ids": [
+                1,
+                2,
+                4
+            ],
+            "updated_at": "Sun, 13 May 2018 05:24:15 GMT",
+            "user_id":3
+    }
+
+
+]
 
 class Menu():
     """ Menu Class """
     def __init__(self):
-        self.menu = []
+        self.menu = menu
         self.counter = 0
 
     def add_meals_menu(self, data):
         """ Menu Class """
+        if len(self.menu) == 0:
+            new_id = 1
+        else:    
+            new_id = self.menu[-1].get("id") + 1
         menu_item = data
-        self.counter = self.counter + 1
-        menu_item['id'] = self.counter
+        menu_item['id'] = new_id
         menu_item['created_at'] = datetime.datetime.now()
         menu_item['updated_at'] = datetime.datetime.now()
         """ A caterer cannot have two mwnus"""
