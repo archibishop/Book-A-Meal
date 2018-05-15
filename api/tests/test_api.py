@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 """import context""" 
+=======
+"""import context """
+>>>>>>> a54cdef2433ce3f8c090c9ef3c023b618cedc322
 from app import app
 import unittest
 import json
