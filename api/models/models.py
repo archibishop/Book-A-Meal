@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+import context
 from app import app
 
 app.config['SQLALCHEMY_DATABASE_URI'] =\
@@ -8,6 +9,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+"""
+Change to persistent data, using sql alchemy 
+Using web tokens
+Hashing Password sent to database
+
+creating the models
+"""
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +57,7 @@ class Orders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meal_name = db.Column(db.String(50))
     price = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForiegnKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     process_status = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
@@ -59,7 +67,7 @@ class Orders(db.Model):
 
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForiegnKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     meal_ids = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)

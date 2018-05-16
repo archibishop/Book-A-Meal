@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request, abort, session
 from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 from models.user import User
 from models.admin import Admin
@@ -18,12 +21,85 @@ app = Flask(__name__)
 app.testing = True
 app.secret_key = 'secret123'
 
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+ "postgresql://postgres:12345@localhost/book"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+"""
+Change to persistent data, using sql alchemy 
+Using web tokens
+Hashing Password sent to database
+
+creating the models
+"""
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime(timezone=True),\
+    default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True),\
+    onupdate=datetime.datetime.utcnow)
+    meal = db.relationship('Orders', backref='user', lazy=True)
+    menu = db.relationship('Menu', backref='user', lazy=True)
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    business_name = db.Column(db.String(50))
+    location = db.Column(db.String(50))
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime(timezone=True),\
+    default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True),\
+    onupdate=datetime.datetime.utcnow)
+
+class Meals(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    meal_name = db.Column(db.String(50), unique=True)
+    price = db.Column(db.Integer)
+    meal_type = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime(timezone=True),\
+    default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True),\
+    onupdate=datetime.datetime.utcnow)   
+
+class Orders(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    meal_name = db.Column(db.String(50))
+    price = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    process_status = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime(timezone=True),\
+    default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True),\
+    onupdate=datetime.datetime.utcnow)
+
+
+class Menu(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    meal_ids = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime(timezone=True),\
+    default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True),\
+    onupdate=datetime.datetime.utcnow)
+
+
+"""
 user = User()
 admin = Admin()
 meals = Meals()
 order = Order()
 menu = Menu()
-
+"""
 
 Swagger(app)
 
@@ -92,11 +168,27 @@ def sign_up():
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
+    hashed_password = generate_password_hash(password, method='sha256')
+
+
+    email_exists = User.query.filter_by(email=email).first()
+
+    if email_exists != None:
+        return jsonify({'message':'Email Already Exists'}), 400
+
+    new_user = User(first_name= first_name, last_name=last_name,\
+    email=email, password= hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message' : 'New user created!'}), 201
+
+    """
     user_data = {
         'first_name': first_name,
         'last_name': last_name,
         'email': email,
-        'password': password,
+        'password': hashed_password,
     }
     message = user.add_user(user_data)
 
@@ -104,7 +196,9 @@ def sign_up():
         return jsonify({'message':'Email Already Exists'}), 400
     else: 
         return jsonify({'meassage':'User Created','user': message}), 201
-           
+    """
+
+
 """ Login """
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
