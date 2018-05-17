@@ -250,7 +250,29 @@ def login():
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
-    
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        admin = Admin.query.filter_by(email=email).first()
+
+        if not admin:
+            return jsonify({'message': 'User Not Found'}), 400
+
+        if check_password_hash(admin.password, password):
+            session['logged_in'] = True
+            session['admin'] = True
+            return jsonify({'message' : 'Successfully login'}), 200   
+        else:
+            return jsonify({'message':'Wrong Password'}), 400
+
+    if check_password_hash(user.password, password):
+        session['logged_in'] = True
+        session['userV'] = True
+        return jsonify({'message':'Successfully login'}), 200
+    else:
+        return jsonify({'message':'Wrong Password'}), 400                 
+
+    """
     message_user = user.check_user_email_password(email, password)
 
     if message_user == True:
@@ -265,7 +287,7 @@ def login():
             return jsonify({'message': "Successfully login"}), 200 
         else:
             return jsonify({'message': "User Not Found"}), 400
-
+    """
 
 """ Add Meal """
 @app.route('/bookmealapi/v1.0/meals', methods=['POST'])
@@ -335,6 +357,25 @@ def add_meal():
 
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
+    meal_type = request.get_json().get('meal_type')    
+
+    if type(price) is not int:
+        abort(400)    
+
+    meal_exists = Meals.query.filter_by(meal_name=meal_name).first()
+
+    if meal_exists != None:
+        return jsonify({'message': "Meal Already Exists"}), 400
+
+    meal = Meals(meal_name=meal_name, price=price, meal_type=meal_type)
+    db.session.add(meal)
+    db.session.commit()
+
+    return jsonify({'message' : 'Meal Successfully Added'}), 201   
+
+    """
+    meal_name = request.get_json().get('meal_name')
+    price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
 
     meal = {
@@ -348,7 +389,8 @@ def add_meal():
     if meal_add == "Successfully Added Meal":
         return jsonify({'message': "Meal Successfully Added"}), 201
     else:
-        abort(400)    
+        abort(400)  
+    """      
 
 """ Select Meal """
 
@@ -421,15 +463,26 @@ def select_meal():
     price = request.get_json().get('price')
     user_id = request.get_json().get('userId')
 
+    meal = Meals.query.filter_by(meal_name=meal_name).first()
+    if not meal:
+        return jsonify({'message': 'Meal Not Found'}), 400
+
     if type(price) is not int and type(user_id) is not int:
         abort(400)
 
+    """
     transaction = {      
         'meal_name': meal_name,
         'price': price,
         'user_id': user_id
     }
     message_order = order.place_order(transaction)
+    """
+    process_status = "Pending"
+    order = Orders(meal_name=meal_name, price=price, user_id=user_id, process_status=process_status)
+    db.session.add(order)
+    db.session.commit()
+
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 
@@ -493,7 +546,12 @@ def set_menu():
               default: brakfast
 
     """
-    """ Setting menu """
+
+    """ Setting menu 
+       We need to cocatenate the items in the lsit with a special character into a string
+       And when retrieving it we return it into a string
+
+    """
     
     if not request.get_json() or 'meal_ids' not in request.get_json()\
     or 'user_id' not in request.get_json():
@@ -511,15 +569,46 @@ def set_menu():
 
     if len(meal_ids) == 0:
         return jsonify({'message':'No meals sent for menu'}), 400
+    """
+    for meal_id in meal_ids:
+        return jsonify({'message':'Testng Code'}), 400
+
+    if meals.get_meals_name(meal_name) == "No Meals Found":
+        return jsonify({'message':'Meal Does Not Exist'}), 404
+
+    else:  
+        menu = meals.update_meals_availability(meal_name)
+    """
+
+    caterer = Menu.query.filter_by(user_id=user_id).first()
+    if caterer is not None:
+        return jsonify({'message': 'Caterer Already Set Menu For the Day'}), 400
     
-    # for meal_id in meal_ids:
-    #     return jsonify({'message':'Testng Code'}), 400
+    meal_ids_string = ""
+    for ids in meal_ids:
+        meal_ids_string += ';%s' % ids 
 
-    # if meals.get_meals_name(meal_name) == "No Meals Found":
-    #     return jsonify({'message':'Meal Does Not Exist'}), 404
+    menu = Menu(user_id=user_id, meal_ids=meal_ids_string)
+    db.session.add(menu)
+    db.session.commit()
 
-    # else:  
-    #     menu = meals.update_meals_availability(meal_name)
+    menu_info = {}
+    menu_info['id'] = menu.id
+    menu_info['user_id'] = menu.user_id
+    """ Converting the meal ids into a list again """
+    converted_meal_ids = []
+    for idx in menu.meal_ids.split(';'):
+        if idx != "":
+            converted_meal_ids.append(idx)
+
+    menu_info['meal_ids'] = converted_meal_ids
+    menu_info['created_at'] = menu.created_at
+    menu_info['updated_at'] = menu.updated_at
+
+    return jsonify({'message':'Menu Successfully Created',\
+      'menu': menu_info}), 201            
+
+    """
     menu_data = {
         'meal_ids': meal_ids,
         'user_id': user_id
@@ -527,6 +616,7 @@ def set_menu():
     menu_details = menu.add_meals_menu(menu_data)
     return jsonify({'message':'Menu Successfully Created',\
       'menu': menu_details}), 201
+    """  
 
 
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
@@ -606,6 +696,30 @@ def update_meal_option(meal_id):
     if type(price) is not int:
         abort(400)
 
+
+    meal = Meals.query.filter_by(id=meal_id).first()
+
+    if not meal:
+        return jsonify({'message':'Meal Does Not Exist'}), 400
+
+    #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
+    if meal.meal_name != meal_name:
+        meal.meal_name =  meal_name
+
+    meal.price = price
+    meal.meal_type = meal_type
+    db.session.commit()
+
+    meal_update = {}
+    meal_update['id'] = meal.id
+    meal_update['meal_name'] = meal.meal_name
+    meal_update['price'] = meal.price
+    meal_update['meal_type'] = meal.meal_type
+    meal_update['created_at'] = meal.created_at
+    meal_update['updated_at'] = meal.updated_at
+
+    return jsonify({'message':'Meal Option Updated', 'meal':meal_update}), 201       
+    """
     data = {
          'meal_name' : meal_name,
          'price' : price,
@@ -617,6 +731,7 @@ def update_meal_option(meal_id):
 
     meal = meals.update_meals(int(meal_id), data)
     return jsonify({'meal': meal}), 201
+    """
 
 """ Modify Order """
 
@@ -696,7 +811,22 @@ def update_order(order_id):
 
     if type(price) is not int:
         abort(400)
+    
+    order = Orders.query.filter_by(id=order_id).first()
 
+    if not order:
+        return jsonify({'message':'Meal Does Not Exist'}), 404
+    
+    #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
+    if order.meal_name != meal_name:
+        order.meal_name = meal_name
+
+    order.price = price 
+    db.session.commit()
+
+    return jsonify({'message': 'Order Updated', 'order':order}), 201    
+        
+    """
     data = {
          'meal_name' : meal_name,  
          'price' : price 
@@ -706,13 +836,19 @@ def update_order(order_id):
         return jsonify({'message': "Meal Does Not Exist"}), 404
     else:      
         order_update = order.update_order(int(order_id), data)
-        return jsonify({'order': order_update}), 201    
+        return jsonify({'order': order_update}), 201
+    """
+
 
 @app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
 def update_menu(menu_id):
+
     
+    """
+     Reciving the string for meal_ids and spliting it 
+    """    
     if not request.get_json() or 'meal_ids' not in request.get_json()\
     or 'user_id' not in request.get_json():
         abort(400)
@@ -722,6 +858,36 @@ def update_menu(menu_id):
 
     if type(user_id) is not int:
         abort(400)
+
+    menu = Menu.query.filter_by(id=menu_id).first()
+    if not menu:
+        return jsonify({'message': 'Menu Does Not Exist'}), 404
+
+    meal_ids_string = ""
+    for ids in meal_ids:
+        if ids != "":
+           meal_ids_string += ';%s' % ids 
+
+    menu.meal_ids = meal_ids_string
+    db.session.commit()
+
+    menu_info = {}
+    menu_info['id'] = menu.id
+    menu_info['user_id'] = menu.user_id
+    """ Converting the meal ids into a list again """
+    converted_meal_ids = []
+    for idx in menu.meal_ids.split(';'):
+        if idx != "":
+            converted_meal_ids.append(idx)
+
+    menu_info['meal_ids'] = converted_meal_ids
+    menu_info['created_at'] = menu.created_at
+    menu_info['updated_at'] = menu.updated_at
+
+    return jsonify({'message': "Meal has been Updated in the menu",\
+          'menu': menu_info}), 201
+
+    """
 
     data = {
          'meal_ids' : meal_ids,  
@@ -733,7 +899,8 @@ def update_menu(menu_id):
     else:      
         menu_update = menu.update_meal_menu(int(menu_id), data)
         return jsonify({'message': "Meal has been Updated in the menu",\
-          'menu': menu_update}), 201            
+          'menu': menu_update}), 201 
+    """                 
 
 """ delete Meal Option """
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
@@ -769,13 +936,26 @@ def delete_meal_option(meal_id):
 
     """
     """ Deleting Meal Option """
+
+    meal = Meals.query.filter_by(id=meal_id).first()
+
+    if not meal:
+        return({'message':'Meal Not Found'}), 404
+
+    db.session.delete(meal)
+    db.session.commit()
+
+    return jsonify({'id': '' + meal_id, 'message':'Meal Successfully Removed'}), 200    
+
             
+    """        
     meal_id = int(meal_id)
     message_meal = meals.remove_meals(meal_id) 
     if message_meal == "Successfully Removed":
         return jsonify({'Meals': meals.get_all_meals()}), 200
     else:               
         return jsonify({'message':'Meal Not Found','id': ''+ str(meal_id)}), 404
+    """
 
 """ get all meals """
 
@@ -812,8 +992,25 @@ def get_all_meals():
                         }]
 
     """
+
+    meals = Meals.query.all()
+
+    output = []
+
+    for meal in meals:
+        meal_info = {}
+        meal_info['id'] =  meal.id
+        meal_info['meal_name'] =  meal.meal_name
+        meal_info['price'] =  meal.price
+        meal_info['meal_type'] =  meal.meal_type
+        meal_info['created_at'] =  meal.created_at
+        meal_info['updated_at'] =  meal.updated_at
+        output.append(meal_info)
+    return jsonify({'meals': output}), 200
     
+    """
     return jsonify({'meals': meals.get_all_meals()}), 200
+    """
 
 """ get all orders """
 
@@ -851,9 +1048,26 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    
-    return jsonify({'transactions': order.get_all_orders()}), 200
+    orders = Orders.query.all()
 
+    output = []
+
+    for order in orders:
+        order_info = {}
+        order_info['id'] =  order.id
+        order_info['meal_name'] =  order.meal_name
+        order_info['price'] =  order.price
+        order_info['user_id'] =  order.user_id
+        order_info['process_status'] =  order.process_status
+        order_info['created_at'] =  order.created_at
+        order_info['updated_at'] =  order.updated_at
+        output.append(order_info)
+    return jsonify({'transactions': output}), 200    
+
+    
+    """
+    return jsonify({'transactions': order.get_all_orders()}), 200
+    """
 """ get menu of the day """
 
 
@@ -891,29 +1105,73 @@ def get_menu():
     """ Get menu for the day """
     
     # return jsonify({'menu_day': meals.menu_meals()}), 200
+    menus = Menu.query.all()
+
+    output = []
+
+    for menu in menus:
+        menu_info = {}
+        menu_info['id'] = menu.id
+        menu_info['user_id'] = menu.user_id
+        """ Converting the meal ids into a list again """
+        converted_meal_ids = []
+        for idx in menu.meal_ids.split(';'):
+            converted_meal_ids.append(idx)
+
+        menu_info['meal_ids'] = converted_meal_ids
+        menu_info['created_at'] = menu.created_at
+        menu_info['updated_at'] = menu.updated_at
+        output.append(menu_info)
+    return jsonify({'menu_day': output}), 200
+
+    """
     return jsonify({'menu_day': menu.get_full_menu()}), 200
+    """
 
 
 @app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @is_loged_in
 def delete_order_item(order_id):
     """ Documentation for deleting an order"""
+
+    order = Orders.query.filter_by(id=order_id).first()
+
+    if not order:
+        return jsonify({'message':'Meal Does Not Exist'}), 404
+
+    db.session.delete(order)
+    db.session.commit()
+
+    return jsonify({'message':'Order Removed'}),200
+
+    """
     message = order.remove_order(int(order_id))
     if message == "No Order Found":
         return jsonify({'message':'Meal Does Not Exist'}), 404
     else:
         return jsonify({'message':'Order Removed'}), 200  
+    """
 
 @app.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
 @is_loged_in
 def delete_menu(menu_id):
-    """ Documentation for deleting a enu"""
+    """ Documentation for deleting a menu"""
+
+    menu = Menu.query.filter_by(id=menu_id).first()
+    
+    if not menu:
+        return jsonify({'message':'Menu Does Not Exist'}), 404    
+    
+    db.session.delete(menu)
+    db.session.commit() 
+    return jsonify({'message':'Menu Successfully removed'}), 200
+    """
     message = menu.remove_meal_menu(int(menu_id))
     if message == "Menu Not Found":
         return jsonify({'message':'Menu Does Not Exist'}), 404
     else:
         return jsonify({'message':'Menu Successfully removed'}), 200 
-
+    """
 
 
     
