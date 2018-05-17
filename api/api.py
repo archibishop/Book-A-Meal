@@ -46,7 +46,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
     meal = db.relationship('Orders', backref='user', lazy=True)
-    menu = db.relationship('Menu', backref='user', lazy=True)
+    menu = db.relationship('Menu', backref='admin', lazy=True)
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -455,6 +455,9 @@ def select_meal():
 
     """
     """ Selecting Meal """
+
+
+
     
     if not request.get_json() or 'meal_name' not in request.get_json()\
     or 'price' not in request.get_json() or 'userId' not in request.get_json():
@@ -462,6 +465,10 @@ def select_meal():
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
     user_id = request.get_json().get('userId')
+
+    """
+    Add check for if user id exists in the user table before it is added
+    """
 
     meal = Meals.query.filter_by(meal_name=meal_name).first()
     if not meal:
@@ -824,7 +831,15 @@ def update_order(order_id):
     order.price = price 
     db.session.commit()
 
-    return jsonify({'message': 'Order Updated', 'order':order}), 201    
+    output = {}
+    output['id'] = order.id
+    output['meal_name'] = order.meal_name
+    output['price'] = order.price
+    output['user_id'] = order.user_id
+    output['created_at'] = order.created_at
+    output['updated_at'] = order.updated_at
+
+    return jsonify({'message': 'Order Updated', 'order': output}), 201    
         
     """
     data = {
@@ -940,12 +955,12 @@ def delete_meal_option(meal_id):
     meal = Meals.query.filter_by(id=meal_id).first()
 
     if not meal:
-        return({'message':'Meal Not Found'}), 404
+        return jsonify({'message':'Meal Not Found'}), 404
 
     db.session.delete(meal)
     db.session.commit()
 
-    return jsonify({'id': '' + meal_id, 'message':'Meal Successfully Removed'}), 200    
+    return jsonify({'id': meal_id, 'message':'Meal Successfully Removed'}), 200    
 
             
     """        
@@ -1006,6 +1021,7 @@ def get_all_meals():
         meal_info['created_at'] =  meal.created_at
         meal_info['updated_at'] =  meal.updated_at
         output.append(meal_info)
+        
     return jsonify({'meals': output}), 200
     
     """
