@@ -1,4 +1,4 @@
-""" import context """
+import context
 from app import app
 from api import db
 from api import User, Admin, Meals, Orders, Menu
@@ -192,12 +192,16 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "mealname": "katogo"
         }
         response = self.app.post(
-            "/bookmealapi/v1.0/meals", data=json.dumps(details), content_type='application/json')
+            "/bookmealapi/v1.0/meals", data=json.dumps(details),\
+             content_type='application/json',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_add_meal_price_is_string(self):
@@ -221,6 +225,8 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "mealname": "katogo", 
@@ -228,7 +234,8 @@ class api_test_case(unittest.TestCase):
             "meal_type": "breakfast"
         }
         response = self.app.post("/bookmealapi/v1.0/meals",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_add_meal_valid(self):
@@ -252,6 +259,8 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo", 
@@ -259,7 +268,8 @@ class api_test_case(unittest.TestCase):
             "meal_type": "breakfast"
         }
         response = self.app.post("/bookmealapi/v1.0/meals",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "Meal Successfully Added")
@@ -271,7 +281,8 @@ class api_test_case(unittest.TestCase):
             "meal_type": "breakfast"
         }
         response = self.app.post("/bookmealapi/v1.0/meals",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_select_meal_missing_values(self):
@@ -293,12 +304,15 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo"
         }
         response = self.app.post("/bookmealapi/v1.0/orders",
-                                 data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_select_meal_price_user_id_string(self):
@@ -320,6 +334,8 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo",
@@ -327,7 +343,8 @@ class api_test_case(unittest.TestCase):
             "userId": "2"
         }
         response = self.app.post("/bookmealapi/v1.0/orders",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_select_meal_valid(self):
@@ -356,6 +373,8 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo", 
@@ -363,7 +382,8 @@ class api_test_case(unittest.TestCase):
             "userId": 1
         }
         response = self.app.post("/bookmealapi/v1.0/orders",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
 
     def test_set_menu(self):
@@ -399,6 +419,8 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         """
         details = {
@@ -413,7 +435,8 @@ class api_test_case(unittest.TestCase):
             "user_id": 1
         }
         response = self.app.post("/bookmealapi/v1.0/menu",
-                                 data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
 
     def test_delete_meal_option_non_existant_data(self):
@@ -436,8 +459,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/meals/10')
+        response = self.app.delete('/bookmealapi/v1.0/meals/10',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 404)
 
     def test_delete_meal_option_data_exists(self):
@@ -467,8 +493,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/meals/1')
+        response = self.app.delete('/bookmealapi/v1.0/meals/1',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 200)
     
 
@@ -494,12 +523,15 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo"
         }
         response = self.app.put("/bookmealapi/v1.0/meals/2",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_update_meal_option_price_string(self):
@@ -523,13 +555,16 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo", 
             "price": "8000"
         }
         response = self.app.put("/bookmealapi/v1.0/meals/2",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_update_meal_option_valid(self):
@@ -561,6 +596,8 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "rolex", 
@@ -568,7 +605,8 @@ class api_test_case(unittest.TestCase):
             "meal_type": "breakfast"
         }
         response = self.app.put("/bookmealapi/v1.0/meals/1",\
-            data=json.dumps(details), content_type='application/json')
+            data=json.dumps(details), content_type='application/json',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         # self.assertEqual(data['meal']['id'], 2)
@@ -596,13 +634,16 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": 
             "katogo"
         }
         response = self.app.put("/bookmealapi/v1.0/orders/2",\
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_update_order_price_string(self):
@@ -626,13 +667,16 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.get_data())
+        token = data['token']
 
         details = {
             "meal_name": "katogo", 
             "price": "8000"
         }
         response = self.app.put("/bookmealapi/v1.0/orders/2",\
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400)
 
     def test_update_order_valid(self):
@@ -674,12 +718,16 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
+
         details = {
             "meal_name": "katogo",
             "price": 8000
         }
         response = self.app.put("/bookmealapi/v1.0/orders/1",
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         # self.assertEqual(data['order']['id'], 2)
@@ -706,11 +754,15 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
+
         details = {
             "user_id": 3
         }
         response = self.app.put("/bookmealapi/v1.0/menu/1",
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 400) 
 
     def test_update_menu_nonexistant(self):
@@ -733,12 +785,16 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
+
         details = {
             "meal_ids": [6, 2, 7, 4],
             "user_id": 3
         }
         response = self.app.put("/bookmealapi/v1.0/menu/10",
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 404) 
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "Menu Does Not Exist")     
@@ -783,15 +839,19 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
+
         details = {
             "meal_ids": [6, 2, 7, 4],
             "user_id": 3
         }
         response = self.app.put("/bookmealapi/v1.0/menu/1",
-                                data=json.dumps(details), content_type='application/json')
+                data=json.dumps(details), content_type='application/json',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
-        self.assertEqual(data['menu']['meal_ids'], ['6', '2', '7', '4'])
+        self.assertEqual(data['menu']['meal_ids'], [6, 2, 7, 4])
         
 
     def test_get_all_meals(self):
@@ -821,8 +881,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.get('/bookmealapi/v1.0/meals')
+        response = self.app.get('/bookmealapi/v1.0/meals',\
+                headers={'x-access-token' : token})
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(data['meals']), 1)
@@ -866,8 +929,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.get('/bookmealapi/v1.0/orders')
+        response = self.app.get('/bookmealapi/v1.0/orders',\
+                headers={'x-access-token' : token})
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(data['transactions']), 1)
@@ -912,8 +978,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.get('/bookmealapi/v1.0/menu')
+        response = self.app.get('/bookmealapi/v1.0/menu',\
+                headers={'x-access-token' : token})
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(data['menu_day']), 1)
@@ -938,8 +1007,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/orders/10')
+        response = self.app.delete('/bookmealapi/v1.0/orders/10',\
+                headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 404)
 
     
@@ -982,8 +1054,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/orders/1')
+        response = self.app.delete('/bookmealapi/v1.0/orders/1',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 200)
 
     def test_delete_menu_exists(self):
@@ -1026,8 +1101,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/menu/1')
+        response = self.app.delete('/bookmealapi/v1.0/menu/1',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 200)  
 
     def test_delete_menu_non_existant_data(self):
@@ -1050,8 +1128,11 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
+        data = json.loads(response.get_data())
+        token = data['token']
 
-        response = self.app.delete('/bookmealapi/v1.0/menu/10')
+        response = self.app.delete('/bookmealapi/v1.0/menu/10',\
+            headers={'x-access-token' : token})
         self.assertEqual(response.status_code, 404)       
 
 if __name__ == '__main__':

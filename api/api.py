@@ -3,6 +3,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+import jwt
 
 from models.user import User
 from models.admin import Admin
@@ -13,6 +14,7 @@ from models.menu import Menu
 from utils import is_loged_in
 from utils import is_user
 from utils import is_admin
+""" from utils import token_required """
 
 from flasgger import Swagger
 
@@ -102,6 +104,27 @@ menu = Menu()
 """
 
 Swagger(app)
+
+""" Web Token Authentication """
+
+def token_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        token = None
+
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+
+        if not token:
+            return jsonify({'message' : 'Token is missing'})
+
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return jsonify({'message' : 'Token is Invalid'}), 401
+
+        return f(*args, **kwargs)
+    return wrap
 
 
 """ Registering a User """
@@ -261,14 +284,16 @@ def login():
         if check_password_hash(admin.password, password):
             session['logged_in'] = True
             session['admin'] = True
-            return jsonify({'message' : 'Successfully login'}), 200   
+            token = jwt.encode({'id':admin.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+            return jsonify({'message' : 'Successfully login','token': token.decode('UTF-8')}), 200   
         else:
             return jsonify({'message':'Wrong Password'}), 400
 
     if check_password_hash(user.password, password):
         session['logged_in'] = True
         session['userV'] = True
-        return jsonify({'message':'Successfully login'}), 200
+        token = jwt.encode({'id':user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        return jsonify({'message':'Successfully login','token': token.decode('UTF-8')}), 200
     else:
         return jsonify({'message':'Wrong Password'}), 400                 
 
@@ -293,6 +318,7 @@ def login():
 @app.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_loged_in
 @is_admin
+@token_required
 def add_meal():
     """
     add meal
@@ -397,7 +423,7 @@ def add_meal():
 
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @is_loged_in
-
+@token_required
 def select_meal():
     """
     select meal
@@ -497,6 +523,7 @@ def select_meal():
 @app.route('/bookmealapi/v1.0/menu', methods=['POST'])
 @is_loged_in
 @is_admin
+@token_required
 def set_menu():
     """
     setting meal
@@ -606,7 +633,7 @@ def set_menu():
     converted_meal_ids = []
     for idx in menu.meal_ids.split(';'):
         if idx != "":
-            converted_meal_ids.append(idx)
+            converted_meal_ids.append(int(idx))
 
     menu_info['meal_ids'] = converted_meal_ids
     menu_info['created_at'] = menu.created_at
@@ -629,6 +656,7 @@ def set_menu():
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
+@token_required
 def update_meal_option(meal_id):
     """
     Update Meal Option
@@ -745,6 +773,7 @@ def update_meal_option(meal_id):
 
 @app.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
 @is_loged_in
+@token_required
 def update_order(order_id):
     """
     Modify order
@@ -858,6 +887,7 @@ def update_order(order_id):
 @app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
+@token_required
 def update_menu(menu_id):
 
     
@@ -893,7 +923,7 @@ def update_menu(menu_id):
     converted_meal_ids = []
     for idx in menu.meal_ids.split(';'):
         if idx != "":
-            converted_meal_ids.append(idx)
+            converted_meal_ids.append(int(idx))
 
     menu_info['meal_ids'] = converted_meal_ids
     menu_info['created_at'] = menu.created_at
@@ -921,6 +951,7 @@ def update_menu(menu_id):
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in
 @is_admin
+@token_required
 def delete_meal_option(meal_id):
     """
     delete meal option
@@ -978,6 +1009,7 @@ def delete_meal_option(meal_id):
 @app.route('/bookmealapi/v1.0/meals', methods=['GET'])
 @is_loged_in
 @is_admin
+@token_required
 def get_all_meals():
     """
     Get all meals
@@ -1034,6 +1066,7 @@ def get_all_meals():
 @app.route('/bookmealapi/v1.0/orders', methods=['GET'])
 @is_loged_in
 @is_admin
+@token_required
 def get_all_orders():
     """
     Get all orders
@@ -1089,6 +1122,7 @@ def get_all_orders():
 
 @app.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @is_loged_in
+@token_required
 def get_menu():
     """
     Get menu for the day
@@ -1132,7 +1166,8 @@ def get_menu():
         """ Converting the meal ids into a list again """
         converted_meal_ids = []
         for idx in menu.meal_ids.split(';'):
-            converted_meal_ids.append(idx)
+            if idx != "":
+                converted_meal_ids.append(int(idx))
 
         menu_info['meal_ids'] = converted_meal_ids
         menu_info['created_at'] = menu.created_at
@@ -1147,6 +1182,7 @@ def get_menu():
 
 @app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @is_loged_in
+@token_required
 def delete_order_item(order_id):
     """ Documentation for deleting an order"""
 
@@ -1170,6 +1206,7 @@ def delete_order_item(order_id):
 
 @app.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
 @is_loged_in
+@token_required
 def delete_menu(menu_id):
     """ Documentation for deleting a menu"""
 

@@ -1,5 +1,8 @@
 from functools import wraps
-from flask import session, jsonify
+from flask import session, jsonify, request
+import jwt
+
+
 """ Check if user is logged """
 
 def is_loged_in(f):
@@ -36,3 +39,6 @@ def is_admin(f):
             return jsonify({'message':\
              "Unauthorized Access, You are not an admin"})
     return wrap
+
+
+
