@@ -401,17 +401,6 @@ class api_test_case(unittest.TestCase):
         db.session.commit()
 
 
-        """ To pass the test """
-        first_name = "atlas"
-        last_name = "waters"
-        email = "atlas@gmail.com"
-        password = "12345"
-        hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit() 
-
         """ correct details admin """
         details = {
             "email": "steven@gmail.com",
@@ -681,19 +670,6 @@ class api_test_case(unittest.TestCase):
 
     def test_update_order_valid(self):
         """ Update Order """
-        business_name = "FAST FOOD"
-        location = "nakulabye"
-        first_name = "atlas"
-        last_name = "waters"
-        email = "steven@gmail.com"
-        password = "54321"
-        hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location, first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
-        db.session.add(new_admin)
-        db.session.commit()
-
-        """ To pass the test """
         first_name = "atlas"
         last_name = "waters"
         email = "atlas@gmail.com"
@@ -713,8 +689,8 @@ class api_test_case(unittest.TestCase):
         db.session.commit()
 
         details = {
-            "email": "steven@gmail.com", 
-            "password": "54321"
+            "email": "atlas@gmail.com", 
+            "password": "12345"
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
@@ -811,17 +787,6 @@ class api_test_case(unittest.TestCase):
         new_admin = Admin(business_name=business_name, location=location, first_name=first_name, last_name=last_name,\
           email=email, password=hashed_password)
         db.session.add(new_admin)
-        db.session.commit()
-
-        """ To pass the test """
-        first_name = "atlas"
-        last_name = "waters"
-        email = "atlas@gmail.com"
-        password = "12345"
-        hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
-        db.session.add(new_user)
         db.session.commit()
 
         meal_ids =[6, 2, 7, 4]
@@ -1029,17 +994,6 @@ class api_test_case(unittest.TestCase):
         db.session.add(new_admin)
         db.session.commit()
 
-        """ To pass the test """
-        first_name = "atlas"
-        last_name = "waters"
-        email = "atlas@gmail.com"
-        password = "12345"
-        hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit() 
-
         meal_name = "katogo"
         price = 3000
         process_status = "Pending"
@@ -1073,17 +1027,6 @@ class api_test_case(unittest.TestCase):
         new_admin = Admin(business_name=business_name, location=location, first_name=first_name, last_name=last_name,\
           email=email, password=hashed_password)
         db.session.add(new_admin)
-        db.session.commit()
-
-        """ To pass the test """
-        first_name = "atlas"
-        last_name = "waters"
-        email = "atlas@gmail.com"
-        password = "12345"
-        hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
-        db.session.add(new_user)
         db.session.commit()
 
         meal_ids =[6, 2, 7, 4]

@@ -47,8 +47,8 @@ class User(db.Model):
     default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
-    meal = db.relationship('Orders', backref='user', lazy=True)
-    menu = db.relationship('Menu', backref='admin', lazy=True)
+    """ meal = db.relationship('Orders', backref='user', lazy=True) """
+    
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,6 +62,7 @@ class Admin(db.Model):
     default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
+    menu = db.relationship('Menu', backref='admin', lazy=True)
 
 class Meals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,7 +78,8 @@ class Orders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meal_name = db.Column(db.String(50))
     price = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    """user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)"""
+    user_id = db.Column(db.Integer)
     process_status = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
@@ -87,7 +89,7 @@ class Orders(db.Model):
 
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=False)
     meal_ids = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
