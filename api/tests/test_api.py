@@ -155,7 +155,7 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "User Not Found")
 
@@ -167,7 +167,7 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "User Not Found")
 
