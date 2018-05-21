@@ -37,7 +37,8 @@ class api_test_case(unittest.TestCase):
             "fname": "clap",
             "lname": "flip", 
             "email": "clap@gmail.com",
-            "password": "12345"
+            "password": "12345",
+            "role_id": 2
         }
         response = self.app.post("/bookmealapi/v1.0/auth/signup",\
             data=json.dumps(user), content_type='application/json')
@@ -50,7 +51,8 @@ class api_test_case(unittest.TestCase):
             "fname": "clap", 
             "lname": "flip",
             "email": "clap@gmail.com",
-            "password": "12345"
+            "password": "12345",
+            "role_id": 2
         }
         response = self.app.post("/bookmealapi/v1.0/auth/signup",\
             data=json.dumps(user), content_type='application/json')
@@ -130,10 +132,12 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name, email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
+
         db.session.add(new_admin)
         db.session.commit()
 
@@ -180,10 +184,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -214,10 +219,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email, \
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -249,10 +255,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -295,9 +302,10 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "atlas@gmail.com"
         password = "12345"
+        role_id = 2
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id)
         db.session.add(new_user)
         db.session.commit() 
 
@@ -325,9 +333,10 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "atlas@gmail.com"
         password = "12345"
+        role_id = 2
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id)
         db.session.add(new_user)
         db.session.commit() 
 
@@ -357,9 +366,10 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "atlas@gmail.com"
         password = "12345"
+        role_id = 2
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id)
         db.session.add(new_user)
         db.session.commit() 
 
@@ -398,10 +408,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location, \
-            first_name=first_name, last_name=last_name,email=email,\
-            password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -441,10 +452,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-         first_name=first_name, last_name=last_name,email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -469,10 +481,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -506,10 +519,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -539,10 +553,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
         
@@ -573,10 +588,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email, \
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -621,10 +637,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -654,10 +671,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -686,9 +704,10 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "atlas@gmail.com"
         password = "12345"
+        role_id = 2
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(first_name=first_name, last_name=last_name,\
-          email=email, password=hashed_password)
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id)
         db.session.add(new_user)
         db.session.commit() 
 
@@ -731,10 +750,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email, \
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -763,10 +783,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name, email=email, \
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -798,10 +819,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name, email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -843,10 +865,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name,email=email, \
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -880,10 +903,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name,email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -930,10 +954,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location, \
-          first_name=first_name, last_name=last_name, email=email, \
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -980,10 +1005,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name, email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -1009,10 +1035,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-           first_name=first_name, last_name=last_name, email=email,\
-           password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -1046,10 +1073,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name, email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 
@@ -1083,10 +1111,11 @@ class api_test_case(unittest.TestCase):
         last_name = "waters"
         email = "steven@gmail.com"
         password = "54321"
+        role_id = 1
         hashed_password = generate_password_hash(password, method='sha256')
-        new_admin = Admin(business_name=business_name, location=location,\
-          first_name=first_name, last_name=last_name, email=email,\
-          password=hashed_password)
+        new_admin = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location)
         db.session.add(new_admin)
         db.session.commit()
 

@@ -43,13 +43,19 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(200))
+    role_id = db.Column(db.Integer)
+    business_name = db.Column(db.String(50))
+    location = db.column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
-    """ meal = db.relationship('Orders', backref='user', lazy=True) """
+    """
+    meal = db.relationship('Orders', backref='user', lazy=True) 
+    menu = db.relationship('Menu', backref='user', lazy=True)
+    """
     
-
+"""
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     business_name = db.Column(db.String(50))
@@ -63,6 +69,7 @@ class Admin(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
     menu = db.relationship('Menu', backref='admin', lazy=True)
+"""    
 
 class Meals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -78,8 +85,10 @@ class Orders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meal_name = db.Column(db.String(50))
     price = db.Column(db.Integer)
-    """user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)"""
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    """
     user_id = db.Column(db.Integer)
+    """
     process_status = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
@@ -89,7 +98,7 @@ class Orders(db.Model):
 
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     meal_ids = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
@@ -185,24 +194,34 @@ def sign_up():
     
     if not request.get_json() or 'fname' not in request.get_json()\
     or 'lname' not in request.get_json() or 'email' not in request.get_json()\
-    or 'password' not in request.get_json():
+    or 'password' not in request.get_json() or 'role_id' not in request.get_json():
         abort(400)
+    
+    role_id = request.get_json().get('role_id')
+    if role_id == 1:
+        if 'business_name' not in request.get_json() \
+              or 'location' not in request.get_json():
+            abort(400)
 
-    first_name = request.get_json().get('fname')
-    last_name = request.get_json().get('lname')
     email = request.get_json().get('email')
-    password = request.get_json().get('password')
-
-    hashed_password = generate_password_hash(password, method='sha256')
-
-
     email_exists = User.query.filter_by(email=email).first()
 
     if email_exists != None:
         return jsonify({'message':'Email Already Exists'}), 400
 
-    new_user = User(first_name= first_name, last_name=last_name,\
-    email=email, password= hashed_password)
+    first_name = request.get_json().get('fname')
+    last_name = request.get_json().get('lname')
+    password = request.get_json().get('password')
+    hashed_password = generate_password_hash(password, method='sha256')    
+    
+    if role_id == 2 : 
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id)   
+    else:
+        new_user = User(first_name= first_name, last_name=last_name,\
+                      email=email, password= hashed_password, role_id=role_id,\
+                      business_name=business_name, location=location) 
+
     db.session.add(new_user)
     db.session.commit()
 
@@ -266,24 +285,16 @@ def login():
     password = request.get_json().get('password')
 
     user = User.query.filter_by(email=email).first()
-
+    
     if not user:
-        admin = Admin.query.filter_by(email=email).first()
-
-        if not admin:
-            return jsonify({'message': 'User Not Found'}), 404
-
-        if check_password_hash(admin.password, password):
-            session['logged_in'] = True
-            session['admin'] = True
-            token = jwt.encode({'id':admin.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-            return jsonify({'message' : 'Successfully login','token': token.decode('UTF-8')}), 200   
-        else:
-            return jsonify({'message':'Wrong Password'}), 400
+        return jsonify({'message': 'User Not Found'}), 404
 
     if check_password_hash(user.password, password):
         session['logged_in'] = True
-        session['userV'] = True
+        if user.role_id == 2:
+            session['userV'] = True
+        else:
+            session['admin'] = True    
         token = jwt.encode({'id':user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
         return jsonify({'message':'Successfully login','token': token.decode('UTF-8')}), 200
     else:
