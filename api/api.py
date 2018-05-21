@@ -10,6 +10,7 @@ from models.admin import Admin
 from models.meals import Meals
 from models.order import Order
 from models.menu import Menu
+# from models.models import db
 
 from utils import is_loged_in
 from utils import is_user
@@ -45,15 +46,14 @@ class User(db.Model):
     password = db.Column(db.String(200))
     role_id = db.Column(db.Integer)
     business_name = db.Column(db.String(50))
-    location = db.column(db.String(50))
+    location = db.Column(db.String(50))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
-    """
     meal = db.relationship('Orders', backref='user', lazy=True) 
     menu = db.relationship('Menu', backref='user', lazy=True)
-    """
+    
     
 """
 class Admin(db.Model):
@@ -214,7 +214,7 @@ def sign_up():
     password = request.get_json().get('password')
     hashed_password = generate_password_hash(password, method='sha256')    
     
-    if role_id == 2 : 
+    if role_id == 2 :
         new_user = User(first_name= first_name, last_name=last_name,\
                       email=email, password= hashed_password, role_id=role_id)   
     else:

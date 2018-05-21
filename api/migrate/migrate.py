@@ -25,25 +25,15 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
-    meal = db.relationship('Orders', backref='user', lazy=True)
-    menu = db.relationship('Menu', backref='admin', lazy=True)
-
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    role_id = db.Column(db.Integer)
     business_name = db.Column(db.String(50))
     location = db.Column(db.String(50))
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(200))
     created_at = db.Column(db.DateTime(timezone=True),\
     default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),\
     onupdate=datetime.datetime.utcnow)
+    meal = db.relationship('Orders', backref='user', lazy=True) 
+    menu = db.relationship('Menu', backref='user', lazy=True) 
 
 class Meals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
