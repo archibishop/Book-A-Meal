@@ -80,6 +80,18 @@ class Meals():
         meal['availability'] = 1
         return meal
 
+    def remove_meal_menu(self, value):
+        """ for meal in self.meals:
+             if meal['availability'] == 1:
+                 if meal[]
+         meal = self.get_meals(value)
+        You should use the meal name to delte
+         if meal == "No Meals Found":
+             return "No Meals Found"  
+         else:
+             meal['availability'] = 0 
+             return meal """
+
     def menu_meals(self):
         output = []
         for meal in self.meals:

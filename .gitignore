@@ -1,3 +1,5 @@
 env
 *.pyc
 .coveralls.yml
+*.__pycache__
+.pytest_cache/v/cache
