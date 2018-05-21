@@ -1,4 +1,4 @@
-import context
+""" import context """
 from app import app
 from api import db
 from api import User, Admin, Meals, Orders, Menu
