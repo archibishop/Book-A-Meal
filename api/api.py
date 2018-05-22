@@ -25,7 +25,7 @@ app.testing = True
 app.secret_key = 'secret123'
 
 app.config['SQLALCHEMY_DATABASE_URI'] =\
- "postgres://jbgpiruhjzgafa:3bcdc8753255e485e6e96311b7fb7f164c63fc1660faa518669855d92f60109e@ec2-50-19-224-165.compute-1.amazonaws.com:5432/ddk6pbihffrbai"
+ "postgres://bqvsyahcierxrk:7d270e10e8f11f9b3a00a86864927ec335ed11304e4e64bf47b7831f5e093b13@ec2-23-21-129-50.compute-1.amazonaws.com:5432/d54og171si9rmq"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
