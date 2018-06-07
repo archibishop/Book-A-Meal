@@ -3,3 +3,4 @@ env
 .coveralls.yml
 *.__pycache__
 .pytest_cache/v/cache
+.vscode/
