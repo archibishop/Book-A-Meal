@@ -12,10 +12,11 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """ Testing Configuration file"""
+    TESING = True
     DEBUG = True
-    DATABASE_URI = "postgresql: // postgres: 12345@localhost/test_book"
+    DATABASE_URI = "postgresql://postgres: 12345@localhost/test_book"
 
 app_config = {
-    "development ": DevelopmentConfig,
+    "development": DevelopmentConfig,
     "testing": TestingConfig
 }    
