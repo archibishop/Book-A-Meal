@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort, session
+from flask import Flask, jsonify, request, abort, session, Blueprint
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
