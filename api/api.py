@@ -1,145 +1,28 @@
-from flask import Flask, jsonify, request, abort, session, Blueprint
+from flask import Flask, jsonify, request, abort, session, Blueprint, current_app
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
 
-from models.user import User
-from models.admin import Admin
-from models.meals import Meals
-from models.order import Order
-from models.menu import Menu
-# from models.models import db
+from api import db
+from .models.models import User
+from .models.models import Menu
+from .models.models import Orders
+from .models.models import Meals
 
-from utils import is_loged_in
-from utils import is_user
-from utils import is_admin
-""" from utils import token_required """
+from .utils import is_loged_in
+from .utils import is_user
+from .utils import is_admin
+from .utils import token_required
 
-from flasgger import Swagger
-
-app = Flask(__name__)
-
-app.testing = True
-app.secret_key = 'secret123'
-
-app.config['SQLALCHEMY_DATABASE_URI'] =\
- "postgresql://postgres:12345@localhost/book"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-"""
-Change to persistent data, using sql alchemy 
-Using web tokens
-Hashing Password sent to database
-
-creating the models
-"""
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(200))
-    role_id = db.Column(db.Integer)
-    business_name = db.Column(db.String(50))
-    location = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
-    meal = db.relationship('Orders', backref='user', lazy=True) 
-    menu = db.relationship('Menu', backref='user', lazy=True)
-    
-    
-"""
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    business_name = db.Column(db.String(50))
-    location = db.Column(db.String(50))
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
-    menu = db.relationship('Menu', backref='admin', lazy=True)
-"""    
-
-class Meals(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    meal_name = db.Column(db.String(50), unique=True)
-    price = db.Column(db.Integer)
-    meal_type = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)   
-
-class Orders(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    meal_name = db.Column(db.String(50))
-    price = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    """
-    user_id = db.Column(db.Integer)
-    """
-    process_status = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
+api_route = Blueprint("api", __name__)
 
 
-class Menu(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    meal_ids = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
-
-
-"""
-user = User()
-admin = Admin()
-meals = Meals()
-order = Order()
-menu = Menu()
-"""
-
-Swagger(app)
-
-""" Web Token Authentication """
-
-def token_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        token = None
-
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-
-        if not token:
-            return jsonify({'message' : 'Token is missing'})
-
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-        except:
-            return jsonify({'message' : 'Token is Invalid'}), 401
-
-        return f(*args, **kwargs)
-    return wrap
 
 
 """ Registering a User """
-@app.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
+@api_route.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
 def sign_up():
     """
     sign up
@@ -202,6 +85,9 @@ def sign_up():
         if 'business_name' not in request.get_json() \
               or 'location' not in request.get_json():
             abort(400)
+        else:
+            business_name = request.get_json().get('business_name')
+            location = request.get_json().get('location')    
 
     email = request.get_json().get('email')
     email_exists = User.query.filter_by(email=email).first()
@@ -216,19 +102,22 @@ def sign_up():
     
     if role_id == 2 :
         new_user = User(first_name= first_name, last_name=last_name,\
-                      email=email, password= hashed_password, role_id=role_id)   
+                      email=email, password= hashed_password, role_id=role_id, business_name= "", location= "")   
     else:
         new_user = User(first_name= first_name, last_name=last_name,\
                       email=email, password= hashed_password, role_id=role_id,\
-                      business_name=business_name, location=location) 
-
+                      business_name=business_name, location=location ) 
+    
+    new_user.save()
+    """
     db.session.add(new_user)
     db.session.commit()
+    """
 
     return jsonify({'message' : 'New user created!'}), 201
 
 """ Login """
-@app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
+@api_route.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
     """
     login
@@ -284,9 +173,11 @@ def login():
     email = request.get_json().get('email')
     password = request.get_json().get('password')
 
-    user = User.query.filter_by(email=email).first()
+    """ user = User.query.filter_by(email=email).first() """
+
+    user = User.get_user_email(email)
     
-    if not user:
+    if user == "No User":
         return jsonify({'message': 'User Not Found'}), 404
 
     if check_password_hash(user.password, password):
@@ -295,13 +186,15 @@ def login():
             session['userV'] = True
         else:
             session['admin'] = True    
-        token = jwt.encode({'id':user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        # token = jwt.encode({'id':user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow(
+        ) + datetime.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
         return jsonify({'message':'Successfully login','token': token.decode('UTF-8')}), 200
     else:
         return jsonify({'message':'Wrong Password'}), 400                 
 
 """ Add Meal """
-@app.route('/bookmealapi/v1.0/meals', methods=['POST'])
+@api_route.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_loged_in
 @is_admin
 @token_required
@@ -382,19 +275,23 @@ def add_meal():
     if type(price) is not int:
         abort(400)    
 
-    meal_exists = Meals.query.filter_by(meal_name=meal_name).first()
+    """ meal_exists = Meals.query.filter_by(meal_name=meal_name).first() """
+    meal_exists = Meals.get_meal_by_name(meal_name)
 
     if meal_exists != None:
         return jsonify({'message': "Meal Already Exists"}), 400
 
     meal = Meals(meal_name=meal_name, price=price, meal_type=meal_type)
+    meal.save()
+    """
     db.session.add(meal)
     db.session.commit()
+    """
 
     return jsonify({'message' : 'Meal Successfully Added'}), 201      
 
 """ Select Meal """
-@app.route('/bookmealapi/v1.0/orders', methods=['POST'])
+@api_route.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @is_loged_in
 @token_required
 def select_meal():
@@ -456,21 +353,28 @@ def select_meal():
 
     if type(price) is not int and type(user_id) is not int:
         abort(400)
-
+    """
     meal = Meals.query.filter_by(meal_name=meal_name).first()
+    if not meal:
+        return jsonify({'message': 'Meal Not Found'}), 404
+    """
+    meal = Meals.get_meal_by_name(meal_name)
     if not meal:
         return jsonify({'message': 'Meal Not Found'}), 404
 
     process_status = "Pending"
     order = Orders(meal_name=meal_name, price=price, user_id=user_id, process_status=process_status)
+    order.save()
+    """
     db.session.add(order)
     db.session.commit()
+    """
 
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 
 """ set Meal Options """
-@app.route('/bookmealapi/v1.0/menu', methods=['POST'])
+@api_route.route('/bookmealapi/v1.0/menu', methods=['POST'])
 @is_loged_in
 @is_admin
 @token_required
@@ -547,18 +451,26 @@ def set_menu():
 
     if len(meal_ids) == 0:
         return jsonify({'message':'No meals sent for menu'}), 400
-
+    
+    """
     caterer = Menu.query.filter_by(user_id=user_id).first()
     if caterer is not None:
         return jsonify({'message': 'Caterer Already Set Menu For the Day'}), 400
+    """
+    caterer = Menu.get_menu_by_user_id(user_id) 
+    if caterer is not None:
+        return jsonify({'message': 'Caterer Already Set Menu For the Day'}), 400   
     
     meal_ids_string = ""
     for ids in meal_ids:
         meal_ids_string += ';%s' % ids 
 
     menu = Menu(user_id=user_id, meal_ids=meal_ids_string)
+    """
     db.session.add(menu)
     db.session.commit()
+    """
+    menu.save()
 
     menu_info = {}
     menu_info['id'] = menu.id
@@ -577,7 +489,7 @@ def set_menu():
       'menu': menu_info}), 201              
 
 
-@app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
+@api_route.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
 @token_required
@@ -663,7 +575,7 @@ def update_meal_option(meal_id):
     if type(price) is not int:
         abort(400)
 
-
+    """
     meal = Meals.query.filter_by(id=meal_id).first()
 
     if not meal:
@@ -676,7 +588,13 @@ def update_meal_option(meal_id):
     meal.price = price
     meal.meal_type = meal_type
     db.session.commit()
+    """
 
+    meal = Meals.update_meal(meal_id, meal_name, price, meal_type)
+
+    if meal == "Meal Does Not Exist":
+        return jsonify({'message':'Meal Does Not Exist'})
+        
     meal_update = {}
     meal_update['id'] = meal.id
     meal_update['meal_name'] = meal.meal_name
@@ -688,7 +606,7 @@ def update_meal_option(meal_id):
     return jsonify({'message':'Meal Option Updated', 'meal':meal_update}), 201       
 
 """ Modify Order """
-@app.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
+@api_route.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
 @is_loged_in
 @token_required
 def update_order(order_id):
@@ -767,11 +685,11 @@ def update_order(order_id):
 
     if type(price) is not int:
         abort(400)
-    
+    """
     order = Orders.query.filter_by(id=order_id).first()
-
+  
     if not order:
-        return jsonify({'message':'Meal Does Not Exist'}), 404
+        return jsonify({'message':'Order Does Not Exist'}), 404
     
     #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
     if order.meal_name != meal_name:
@@ -779,6 +697,11 @@ def update_order(order_id):
 
     order.price = price 
     db.session.commit()
+    """
+    order = Orders.update_order(order_id, meal_name, price)
+
+    if order == "Order does not exist":
+        return jsonify({'message': 'Order Does Not Exist'}), 404
 
     output = {}
     output['id'] = order.id
@@ -790,7 +713,7 @@ def update_order(order_id):
 
     return jsonify({'message': 'Order Updated', 'order': output}), 201    
 
-@app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
+@api_route.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
 @is_loged_in
 @is_admin
 @token_required
@@ -863,7 +786,9 @@ def update_menu(menu_id):
     if type(user_id) is not int:
         abort(400)
 
-    menu = Menu.query.filter_by(id=menu_id).first()
+    """ menu = Menu.query.filter_by(id=menu_id).first() """
+    """
+    menu = Menu.get_menu_by_id(menu_id)
     if not menu:
         return jsonify({'message': 'Menu Does Not Exist'}), 404
 
@@ -874,6 +799,11 @@ def update_menu(menu_id):
 
     menu.meal_ids = meal_ids_string
     db.session.commit()
+    """
+    menu = Menu.update_menu(menu_id, meal_ids)
+    print(menu)
+    if menu == "No Meal Found":
+        return jsonify({'message': 'Menu Does Not Exist'}), 404
 
     menu_info = {}
     menu_info['id'] = menu.id
@@ -892,7 +822,7 @@ def update_menu(menu_id):
           'menu': menu_info}), 201               
 
 """ delete Meal Option """
-@app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
+@api_route.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
 @is_loged_in
 @is_admin
 @token_required
@@ -926,7 +856,7 @@ def delete_meal_option(meal_id):
 
     """
     """ Deleting Meal Option """
-
+    """
     meal = Meals.query.filter_by(id=meal_id).first()
 
     if not meal:
@@ -934,11 +864,19 @@ def delete_meal_option(meal_id):
 
     db.session.delete(meal)
     db.session.commit()
+    """
+
+    meal = Meals.get_meal_by_id(meal_id)
+
+    if not meal:
+        return jsonify({'message':'Meal Not Found'}), 404
+
+    meal.delete_meal()    
 
     return jsonify({'id': meal_id, 'message':'Meal Successfully Removed'}), 200    
 
 """ get all meals """
-@app.route('/bookmealapi/v1.0/meals', methods=['GET'])
+@api_route.route('/bookmealapi/v1.0/meals', methods=['GET'])
 @is_loged_in
 @is_admin
 @token_required
@@ -974,7 +912,8 @@ def get_all_meals():
 
     """
 
-    meals = Meals.query.all()
+    """ meals = Meals.query.all() """
+    meals = Meals.get_all_meals()
 
     output = []
 
@@ -992,7 +931,7 @@ def get_all_meals():
     
 
 """ get all orders """
-@app.route('/bookmealapi/v1.0/orders', methods=['GET'])
+@api_route.route('/bookmealapi/v1.0/orders', methods=['GET'])
 @is_loged_in
 @is_admin
 @token_required
@@ -1028,7 +967,9 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    orders = Orders.query.all()
+    """ orders = Orders.query.all() """
+
+    orders = Orders.get_all_orders()
 
     output = []
 
@@ -1045,7 +986,7 @@ def get_all_orders():
     return jsonify({'transactions': output}), 200    
 
 """ get menu of the day """
-@app.route('/bookmealapi/v1.0/menu', methods=['GET'])
+@api_route.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @is_loged_in
 @token_required
 def get_menu():
@@ -1081,7 +1022,8 @@ def get_menu():
     """ Get menu for the day """
     
     # return jsonify({'menu_day': meals.menu_meals()}), 200
-    menus = Menu.query.all()
+    """ menus = Menu.query.all() """
+    menus = Menu.get_all_menus()
 
     output = []
 
@@ -1102,7 +1044,7 @@ def get_menu():
     return jsonify({'menu_day': output}), 200
 
 
-@app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
+@api_route.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @is_loged_in
 @token_required
 def delete_order_item(order_id):
@@ -1134,7 +1076,7 @@ def delete_order_item(order_id):
               default: Order Removed
 
     """
-
+    """
     order = Orders.query.filter_by(id=order_id).first()
 
     if not order:
@@ -1142,11 +1084,19 @@ def delete_order_item(order_id):
 
     db.session.delete(order)
     db.session.commit()
+    """
+
+    order = Orders.get_order_by_id(order_id)
+
+    if not order:
+        return jsonify({'message':'Meal Does Not Exisr'}), 404
+
+    order.delete_order()    
 
     return jsonify({'message':'Order Removed'}),200
 
 
-@app.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
+@api_route.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
 @is_loged_in
 @token_required
 def delete_menu(menu_id):
@@ -1178,7 +1128,7 @@ def delete_menu(menu_id):
               default: Menu Successfully removed
 
     """
-
+    """
     menu = Menu.query.filter_by(id=menu_id).first()
     
     if not menu:
@@ -1186,6 +1136,15 @@ def delete_menu(menu_id):
     
     db.session.delete(menu)
     db.session.commit() 
+    """
+
+    menu = Menu.get_menu_by_id(menu_id)
+
+    if not menu:
+        return jsonify({'message':'Menu Does Not Exist'}), 404
+
+    menu.delete_menu()
+
     return jsonify({'message':'Menu Successfully removed'}), 200
 
 

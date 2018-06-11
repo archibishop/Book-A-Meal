@@ -2,19 +2,21 @@ import os
 
 class Config(object):
     """ Parent Configuration file"""
-    DEBUG = False
-    DATABASE_URI = "postgresql://postgres:12345@localhost/book"
     SECRET_KEY = "secret123"
 
 class DevelopmentConfig(Config):
     """ Development Configuration file"""
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:12345@localhost/book"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
 
 class TestingConfig(Config):
     """ Testing Configuration file"""
-    TESING = True
+    TESTING = True
     DEBUG = True
-    DATABASE_URI = "postgresql://postgres: 12345@localhost/test_book"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:12345@localhost/test_book"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
 
 app_config = {
     "development": DevelopmentConfig,

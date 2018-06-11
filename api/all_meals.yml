@@ -1,8 +1,0 @@
-This should retuen all meals available in the system
-When the url is requested ate returned
----
-tags:
-  - meals
-responses:
-  200:
-    description: All meals are returned
