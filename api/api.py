@@ -18,11 +18,13 @@ app = Flask(__name__)
 app.testing = True
 app.secret_key = 'secret123'
 
+"""
 user = User()
 admin = Admin()
 meals = Meals()
 order = Order()
 menu = Menu()
+"""
 
 
 Swagger(app)
@@ -98,12 +100,21 @@ def sign_up():
         'email': email,
         'password': password,
     }
-    message = user.add_user(user_data)
+
+    user = User(first_name, last_name, email, password)
+    message = user.add_user()
 
     if message == "Email Exists":
         return jsonify({'message':'Email Already Exists'}), 400
     else: 
-        return jsonify({'meassage':'User Created','user': message}), 201
+        user_data = {
+            'id': message.id,
+            'first_name': message.first_name,
+            'last_name': message.last_name,
+            'email': message.email,
+            'password': message.password
+        }
+        return jsonify({'meassage':'User Created','user': user_data}), 201
            
 """ Login """
 @app.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
@@ -157,14 +168,16 @@ def login():
     password = request.get_json().get('password')
 
     
-    message_user = user.check_user_email_password(email, password)
-
+    """ message_user = user.check_user_email_password(email, password) """
+    message_user = User.check_user_email_password(email, password)
+    print(message_user)
     if message_user == True:
         session['logged_in'] = True
         session['userV'] = True
         return jsonify({'message': "Successfully login"}), 200
     else:
-        message_admin = admin.check_admin_email_password(email, password)
+        message_admin = Admin.check_admin_email_password(email, password)
+        print(message_admin)
         if message_admin == True:
             session['logged_in'] = True
             session['admin'] = True
@@ -176,7 +189,7 @@ def login():
 """ Add Meal """
 @app.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_loged_in
-@is_admin
+# @is_admin
 def add_meal():
     """
     add meal
@@ -243,14 +256,13 @@ def add_meal():
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
 
-    meal = {
-       
+    meal = { 
         'meal_name': meal_name,
         'price': price,
         'meal_type': meal_type
     }
-
-    meal_add = meals.add_meals(meal)
+    meal = Meals(meal_name, price, meal_type, 0)
+    meal_add = meal.add_meals()
     if meal_add == "Successfully Added Meal":
         return jsonify({'message': "Meal Successfully Added"}), 201
     else:
@@ -335,7 +347,8 @@ def select_meal():
         'price': price,
         'user_id': user_id
     }
-    message_order = order.place_order(transaction)
+    order = Order(meal_name, price, user_id)
+    message_order = order.place_order()
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 
@@ -426,13 +439,16 @@ def set_menu():
 
     # else:  
     #     menu = meals.update_meals_availability(meal_name)
+    
+    menu = Menu(meal_ids, user_id)
+    menu_details = menu.add_meals_menu()
     menu_data = {
-        'meal_ids': meal_ids,
-        'user_id': user_id
+        'meal_ids': menu_details.meal_ids,
+        'user_id': menu_details.user_id
     }
-    menu_details = menu.add_meals_menu(menu_data)
+    print(menu_data)
     return jsonify({'message':'Menu Successfully Created',\
-      'menu': menu_details}), 201
+      'menu': menu_data}), 201
 
 
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
@@ -518,11 +534,16 @@ def update_meal_option(meal_id):
          'meal_type' : meal_type
     }    
     
-    if meals.get_meals(int(meal_id)) == "No Meals Found":
+    if Meals.get_meals(int(meal_id)) == "No Meals Found":
         return jsonify({'message':'Meal Does Not Exist'}), 404
 
-    meal = meals.update_meals(int(meal_id), data)
-    return jsonify({'meal': meal}), 201
+    meal = Meals.update_meals(int(meal_id), data)
+    updated_meal = {
+        'meal_name': meal.meal_name,
+        'price': meal.price,
+        'meal_type': meal.meal_type
+    }
+    return jsonify({'meal': updated_meal}), 201
 
 """ Modify Order """
 
@@ -608,11 +629,16 @@ def update_order(order_id):
          'price' : price 
     }     
 
-    if order.get_order(int(order_id)) == "No Order Found":
+    if Order.get_order(int(order_id)) == "No Order Found":
         return jsonify({'message': "Meal Does Not Exist"}), 404
     else:      
-        order_update = order.update_order(int(order_id), data)
-        return jsonify({'order': order_update}), 201    
+        order_update = Order.update_order(int(order_id), data)
+        order = {
+          'meal_name': order_update.meal_name,
+          'price': order_update.price,
+          'user_id': order_update.user_id
+        }
+        return jsonify({'order': order, "message": "Test"}), 201    
 
 @app.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
 @is_loged_in
@@ -634,12 +660,17 @@ def update_menu(menu_id):
          'user_id' : user_id  
     }     
 
-    if menu.get_meal_menu(int(menu_id)) == "Menu Not Found":
+    if Menu.get_meal_menu(int(menu_id)) == "Menu Not Found":
         return jsonify({'message': "Menu Does Not Exist"}), 404
     else:      
-        menu_update = menu.update_meal_menu(int(menu_id), data)
+        menu_update = Menu.update_meal_menu(int(menu_id), data)
+        data = {
+          "meal_ids": menu_update.meal_ids,
+          "user_id": menu_update.user_id
+        }
+        
         return jsonify({'message': "Meal has been Updated in the menu",\
-          'menu': menu_update}), 201            
+          'menu': data}), 201            
 
 """ delete Meal Option """
 @app.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
@@ -677,9 +708,9 @@ def delete_meal_option(meal_id):
     """ Deleting Meal Option """
             
     meal_id = int(meal_id)
-    message_meal = meals.remove_meals(meal_id) 
+    message_meal = Meals.remove_meals(meal_id) 
     if message_meal == "Successfully Removed":
-        return jsonify({'Meals': meals.get_all_meals()}), 200
+        return jsonify({'Meals': Meals.get_all_meals()}), 200
     else:               
         return jsonify({'message':'Meal Not Found','id': ''+ str(meal_id)}), 404
 
@@ -718,8 +749,17 @@ def get_all_meals():
                         }]
 
     """
-    
-    return jsonify({'meals': meals.get_all_meals()}), 200
+    output = []
+    meals = Meals.get_all_meals()
+    for meal in meals:
+        data = {
+          'id': meal.id,
+          'meal_name': meal.meal_name,
+          'price': meal.price,
+          'meal_type': meal.meal_type
+        }
+        output. append(data)
+    return jsonify({'meals': output}), 200
 
 """ get all orders """
 
@@ -757,8 +797,17 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    
-    return jsonify({'transactions': order.get_all_orders()}), 200
+    output = []
+    orders = Order.get_all_orders()
+    for order in orders:
+        data = {
+            'id': order.id,
+            'meal_name': order.meal_name,
+            'price': order.price,
+            'meal_type': order.process_status
+        }
+        output. append(data)
+    return jsonify({'transactions': output}), 200
 
 """ get menu of the day """
 
@@ -797,14 +846,25 @@ def get_menu():
     """ Get menu for the day """
     
     # return jsonify({'menu_day': meals.menu_meals()}), 200
-    return jsonify({'menu_day': menu.get_full_menu()}), 200
+    output = []
+    menus = Menu.get_full_menu()
+    for menu in menus:
+        data = {
+            'id': menu.id,
+            'meal_name': menu.meal_ids,
+            'price': menu.user_id,
+            'created_at': menu.created_at,
+            'updated_at': menu.updated_at
+        }
+        output.append(data)
+    return jsonify({'menu_day': output}), 200
 
 
 @app.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @is_loged_in
 def delete_order_item(order_id):
     """ Documentation for deleting an order"""
-    message = order.remove_order(int(order_id))
+    message = Order.remove_order(int(order_id))
     if message == "No Order Found":
         return jsonify({'message':'Meal Does Not Exist'}), 404
     else:
@@ -814,7 +874,7 @@ def delete_order_item(order_id):
 @is_loged_in
 def delete_menu(menu_id):
     """ Documentation for deleting a enu"""
-    message = menu.remove_meal_menu(int(menu_id))
+    message = Menu.remove_meal_menu(int(menu_id))
     if message == "Menu Not Found":
         return jsonify({'message':'Menu Does Not Exist'}), 404
     else:

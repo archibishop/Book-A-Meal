@@ -1,4 +1,5 @@
 import datetime
+from .data import Data
 
 admin = [{
     'id': 1,
@@ -12,11 +13,28 @@ admin = [{
 
 
 class Admin():
-    def __init__(self):
+    def __init__(self, business_name, first_name, last_name, email, password):
+        self.business_name = business_name
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password =password
+        id = len(Data.admin) + 1 
+        self.id = id
+
+        """
         self.admins = admin
         self.counter = 0
+        """
 
-    def add_admin(self, data):
+    def add_admin(self):
+        for admin in Data.admin:
+            if admin.email == self.email:
+                return "Admin Already Exist"
+        Data.admin.append(self)
+        return "Successfully Added"
+
+        """
         admin = data
         if len(self.admins) == 0:
             new_id = 1
@@ -27,27 +45,34 @@ class Admin():
         admin['updated_at'] = datetime.datetime.now()
         self.admins.append(admin)
         return "Successfully Added"
-
-    def get_admin(self, value):
-        for admin in self.admins:
+        """
+    
+    @staticmethod
+    def get_admin(value):
+        for admin in Data.admin:
             if admin['id'] == value:
                 return admin
         return "No Admin Found"
 
     """ add email test class """
-    def check_admin_email_password(self, email, password):
-        for admin in self.admins:
-            if admin['email'] == email:
-                if admin['password'] == password:
+    @staticmethod
+    def check_admin_email_password(email, password):
+        for admin in Data.admin:
+            print(len(Data.admin))
+            print(password)
+            print(email)
+            if admin.email == email:
+                if admin.password == password:
                     return True
                 else:
                     return "Wrong Password or UserName"           
         return "No User Found With That Email"    
-
-    def remove_admin(self, value):
-        for admin in self.admins:
+ 
+    @staticmethod
+    def remove_admin(value):
+        for admin in Data.admin:
             if admin['id'] == value:
-                self.admins.remove(admin)
+                Data.admin.remove(admin)
                 return "Successfully Removed"
         return "No Admin Found"
 

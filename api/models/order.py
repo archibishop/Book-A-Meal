@@ -1,4 +1,5 @@
 import datetime
+from .data import Data
 
 transactions = [
     {
@@ -31,11 +32,22 @@ transactions = [
 ]
 
 class Order():
-    def __init__(self):
-        self.orders = transactions
-        self.counter = 0
+    def __init__(self, meal_name, price, user_id):
+        # self.orders = transactions
+        # self.counter = 0
+        self.meal_name = meal_name
+        self.price = price
+        self.user_id = user_id
+        self.process_status = "pending"
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
+        id = len(Data.orders) + 1
+        self.id = id
 
-    def place_order(self, data):
+    def place_order(self):
+        Data.orders.append(self)
+        return "Successfully Made Order"
+        """
         order_add = data
         if len(self.orders) == 0:
             new_id = 1
@@ -46,21 +58,25 @@ class Order():
         order_add['updated_at'] = datetime.datetime.now()
         self.orders.append(order_add)
         return "Successfully Made Order"
+        """
 
-    def get_order(self, value):
-        for order in self.orders:
-            if order['id'] == value:
+    @staticmethod
+    def get_order(value):
+        for order in Data.orders:
+            if order.id == value:
                 return order
         return "No Order Found"
 
     """ test case for this """
-    def get_all_orders(self):
-        return self.orders    
+    @staticmethod
+    def get_all_orders():
+        return Data.orders    
 
-    def get_orders_user(self, value):
+    @staticmethod
+    def get_orders_user(value):
         ordersUser = []
-        for order in self.orders:
-            if order['user_id'] == value:
+        for order in Data.orders:
+            if order.user_id == value:
                 ordersUser.append(order)
         if ordersUser != []:
             return ordersUser
@@ -68,16 +84,18 @@ class Order():
             return ordersUser
 
 
-    def remove_order(self, value):
-        for order in self.orders:
-            if order['id'] == value:
-                self.orders.remove(order)
+    @staticmethod
+    def remove_order(value):
+        for order in Data.orders:
+            if order.id == value:
+                Data.orders.remove(order)
                 return "Successfully Removed"
         return "No Order Found"
 
-    def update_order(self, value, data):
-        order = self.get_order(value)
-        order['meal_name'] = data['meal_name']
-        order['price'] = data['price']
-        order['updated_at'] = datetime.datetime.now()
+    @staticmethod
+    def update_order( value, data):
+        order = Order.get_order(value)
+        order.meal_name = data['meal_name']
+        order.price = data['price']
+        order.updated_at = datetime.datetime.now()
         return order
