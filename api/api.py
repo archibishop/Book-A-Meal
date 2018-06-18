@@ -417,11 +417,7 @@ def set_menu():
     if not request.get_json() or 'meal_ids' not in request.get_json()\
     or 'user_id' not in request.get_json():
         abort(400)
-    """    
-    meal_name = request.get_json().get('meal_name')
-    price = request.get_json().get('price')
-    meal_type = request.get_json().get('meal_type')
-    """
+ 
 
     """ We need to check if the id exist in the meals"""
 
@@ -430,15 +426,6 @@ def set_menu():
 
     if len(meal_ids) == 0:
         return jsonify({'message':'No meals sent for menu'}), 400
-    
-    # for meal_id in meal_ids:
-    #     return jsonify({'message':'Testng Code'}), 400
-
-    # if meals.get_meals_name(meal_name) == "No Meals Found":
-    #     return jsonify({'message':'Meal Does Not Exist'}), 404
-
-    # else:  
-    #     menu = meals.update_meals_availability(meal_name)
     
     menu = Menu(meal_ids, user_id)
     menu_details = menu.add_meals_menu()
