@@ -2,34 +2,6 @@
 import datetime
 from .data import Data
 
-
-menu = [
-    {
-            "created_at": "Sun, 13 May 2018 05:24:15 GMT",
-            "id": 1,
-            "meal_ids": [
-                6,
-                5,
-                4
-            ],
-            "updated_at": "Sun, 13 May 2018 05:24:15 GMT",
-            "user_id": 1
-    },
-    {
-            "created_at": "Sun, 13 May 2018 05:24:15 GMT",
-            "id": 2,
-            "meal_ids": [
-                1,
-                2,
-                4
-            ],
-            "updated_at": "Sun, 13 May 2018 05:24:15 GMT",
-            "user_id":3
-    }
-
-
-]
-
 class Menu():
     """ Menu Class """
     def __init__(self, meal_ids, user_id):
@@ -39,8 +11,6 @@ class Menu():
         self.updated_at = datetime.datetime.now()
         id = len(Data.menu) + 1
         self.id = id
-        # self.menu = menu
-        # self.counter = 0
 
     def add_meals_menu(self):
         """ Menu Class """
@@ -59,7 +29,11 @@ class Menu():
     @staticmethod
     def get_full_menu():
         """ Getting Full Menu """
-        return Data.menu    
+        output = []
+        for menu in Data.menu:
+            if menu.created_at.date() == datetime.datetime.today().date():
+                output.append(menu)
+        return output
 
     @staticmethod
     def remove_meal_menu(value):
