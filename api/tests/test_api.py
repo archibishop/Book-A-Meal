@@ -14,6 +14,11 @@ BASE_URL = 'http://127.0.0.1:5000/bookmealapi/v1.0/meals/'
 
 
 class api_test_case(unittest.TestCase):
+    update_details = {
+        "meal_ids": [6, 2, 7, 4],
+        "user_id": 3
+    }
+    
     def setUp(self):
         self.app = app.test_client()
 
@@ -369,10 +374,7 @@ class api_test_case(unittest.TestCase):
                                 data=json.dumps(details), content_type='application/json')
         self.assertEqual(response.status_code, 400) 
 
-    update_details = {
-        "meal_ids": [6, 2, 7, 4],
-        "user_id": 3
-    }
+    
     def test_update_menu_nonexistant(self):
         """ Incomplete json sent """
         self.login()

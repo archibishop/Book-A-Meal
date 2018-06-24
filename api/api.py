@@ -84,22 +84,15 @@ def sign_up():
     """
     """ Regisrering User """
     
-    if not request.get_json() or 'fname' not in request.get_json()\
-    or 'lname' not in request.get_json() or 'email' not in request.get_json()\
-    or 'password' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = User.validate(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
-    first_name = request.get_json().get('fname')
-    last_name = request.get_json().get('lname')
-    email = request.get_json().get('email')
-    password = request.get_json().get('password')
-
-    user_data = {
-        'first_name': first_name,
-        'last_name': last_name,
-        'email': email,
-        'password': password,
-    }
+    first_name = data.get('fname')
+    last_name = data.get('lname')
+    email = data.get('email')
+    password = data.get('password')
 
     user = User(first_name, last_name, email, password)
     message = user.add_user()
@@ -158,26 +151,22 @@ def login():
 
     """
     """ login  """
-    
-    
-    if not request.get_json() or 'email' not in request.get_json()\
-     or 'password' not in request.get_json():
-        abort(400)
 
-    email = request.get_json().get('email')
-    password = request.get_json().get('password')
+    data = request.get_json()
+    message = User.validate_login(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
-    
-    """ message_user = user.check_user_email_password(email, password) """
+    email = data.get('email')
+    password = data.get('password')
+
     message_user = User.check_user_email_password(email, password)
-    print(message_user)
     if message_user == True:
         session['logged_in'] = True
         session['userV'] = True
         return jsonify({'message': "Successfully login"}), 200
     else:
         message_admin = Admin.check_admin_email_password(email, password)
-        print(message_admin)
         if message_admin == True:
             session['logged_in'] = True
             session['admin'] = True
@@ -248,13 +237,14 @@ def add_meal():
     """
     """ Adding meal  """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Meals.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
-    meal_name = request.get_json().get('meal_name')
-    price = request.get_json().get('price')
-    meal_type = request.get_json().get('meal_type')
+    meal_name = data.get('meal_name')
+    price = data.get('price')
+    meal_type = data.get('meal_type')
 
     meal = { 
         'meal_name': meal_name,
@@ -269,8 +259,6 @@ def add_meal():
         abort(400)    
 
 """ Select Meal """
-
-
 @app.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @is_loged_in
 
@@ -332,21 +320,15 @@ def select_meal():
     """
     """ Selecting Meal """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json() or 'userId' not in request.get_json():
-        abort(400)
-    meal_name = request.get_json().get('meal_name')
-    price = request.get_json().get('price')
-    user_id = request.get_json().get('userId')
+    data = request.get_json()
+    message = Order.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
+    
+    meal_name = data.get('meal_name')
+    price = data.get('price')
+    user_id = data.get('userId')
 
-    if type(price) is not int and type(user_id) is not int:
-        abort(400)
-
-    transaction = {      
-        'meal_name': meal_name,
-        'price': price,
-        'user_id': user_id
-    }
     order = Order(meal_name, price, user_id)
     message_order = order.place_order()
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
@@ -433,7 +415,6 @@ def set_menu():
         'meal_ids': menu_details.meal_ids,
         'user_id': menu_details.user_id
     }
-    print(menu_data)
     return jsonify({'message':'Menu Successfully Created',\
       'menu': menu_data}), 201
 
@@ -505,15 +486,14 @@ def update_meal_option(meal_id):
     """
     """ Updating meals """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'meal_type' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Meals.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({"message":message}), 400
+
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
     meal_type = request.get_json().get('meal_type')
-
-    if type(price) is not int:
-        abort(400)
 
     data = {
          'meal_name' : meal_name,
@@ -601,15 +581,15 @@ def update_order(order_id):
     """
     """ Modify Order """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Order.validate_json_1(data)
+
+    if message != "Valid Data Sent":
+        return jsonify({"message": message}), 400
+  
 
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
-
-    if type(price) is not int:
-        abort(400)
 
     data = {
          'meal_name' : meal_name,  
@@ -632,15 +612,14 @@ def update_order(order_id):
 @is_admin
 def update_menu(menu_id):
     
-    if not request.get_json() or 'meal_ids' not in request.get_json()\
-    or 'user_id' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Menu.validate_json(data)
+
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
     meal_ids = request.get_json().get('meal_ids')
     user_id = request.get_json().get('user_id')
-
-    if type(user_id) is not int:
-        abort(400)
 
     data = {
          'meal_ids' : meal_ids,  

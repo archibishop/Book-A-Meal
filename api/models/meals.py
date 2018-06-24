@@ -1,31 +1,8 @@
 import datetime
 from .data import Data
 
-# meals = [
-#     {
-#         'id': 1,
-#         'meal_name': "ricebeans",
-#         'price': 3000,
-#         'meal_type': "lunch",
-#         'availability': 0,
-#         'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
-#         'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
-#     },
-#     {
-#         'id': 2,
-#         'meal_name': 'rolex',
-#         'price': 4000,
-#         'meal_type': 'lunch',
-#         'availability': 0,
-#         'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
-#         'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
-#     }
-# ]
-
 class Meals():
     def __init__(self, meal_name, price, meal_type, availability):
-        # self.meals = meals
-        # self.counter = 0
         self.meal_name = meal_name
         self.price = price
         self.meal_type = meal_type
@@ -86,18 +63,6 @@ class Meals():
         meal.availability = 1
         return meal
 
-    def remove_meal_menu(self, value):
-        """ for meal in self.meals:
-             if meal['availability'] == 1:
-                 if meal[]
-         meal = self.get_meals(value)
-        You should use the meal name to delte
-         if meal == "No Meals Found":
-             return "No Meals Found"  
-         else:
-             meal['availability'] = 0 
-             return meal """
-
     @staticmethod
     def menu_meals(self):
         output = []
@@ -105,5 +70,19 @@ class Meals():
             if meal.availability == 1:
                 output.append(meal)
         return output
+
+    @staticmethod 
+    def validate_json(data):
+        if data is None:
+            return "No Data Sent"
+        if 'meal_name' not in data or 'price' not in data \
+            or 'meal_type' not in data:
+            return "Missing Values in Data Sent"
+        if data.get('meal_name') == '' or data.get('price') == ''\
+            or data.get('meal_type') == '':
+            return "You sent some empty strings"
+        if type(data.get('price')) is not int:
+            return "Price Should be Integer"  
+        return "Valid Data Sent" 
 
     

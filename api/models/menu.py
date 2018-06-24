@@ -52,3 +52,15 @@ class Menu():
         menu_item.meal_ids = data['meal_ids']
         menu_item.user_id = data['user_id']
         return menu_item 
+
+    @staticmethod
+    def validate_json(data):
+        if data is None:
+            return "No Data Sent"
+        if 'meal_ids' not in data or 'user_id' not in data:
+            return "Missing Values in Data Sent"    
+        if data.get('meal_ids') == '' or data.get('user_id') == '':
+            return "You sent some empty strings"
+        if type(data.get('user_id')) is not int:
+            return "User Id should be Integer"
+        return "Valid Data Sent"    

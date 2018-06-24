@@ -1,16 +1,6 @@
 import datetime
 from .data import Data
 
-admin = [{
-    'id': 1,
-    'business_name': 'HAPPY FOODS',
-    'location': 'NAKULABYE',
-    'first_name': 'steven',
-    'last_name': 'walube',
-    'email': 'steven@gmail.com',
-    'password': '54321',
-}]
-
 
 class Admin():
     def __init__(self, business_name, first_name, last_name, email, password):
@@ -22,11 +12,6 @@ class Admin():
         id = len(Data.admin) + 1 
         self.id = id
 
-        """
-        self.admins = admin
-        self.counter = 0
-        """
-
     def add_admin(self):
         for admin in Data.admin:
             if admin.email == self.email:
@@ -34,18 +19,6 @@ class Admin():
         Data.admin.append(self)
         return "Successfully Added"
 
-        """
-        admin = data
-        if len(self.admins) == 0:
-            new_id = 1
-        else:    
-            new_id = self.admins[-1].get("id") + 1
-        admin['id'] = new_id
-        admin['created_at'] = datetime.datetime.now()
-        admin['updated_at'] = datetime.datetime.now()
-        self.admins.append(admin)
-        return "Successfully Added"
-        """
     
     @staticmethod
     def get_admin(value):
@@ -58,9 +31,6 @@ class Admin():
     @staticmethod
     def check_admin_email_password(email, password):
         for admin in Data.admin:
-            print(len(Data.admin))
-            print(password)
-            print(email)
             if admin.email == email:
                 if admin.password == password:
                     return True
@@ -94,3 +64,19 @@ class Admin():
         admin['email'] = data['email']
         admin['password'] = data['password']
         return admin
+
+    @staticmethod
+    def validate(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'fname' not in data or 'lname' not in data or 'email' not in data\
+                or 'password' not in data or 'business_name' not in data or \
+                'locaton' not in data:
+            return "Some values missing in json data sent"
+        if data.get('fname') == '' or data.get('lname') == '' or \
+                data.get('email') == '' or data.get('password') == '' or \
+                data.get('business_name') == '' or data.get('location') == '':
+            return "You sent some empty strings"
+        if len(data.get('password')) < 5:
+            return "Password provided is too short.A minimum of 5 characters required"    
+        return "Valid Data Sent"
