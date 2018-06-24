@@ -284,3 +284,11 @@ class Menu(db.Model):
         if len(data.get('meal_ids')) == 0:
             return "Meal ids is Empty"
         return "Valid Data Sent"
+
+    @staticmethod
+    def convert_into_list(menu):
+        converted_meal_ids = []
+        for idx in menu.meal_ids.split(';'):
+            if idx != "":
+                converted_meal_ids.append(int(idx))
+        return converted_meal_ids        

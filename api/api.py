@@ -436,11 +436,9 @@ def set_menu():
     menu_info = {}
     menu_info['id'] = menu.id
     menu_info['user_id'] = menu.user_id
+
     """ Converting the meal ids into a list again """
-    converted_meal_ids = []
-    for idx in menu.meal_ids.split(';'):
-        if idx != "":
-            converted_meal_ids.append(int(idx))
+    converted_meal_ids = Menu.convert_into_list(menu)
 
     menu_info['meal_ids'] = converted_meal_ids
     menu_info['created_at'] = menu.created_at
@@ -727,10 +725,7 @@ def update_menu(menu_id):
     menu_info['id'] = menu.id
     menu_info['user_id'] = menu.user_id
     """ Converting the meal ids into a list again """
-    converted_meal_ids = []
-    for idx in menu.meal_ids.split(';'):
-        if idx != "":
-            converted_meal_ids.append(int(idx))
+    converted_meal_ids = Menu.convert_into_list(menu)
 
     menu_info['meal_ids'] = converted_meal_ids
     menu_info['created_at'] = menu.created_at
@@ -936,10 +931,7 @@ def get_menu():
         menu_info['id'] = menu.id
         menu_info['user_id'] = menu.user_id
         """ Converting the meal ids into a list again """
-        converted_meal_ids = []
-        for idx in menu.meal_ids.split(';'):
-            if idx != "":
-                converted_meal_ids.append(int(idx))
+        converted_meal_ids = Menu.convert_into_list(menu)
 
         menu_info['meal_ids'] = converted_meal_ids
         menu_info['created_at'] = menu.created_at
