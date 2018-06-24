@@ -45,25 +45,43 @@ class User(db.Model):
         user = User.query.filter_by(email=email).first()
         if not user:
             return "No User"
-        return user    
+        return user
+
+    @staticmethod
+    def validate_json(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'fname' not in data or 'lname' not in data or 'email' not in data\
+                or 'password' not in data or 'role_id' not in data:
+            return "Some values missing in json data sent"
+        if data.get('fname') == '' or data.get('lname') == '' or data.get('email') == ''\
+                or data.get('password') == '':
+            return "You sent some empty strings"
+        if type(data.get('role_id')) is not int:
+            return "Role id should be an integer"   
+        if len(data.get('password')) < 5:
+            return "Password provided is too short.A minimum of 5 characters required"
+        return "Valid Data Sent"
 
     
-    
-"""
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    business_name = db.Column(db.String(50))
-    location = db.Column(db.String(50))
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime(timezone=True),\
-    default=datetime.datetime.utcnow)
-    updated_at = db.Column(db.DateTime(timezone=True),\
-    onupdate=datetime.datetime.utcnow)
-    menu = db.relationship('Menu', backref='admin', lazy=True)
-"""    
+    @staticmethod
+    def validate_json_1(data):  
+        if 'business_name' not in data or 'location' not in data:
+            return "Some values missing in json data sent"
+        if data.get('business_name') == '' or data.get('location') == '':
+            return "You sent some empty strings"  
+        return "Valid Data Sent" 
+
+    @staticmethod
+    def validate_json_login(data):
+        if data is None:
+            return "No Data Sent"
+        if 'email' not in data or 'password' not in data:
+            return "Some values missing in json data sent"
+        if data.get('email') == '' or data.get('password') == '':
+            return "You sent some empty strings"
+        return "Valid Data Sent"
+  
 
 class Meals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,7 +125,6 @@ class Meals(db.Model):
         meal = Meals.get_meal_by_id(id)
         if not meal:
             return "Meal Does Not Exist"
-        #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
         if meal.meal_name != meal_name:
             meal.meal_name = meal_name
 
@@ -115,6 +132,32 @@ class Meals(db.Model):
         meal.meal_type = meal_type
         db.session.commit()
         return meal
+
+    @staticmethod
+    def validate_json(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'meal_name' not in data or 'price' not in data or\
+            'meal_type' not in data:
+            return "Some values missing in json data sent"
+        if data.get('meal_name') == '' or data.get('meal_type') == '':
+            return "You sent some empty strings"
+        if type(data.get('price')) is not int:
+            return "Price should be an integer"
+        return "Valid Data Sent"
+
+    @staticmethod
+    def validate_json_1(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'meal_name' not in data or 'price' not in data or\
+                'user_id' not in data:
+            return "Some values missing in json data sent"
+        if data.get('meal_name') == '':
+            return "You sent some empty strings"
+        if type(data.get('price')) is not int or type(data.get('user_id')) is not int:
+            return "Price or User id should be an integer"
+        return "Valid Data Sent"
 
 
 class Orders(db.Model):
@@ -164,6 +207,20 @@ class Orders(db.Model):
         order.price = price
         db.session.commit()
         return order
+
+    @staticmethod
+    def validate_json(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'meal_name' not in data or 'price' not in data:
+            return "Some values missing in json data sent"
+        if type(data.get('price')) is not int:
+            return "Price should be Integer"
+        if data.get('meal_name') == '':
+            return "Meal Name is Empty"
+        return "Valid Data Sent"
+    
+        
 
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -215,3 +272,15 @@ class Menu(db.Model):
         menu.meal_ids = meal_ids_string
         db.session.commit()
         return menu
+
+    @staticmethod
+    def validate_json(data):
+        if data is None:
+            return "No JSON DATA sent"
+        if 'meal_ids' not in data or 'user_id' not in data:
+            return "Some values missing in json data sent"
+        if type(data.get('user_id')) is not int:
+            return "User Id should be Integer"
+        if len(data.get('meal_ids')) == 0:
+            return "Meal ids is Empty"
+        return "Valid Data Sent"

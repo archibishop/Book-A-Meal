@@ -5,3 +5,4 @@ env
 .pytest_cache/v/cache
 .vscode/
 *.DS_Store
+*.pytest_cache

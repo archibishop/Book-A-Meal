@@ -74,30 +74,29 @@ def sign_up():
 
     """
     """ Regisrering User """
-    
-    if not request.get_json() or 'fname' not in request.get_json()\
-    or 'lname' not in request.get_json() or 'email' not in request.get_json()\
-    or 'password' not in request.get_json() or 'role_id' not in request.get_json():
-        abort(400)
-    
-    role_id = request.get_json().get('role_id')
-    if role_id == 1:
-        if 'business_name' not in request.get_json() \
-              or 'location' not in request.get_json():
-            abort(400)
-        else:
-            business_name = request.get_json().get('business_name')
-            location = request.get_json().get('location')    
 
-    email = request.get_json().get('email')
+    data = request.get_json()
+    message = User.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
+    
+    role_id = data.get('role_id')
+    if role_id == 1:
+        if User.validate_json_1(data) != "Valid Data Sent":
+            return jsonify({'message':message}), 400
+        else:
+            business_name = data.get('business_name')
+            location = data.get('location')    
+
+    email = data.get('email')
     email_exists = User.query.filter_by(email=email).first()
 
     if email_exists != None:
         return jsonify({'message':'Email Already Exists'}), 400
 
-    first_name = request.get_json().get('fname')
-    last_name = request.get_json().get('lname')
-    password = request.get_json().get('password')
+    first_name = data.get('fname')
+    last_name = data.get('lname')
+    password = data.get('password')
     hashed_password = generate_password_hash(password, method='sha256')    
     
     if role_id == 2 :
@@ -109,11 +108,6 @@ def sign_up():
                       business_name=business_name, location=location ) 
     
     new_user.save()
-    """
-    db.session.add(new_user)
-    db.session.commit()
-    """
-
     return jsonify({'message' : 'New user created!'}), 201
 
 """ Login """
@@ -165,15 +159,13 @@ def login():
     """
     """ login  """
     
-    
-    if not request.get_json() or 'email' not in request.get_json()\
-     or 'password' not in request.get_json():
-        abort(400)
+    data =  request.get_json()
+    message = User.validate_json_login(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
-    email = request.get_json().get('email')
-    password = request.get_json().get('password')
-
-    """ user = User.query.filter_by(email=email).first() """
+    email = data.get('email')
+    password = data.get('password')
 
     user = User.get_user_email(email)
     
@@ -186,7 +178,6 @@ def login():
             session['userV'] = True
         else:
             session['admin'] = True    
-        # token = jwt.encode({'id':user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
         token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow(
         ) + datetime.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
         return jsonify({'message':'Successfully login','token': token.decode('UTF-8')}), 200
@@ -264,9 +255,10 @@ def add_meal():
     """
     """ Adding meal  """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json() or 'meal_type' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Meals.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
@@ -275,7 +267,6 @@ def add_meal():
     if type(price) is not int:
         abort(400)    
 
-    """ meal_exists = Meals.query.filter_by(meal_name=meal_name).first() """
     meal_exists = Meals.get_meal_by_name(meal_name)
 
     if meal_exists != None:
@@ -283,10 +274,6 @@ def add_meal():
 
     meal = Meals(meal_name=meal_name, price=price, meal_type=meal_type)
     meal.save()
-    """
-    db.session.add(meal)
-    db.session.commit()
-    """
 
     return jsonify({'message' : 'Meal Successfully Added'}), 201      
 
@@ -340,24 +327,19 @@ def select_meal():
               default: Transaction Successfully Made
     """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json() or 'userId' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Meals.validate_json_1(data)
+    print(message)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
+
     meal_name = request.get_json().get('meal_name')
     price = request.get_json().get('price')
-    user_id = request.get_json().get('userId')
-
-    """
-    Add check for if user id exists in the user table before it is added
-    """
+    user_id = request.get_json().get('user_id')
 
     if type(price) is not int and type(user_id) is not int:
         abort(400)
-    """
-    meal = Meals.query.filter_by(meal_name=meal_name).first()
-    if not meal:
-        return jsonify({'message': 'Meal Not Found'}), 404
-    """
+  
     meal = Meals.get_meal_by_name(meal_name)
     if not meal:
         return jsonify({'message': 'Meal Not Found'}), 404
@@ -365,10 +347,6 @@ def select_meal():
     process_status = "Pending"
     order = Orders(meal_name=meal_name, price=price, user_id=user_id, process_status=process_status)
     order.save()
-    """
-    db.session.add(order)
-    db.session.commit()
-    """
 
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
@@ -434,29 +412,16 @@ def set_menu():
 
     """
 
-    """ Setting menu 
-       We need to cocatenate the items in the lsit with a special character into a string
-       And when retrieving it we return it into a string
+    """ Setting menu """
+    data = request.get_json()
+    message = Menu.validate_json(data)
+    print(message)
+    if message != "Valid Data Sent":
+        jsonify({'message': message}), 400
 
-    """
+    meal_ids = data.get('meal_ids')
+    user_id = data.get('user_id')
     
-    if not request.get_json() or 'meal_ids' not in request.get_json()\
-    or 'user_id' not in request.get_json():
-        abort(400)
-
-    """ We need to check if the id exist in the meals"""
-
-    meal_ids = request.get_json().get('meal_ids')
-    user_id = request.get_json().get('user_id')
-
-    if len(meal_ids) == 0:
-        return jsonify({'message':'No meals sent for menu'}), 400
-    
-    """
-    caterer = Menu.query.filter_by(user_id=user_id).first()
-    if caterer is not None:
-        return jsonify({'message': 'Caterer Already Set Menu For the Day'}), 400
-    """
     caterer = Menu.get_menu_by_user_id(user_id) 
     if caterer is not None:
         return jsonify({'message': 'Caterer Already Set Menu For the Day'}), 400   
@@ -466,10 +431,6 @@ def set_menu():
         meal_ids_string += ';%s' % ids 
 
     menu = Menu(user_id=user_id, meal_ids=meal_ids_string)
-    """
-    db.session.add(menu)
-    db.session.commit()
-    """
     menu.save()
 
     menu_info = {}
@@ -564,31 +525,17 @@ def update_meal_option(meal_id):
 
     """
     """ Updating meals """
-    
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'meal_type' not in request.get_json():
-        abort(400)
-    meal_name = request.get_json().get('meal_name')
-    price = request.get_json().get('price')
-    meal_type = request.get_json().get('meal_type')
+    data = request.get_json()
+    message = Meals.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
+
+    meal_name = data.get('meal_name')
+    price = data.get('price')
+    meal_type = data.get('meal_type')
 
     if type(price) is not int:
         abort(400)
-
-    """
-    meal = Meals.query.filter_by(id=meal_id).first()
-
-    if not meal:
-        return jsonify({'message':'Meal Does Not Exist'}), 400
-
-    #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
-    if meal.meal_name != meal_name:
-        meal.meal_name =  meal_name
-
-    meal.price = price
-    meal.meal_type = meal_type
-    db.session.commit()
-    """
 
     meal = Meals.update_meal(meal_id, meal_name, price, meal_type)
 
@@ -676,28 +623,16 @@ def update_order(order_id):
     """
     """ Modify Order """
     
-    if not request.get_json() or 'meal_name' not in request.get_json()\
-    or 'price' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Orders.validate_json(data)
+    print(message)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
-    meal_name = request.get_json().get('meal_name')
-    price = request.get_json().get('price')
+    meal_name = data.get('meal_name')
+    price = data.get('price')
 
-    if type(price) is not int:
-        abort(400)
-    """
-    order = Orders.query.filter_by(id=order_id).first()
-  
-    if not order:
-        return jsonify({'message':'Order Does Not Exist'}), 404
     
-    #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
-    if order.meal_name != meal_name:
-        order.meal_name = meal_name
-
-    order.price = price 
-    db.session.commit()
-    """
     order = Orders.update_order(order_id, meal_name, price)
 
     if order == "Order does not exist":
@@ -776,32 +711,15 @@ def update_menu(menu_id):
     """
      Reciving the string for meal_ids and spliting it 
     """    
-    if not request.get_json() or 'meal_ids' not in request.get_json()\
-    or 'user_id' not in request.get_json():
-        abort(400)
+    data = request.get_json()
+    message = Menu.validate_json(data)
+    if message != "Valid Data Sent":
+        return jsonify({'message': message}), 400
 
     meal_ids = request.get_json().get('meal_ids')
     user_id = request.get_json().get('user_id')
 
-    if type(user_id) is not int:
-        abort(400)
-
-    """ menu = Menu.query.filter_by(id=menu_id).first() """
-    """
-    menu = Menu.get_menu_by_id(menu_id)
-    if not menu:
-        return jsonify({'message': 'Menu Does Not Exist'}), 404
-
-    meal_ids_string = ""
-    for ids in meal_ids:
-        if ids != "":
-           meal_ids_string += ';%s' % ids 
-
-    menu.meal_ids = meal_ids_string
-    db.session.commit()
-    """
     menu = Menu.update_menu(menu_id, meal_ids)
-    print(menu)
     if menu == "No Meal Found":
         return jsonify({'message': 'Menu Does Not Exist'}), 404
 
@@ -856,15 +774,6 @@ def delete_meal_option(meal_id):
 
     """
     """ Deleting Meal Option """
-    """
-    meal = Meals.query.filter_by(id=meal_id).first()
-
-    if not meal:
-        return jsonify({'message':'Meal Not Found'}), 404
-
-    db.session.delete(meal)
-    db.session.commit()
-    """
 
     meal = Meals.get_meal_by_id(meal_id)
 
@@ -912,7 +821,6 @@ def get_all_meals():
 
     """
 
-    """ meals = Meals.query.all() """
     meals = Meals.get_all_meals()
 
     output = []
@@ -967,7 +875,6 @@ def get_all_orders():
 
     """
     """ Get all orders """
-    """ orders = Orders.query.all() """
 
     orders = Orders.get_all_orders()
 
@@ -1020,9 +927,6 @@ def get_menu():
 
     """
     """ Get menu for the day """
-    
-    # return jsonify({'menu_day': meals.menu_meals()}), 200
-    """ menus = Menu.query.all() """
     menus = Menu.get_all_menus()
 
     output = []
@@ -1076,15 +980,6 @@ def delete_order_item(order_id):
               default: Order Removed
 
     """
-    """
-    order = Orders.query.filter_by(id=order_id).first()
-
-    if not order:
-        return jsonify({'message':'Meal Does Not Exist'}), 404
-
-    db.session.delete(order)
-    db.session.commit()
-    """
 
     order = Orders.get_order_by_id(order_id)
 
@@ -1127,15 +1022,6 @@ def delete_menu(menu_id):
               description: delete message
               default: Menu Successfully removed
 
-    """
-    """
-    menu = Menu.query.filter_by(id=menu_id).first()
-    
-    if not menu:
-        return jsonify({'message':'Menu Does Not Exist'}), 404    
-    
-    db.session.delete(menu)
-    db.session.commit() 
     """
 
     menu = Menu.get_menu_by_id(menu_id)

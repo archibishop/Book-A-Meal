@@ -345,7 +345,7 @@ class api_test_case(unittest.TestCase):
         details = {
             "meal_name": "katogo",
             "price": "2000", 
-            "userId": "2"
+            "user_id": "2"
         }
         response = self.client.post("/bookmealapi/v1.0/orders",\
             data=json.dumps(details), content_type='application/json',\
@@ -388,7 +388,7 @@ class api_test_case(unittest.TestCase):
         details = {
             "meal_name": "katogo", 
             "price": 2000, 
-            "userId": 1
+            "user_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",\
             data=json.dumps(details), content_type='application/json',\
@@ -708,7 +708,7 @@ class api_test_case(unittest.TestCase):
         details = {
             "meal_name": "katogo",
             "price": 2000,
-            "userId": 1
+            "user_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",
             data=json.dumps(details), content_type='application/json',
@@ -912,7 +912,7 @@ class api_test_case(unittest.TestCase):
         details = {
             "meal_name": "katogo",
             "price": 2000,
-            "userId": 1
+            "user_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",
             data=json.dumps(details), content_type='application/json',
@@ -1026,7 +1026,7 @@ class api_test_case(unittest.TestCase):
         details = {
             "meal_name": "katogo",
             "price": 2000,
-            "userId": 1
+            "user_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",
             data=json.dumps(details), content_type='application/json',
