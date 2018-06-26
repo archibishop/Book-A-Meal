@@ -1,5 +1,6 @@
 import datetime
 from .data import Data
+from validate_email import validate_email
 
 
 class User():
@@ -23,7 +24,7 @@ class User():
     def add_user(self):
         for user in Data.users:
             if user.email == self.email:
-                return "Email Exists"
+                return "Email Exists"    
         Data.users.append(self)
         return self
 
@@ -77,6 +78,9 @@ class User():
         if data.get('fname') == '' or data.get('lname') == '' or data.get('email') == ''\
                 or data.get('password') == '':
             return "You sent some empty strings"  
+        is_valid = validate_email(data.get('email'))
+        if not is_valid:
+            return "Wrong Email Format Sent"
         if len(data.get('password')) < 5:
             return "Password provided is too short.A minimum of 5 characters required"
         return "Valid Data Sent"

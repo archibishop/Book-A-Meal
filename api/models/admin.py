@@ -1,5 +1,6 @@
 import datetime
 from .data import Data
+from validate_email import validate_email
 
 
 class Admin():
@@ -73,6 +74,9 @@ class Admin():
                 or 'password' not in data or 'business_name' not in data or \
                 'locaton' not in data:
             return "Some values missing in json data sent"
+        is_valid = validate_email(data.get('email'))
+        if not is_valid:
+            return "Wrong Email Format Sent"
         if data.get('fname') == '' or data.get('lname') == '' or \
                 data.get('email') == '' or data.get('password') == '' or \
                 data.get('business_name') == '' or data.get('location') == '':
