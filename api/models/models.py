@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify
+from validate_email import validate_email
 import datetime
 from api import db
 
@@ -57,6 +58,9 @@ class User(db.Model):
         if data.get('fname') == '' or data.get('lname') == '' or data.get('email') == ''\
                 or data.get('password') == '':
             return "You sent some empty strings"
+        is_valid = validate_email(data.get('email'))
+        if not is_valid:
+            return "Wrong Email Format Sent"
         if type(data.get('role_id')) is not int:
             return "Role id should be an integer"   
         if len(data.get('password')) < 5:
