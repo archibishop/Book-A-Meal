@@ -1,0 +1,25 @@
+delete an order
+BOOK-A-MEAL API
+delete order
+---
+tags:
+  - orders
+parameters:
+- name: order_id
+  in: path
+  type: integer
+  required: true
+  description: order id to be deleted
+  default: 2
+responses:
+  404:
+    description: Order Not found
+  200:
+    description: Order Deleted 
+    schema:
+      id: delete_message_order
+      properties:
+        message:
+          type: string
+          description: delete message
+          default: Order Removed

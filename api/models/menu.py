@@ -53,6 +53,15 @@ class Menu():
         menu_item.user_id = data['user_id']
         return menu_item 
 
+    def validate(self):
+        if self.meal_ids is None or self.user_id is None:
+            return "Missing Values in Data Sent"
+        if  len(self.meal_ids) ==  0:
+            return "You sent some empty strings"
+        if not isinstance(self.user_id, int):
+            return "User Id should be Integer"
+        return "Valid Data Sent"
+
     @staticmethod
     def validate_json(data):
         if data is None:

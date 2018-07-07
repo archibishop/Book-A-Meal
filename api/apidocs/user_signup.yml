@@ -1,0 +1,48 @@
+Sign up
+BOOK-A-MEAL API
+Register a user
+---
+tags:
+  - user
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: register
+      required:
+        - fname
+        - lname
+        - email
+        - password
+      properties:
+        fname:
+          type: string
+          description: first name
+          default: felix
+        lname:
+          type: string
+          description: last name
+          default: journey  
+        email:
+          type: string
+          description: user email
+          default: test@gmail.com
+        password:
+          type: string
+          description: password
+          default: "12345"
+responses:
+  400:
+    description: Email Already Exists
+  201:
+    description: Successfully Registration
+    schema:
+      id: registermessage
+      properties:
+        message:
+          type: string
+          description: success message
+          default: New user created!
+
+
+  

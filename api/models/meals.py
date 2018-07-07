@@ -13,9 +13,6 @@ class Meals():
         
 
     def add_meals(self):
-        for meal in Data.meals:
-            if meal.meal_name == self.meal_name:
-                return "Meal Name Exists"
         Data.meals.append(self)
         return "Successfully Added Meal"
 
@@ -70,6 +67,19 @@ class Meals():
             if meal.availability == 1:
                 output.append(meal)
         return output
+
+    def validate(self):
+        if self.meal_name is None or self.price is None or\
+            self.meal_type is None:
+            return "Missing Values in Data Sent"
+        if self.meal_name.strip() == '' or self.meal_type.strip() == '':
+            return "You sent some empty strings"
+        if type(self.price) is not int:
+            return "Price Should be Integer"
+        for meal in Data.meals:
+            if meal.meal_name == self.meal_name:
+                return "Meal Name Exists"
+        return "Valid Data Sent"
 
     @staticmethod 
     def validate_json(data):

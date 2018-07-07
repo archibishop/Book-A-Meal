@@ -1,0 +1,51 @@
+Update Menu
+BOOK-A-MEAL API
+update menu
+---
+tags:
+  - meals
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: update_menu
+      required:
+        - meal_ids
+        - user_id
+      properties:
+        meal_ids:
+          type: string
+          description: meal name
+          default: [1,3,5]
+        user_id:
+          type: integer
+          description: user id
+          default: 3 
+responses:
+  400:
+    description: 
+  201:
+    description: Menu Updated
+    schema:
+      id: menu
+      properties:
+        id:
+          type: integer
+          description: price for meal
+          default: 3
+        meal_ids:
+          type: string
+          description: meal ids
+          default: [1,3,5]
+        user_ids:
+          type: integer
+          description: user id
+          default: 3 
+        created_at:
+          type: string
+          description: time created menu
+          default: Fri, 04 May 2018 00:10:06 GMT
+        updated_at:
+          type: string
+          description: time updated menu
+          default: Fri, 04 May 2018 00:10:06 GMT 

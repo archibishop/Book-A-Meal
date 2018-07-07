@@ -1,0 +1,42 @@
+select meal
+BOOK-A-MEAL API
+Selecting meal
+---
+tags:
+  - orders
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: select_meal
+      required:
+        - meal_name
+        - price
+        - user_id
+      properties:
+        meal_name:
+          type: string
+          description: meal name
+          default: katogo
+        price:
+          type: integer
+          description: price for meal
+          default: 3000 
+        userId:
+          type: integer
+          description: user id
+          default: 1
+responses:
+  404:
+    description: Meal Not Found
+  404:
+    description: Bad request 
+  201:
+    description: Order Made
+    schema:
+      id: select_meal_message
+      properties:
+        message:
+          type: string
+          description: order made
+          default: Transaction Successfully Made

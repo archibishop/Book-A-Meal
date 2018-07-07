@@ -1,4 +1,5 @@
 import datetime
+from .admin import Admin
 from .data import Data
 from validate_email import validate_email
 
@@ -21,10 +22,7 @@ class User():
         self.id = id
 
 
-    def add_user(self):
-        for user in Data.users:
-            if user.email == self.email:
-                return "Email Exists"    
+    def add_user(self):    
         Data.users.append(self)
         return self
 
@@ -67,22 +65,21 @@ class User():
                 user = data
         return user
 
-
-    @staticmethod
-    def validate(data):
-        if data is None:
-            return "No JSON DATA sent"
-        if 'fname' not in data or 'lname' not in data or 'email' not in data\
-            or 'password' not in data:
+    def validate_json(self):
+        if self.first_name is None or self.last_name is None or self.email is None\
+            or self.password is None:
             return "Some values missing in json data sent"
-        if data.get('fname') == '' or data.get('lname') == '' or data.get('email') == ''\
-                or data.get('password') == '':
-            return "You sent some empty strings"  
-        is_valid = validate_email(data.get('email'))
+        if self.first_name.strip() == '' or self.last_name.strip() == '' or\
+                self.email.strip() == '' or self.password.strip() == '':
+            return "You sent some empty strings"
+        is_valid = validate_email(self.email)
         if not is_valid:
             return "Wrong Email Format Sent"
-        if len(data.get('password')) < 5:
+        if len(self.password) < 5:
             return "Password provided is too short.A minimum of 5 characters required"
+        for user in Data.users:
+            if user.email == self.email:
+                return "Email Already Exists"
         return "Valid Data Sent"
 
     @staticmethod
@@ -91,8 +88,14 @@ class User():
             return "No JSON DATA sent"
         if 'email' not in data or 'password' not in data:
             return "Missing Values in Data Sent"
-        if data.get('email') == '' or data.get('password') == '':
+        if data.get('email').strip() == '' or data.get('password').strip() == '':
             return "You sent some empty strings"
-        return "Valid Data Sent"    
+        if User.check_user_email_password(
+            data.get('email'), data.get('password')) is True:
+            return "User"
+        if Admin.check_admin_email_password(
+            data.get('email'), data.get('password')) is True:
+            return "Admin"
+        return "User Not Found"
 
 

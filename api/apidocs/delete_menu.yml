@@ -1,0 +1,25 @@
+delete menu 
+BOOK-A-MEAL API
+delete menu
+---
+tags:
+  - meals
+parameters:
+- name: menu_id
+  in: path
+  type: integer
+  required: true
+  description: menu id to be deleted
+  default: 2
+responses:
+  404:
+    description: Menu Not found
+  200:
+    description: Menu Option Deleted
+    schema:
+      id: delete_message
+      properties:
+        message:
+          type: string
+          description: delete message
+          default: Menu Successfully removed

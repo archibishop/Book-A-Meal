@@ -1,0 +1,27 @@
+Get all meals
+BOOK-A-MEAL API
+Call this api url and it will return the all the meals in the system
+---
+tags:
+  - meals
+responses:
+  500:
+    description: Error The language is not awesome!
+  200:
+    description: All meals returned
+    schema:
+      id: meal
+      properties:
+        meals:
+          type: array
+          description: The awesomeness list
+          items:
+            type: string
+          default: [{
+                        'id': 1,
+                        'meal_name': "ricebeans",
+                        'price': 3000,
+                        'meal_type': "lunch",
+                        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+                        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
+                    }]

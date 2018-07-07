@@ -1,4 +1,3 @@
-"""import context """
 from app import app
 import unittest
 import json
@@ -8,20 +7,13 @@ from models.user import User
 from models.menu import Menu
 from models.meals import Meals
 
-
-
-BASE_URL = 'http://127.0.0.1:5000/bookmealapi/v1.0/meals/'
-
-
 class api_test_case(unittest.TestCase):
     update_details = {
         "meal_ids": [6, 2, 7, 4],
         "user_id": 3
-    }
-    
+    }   
     def setUp(self):
         self.app = app.test_client()
-
     def test_signup_missing_values(self):
         """ missing value in request sent"""
         user = {
@@ -33,7 +25,7 @@ class api_test_case(unittest.TestCase):
             data=json.dumps(user), content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
-    def test_signup_valid(self):
+    def test_signup_is_valid(self):
         """ valid json object, all fields avaiable """
         user = {
             "fname": "felix",
@@ -51,7 +43,16 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(data['user']['email'], "felix@gmail.com")
         self.assertEqual(data['user']['password'], "12345")
 
+    def test_signup_similar_email_not_allowed(self):
         """ cannot add item with same email again """
+        user = {
+            "fname": "felix",
+            "lname": "craig",
+            "email": "felix@gmail.com",
+            "password": "12345"
+        }
+        response = self.app.post("/bookmealapi/v1.0/auth/signup",
+                    data=json.dumps(user), content_type='application/json')
         user = {
             "fname": "felix", 
             "lname": "craig",
@@ -91,29 +92,7 @@ class api_test_case(unittest.TestCase):
         response = self.app.post("/bookmealapi/v1.0/auth/login",\
             data=json.dumps(details), content_type='application/json')
         data = json.loads(response.get_data())
-        # self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data())
-        self.assertEqual(data['message'], "Successfully login")
-
-    def test_login_valid_details_user2(self):
-        """ correct details """
-        user = {
-            "fname": "atlas",
-            "lname": "red",
-            "email": "atlas@gmail.com",
-            "password": "12345"
-        }
-        response = self.app.post("/bookmealapi/v1.0/auth/signup",
-            data=json.dumps(user), content_type='application/json')
-
-        details = {
-            "email": "atlas@gmail.com",
-            "password": "12345"
-        }
-        response = self.app.post("/bookmealapi/v1.0/auth/login",\
-            data=json.dumps(details), content_type='application/json')
-        data = json.loads(response.get_data())
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(data['message'], "Successfully login")
 
     def test_login_valid_details_admin(self):
@@ -154,13 +133,10 @@ class api_test_case(unittest.TestCase):
 
     def test_add_meal(self):
         """ missing values """
-
         admin = Admin("Fast Foods", "steven", "lule",
                       "steven@gmail.com", "54321")
-        admin.add_admin()
-        
+        admin.add_admin()      
         self.login()
-
         details = {
             "mealname": "katogo"
         }
@@ -169,10 +145,8 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_add_meal_price_is_string(self):
-        """ # price cannot take string """
-
+        """ price cannot take string """
         self.login()
-
         details = {
             "mealname": "katogo", 
             "price": "2000", 
@@ -185,7 +159,6 @@ class api_test_case(unittest.TestCase):
     def test_add_meal_valid(self):
         """ correct values """
         self.login()
-
         details = {
             "meal_name": "katogo", 
             "price": 2000, 
@@ -196,7 +169,6 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], "Meal Successfully Added")
-
         #same meal name
         details = {
             "meal_name": "katogo", 
@@ -209,9 +181,7 @@ class api_test_case(unittest.TestCase):
 
     def test_select_meal_missing_values(self):
         """  Mising Values in json """
-
         self.login()
-
         details = {
             "meal_name": "katogo"
         }
@@ -222,7 +192,6 @@ class api_test_case(unittest.TestCase):
     def test_select_meal_price_user_id_string(self):
         """  Price and userId cannot be string """
         self.login()
-
         details = {
             "meal_name": "katogo",
             "price": "2000", 
@@ -235,7 +204,6 @@ class api_test_case(unittest.TestCase):
     def test_select_meal_valid(self):
         """  valid json """
         self.login()  
-
         details = {
             "meal_name": "katogo", 
             "price": 2000, 
@@ -248,7 +216,6 @@ class api_test_case(unittest.TestCase):
     def test_set_menu(self):
         """ setting the menu """
         self.login()
-
         details = {
             "meal_ids": [1, 2, 3, 4],
             "user_id": 2
@@ -262,14 +229,12 @@ class api_test_case(unittest.TestCase):
     def test_delete_meal_option_non_existant_data(self):
         """ Deleting a value that doesnt exist """
         self.login()
-
         response = self.app.delete('/bookmealapi/v1.0/meals/10')
         self.assertEqual(response.status_code, 404)
 
     def test_delete_meal_option_data_exists(self):
         """ Deleting a value that exists """
         self.login()
-
         response = self.app.delete('/bookmealapi/v1.0/meals/1')
         self.assertEqual(response.status_code, 200)
     
@@ -277,7 +242,6 @@ class api_test_case(unittest.TestCase):
     def test_update_meal_option(self):
         """ # missing values """
         self.login()
-
         details = {
             "meal_name": "katogo"
         }
@@ -288,7 +252,6 @@ class api_test_case(unittest.TestCase):
     def test_update_meal_option_price_string(self):
         """ Price cannot be string """
         self.login()
-
         details = {
             "meal_name": "katogo", 
             "price": "8000"
@@ -300,10 +263,8 @@ class api_test_case(unittest.TestCase):
     def test_update_meal_option_valid(self):
         """ correct values """
         self.login()
-
         meal = Meals("rice", 2000, "lunch", 0)    
         meal.add_meals()
-
         details = {
             "meal_name": "rolex", 
             "price": 8000, 
@@ -320,7 +281,6 @@ class api_test_case(unittest.TestCase):
     def test_update_order_missing_values(self):
         """ Missing valuesvin json """
         self.login()
-
         details = {
             "meal_name": 
             "katogo"
@@ -332,7 +292,6 @@ class api_test_case(unittest.TestCase):
     def test_update_order_price_string(self):
         """  Price cannot be string """
         self.login()
-
         details = {
             "meal_name": "katogo", 
             "price": "8000"
@@ -342,16 +301,12 @@ class api_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_order_valid(self):
-        """ Update Order """
-        
+        """ Update Order """       
         meal = Meals("rice", 2000, "breakfast", 0)
         meal.add_meals()
-
         order = Order("rice", 2000, 1) 
         order.place_order()  
-
         self.login()
-
         details = {
             "meal_name": "katogo",
             "price": 8000
@@ -396,11 +351,9 @@ class api_test_case(unittest.TestCase):
 
     def test_get_all_meals(self):
         """ Get all meals """
-        self.login()
-        
+        self.login()        
         meal = Meals("rice", 2000, "breakfast", 0)
         meal.add_meals()
-
         response = self.app.get('/bookmealapi/v1.0/meals')
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
@@ -409,10 +362,8 @@ class api_test_case(unittest.TestCase):
     def test_get_all_orders(self):
         """ Get All orders """
         self.login()
-
         order = Order("rice", 3000, 2)  
         order.place_order()  
-
         response = self.app.get('/bookmealapi/v1.0/orders')
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
@@ -422,9 +373,7 @@ class api_test_case(unittest.TestCase):
         """ Get menu  for the day """
         menu = Menu([1,4], 2)
         menu.add_meals_menu()
-
         self.login()
-
         response = self.app.get('/bookmealapi/v1.0/menu')
         data = json.loads(response.get_data())
         self.assertEqual(response.status_code, 200)
@@ -433,7 +382,6 @@ class api_test_case(unittest.TestCase):
     def test_delete_order_non_existant_data(self):
         """ Deleting order that doesnt exist """
         self.login()
-
         response = self.app.delete('/bookmealapi/v1.0/orders/10')
         self.assertEqual(response.status_code, 404)
 
@@ -442,32 +390,21 @@ class api_test_case(unittest.TestCase):
         """ Deleting an order """
         order = Order("rice", 2000, 1)
         order.place_order()
-
-        details = {
-            "email": "steven@gmail.com", 
-            "password": "54321"
-        }
-        response = self.app.post("/bookmealapi/v1.0/auth/login",\
-            data=json.dumps(details), content_type='application/json')
-
+        self.login()
         response = self.app.delete('/bookmealapi/v1.0/orders/1')
         self.assertEqual(response.status_code, 200)
 
     def test_delete_menu_exists(self):
         """ Deleting a value that exists """
-
         menu = Menu([1,2], 3)
         menu.add_meals_menu()
-
         self.login()
-
         response = self.app.delete('/bookmealapi/v1.0/menu/1')
         self.assertEqual(response.status_code, 200)  
 
     def test_delete_menu_non_existant_data(self):
         """ Deleting menu that doesnt exist """
         self.login()
-
         response = self.app.delete('/bookmealapi/v1.0/menu/10')
         self.assertEqual(response.status_code, 404)  
 
@@ -476,9 +413,8 @@ class api_test_case(unittest.TestCase):
             "email": "steven@gmail.com",
             "password": "54321"
         }
-        response = self.app.post("/bookmealapi/v1.0/auth/login",
+        self.app.post("/bookmealapi/v1.0/auth/login",
             data=json.dumps(details), content_type='application/json')
-        data = json.loads(response.get_data())
 
 if __name__ == '__main__':
     unittest.main()

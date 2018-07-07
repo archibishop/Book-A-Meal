@@ -55,19 +55,16 @@ class Order():
         order.price = data['price']
         order.updated_at = datetime.datetime.now()
         return order
-
-    @staticmethod
-    def validate_json(data):
-        if data is None:
-            return "No Data Sent"
-        if 'meal_name' not in  data or 'price' not in data or \
-                'userId' not in data:
-            return "Missing Values"    
-        if data.get('meal_name') == '' or data.get('price') == '' or data.get('userId') == '':
+  
+    def validate(self):
+        if self.meal_name is None or self.price is None or \
+                self.user_id is None:
+            return "Missing Values"
+        if self.meal_name.strip() == '':
             return "You sent some empty strings"
-        if type(data.get('price')) is not int or type(data.get('userId')) is not int:
+        if not isinstance((self.price), int) or not isinstance((self.user_id), int):
             return "Price Must Be Integer"
-        return "Valid Data Sent"    
+        return "Valid Data Sent"   
 
     @staticmethod
     def validate_json_1(data):
@@ -76,8 +73,8 @@ class Order():
         if 'meal_name' not in data or 'price' not in data:
             return "Missing Values"
         if data.get('meal_name') == '' or data.get('price') == '':
-            return "You sent some empty strings"
-        if type(data.get('price')) is not int:
+            return "You sent some empty strings"    
+        if not isinstance((data.get('price')), int):
             return "Price Must Be Integer"
         return "Valid Data Sent"
 
