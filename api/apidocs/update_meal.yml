@@ -1,0 +1,66 @@
+Update Meal Option
+BOOK-A-MEAL API
+Update meal
+---
+tags:
+  - meals
+parameters:
+  - name: meal_id
+    in: path
+    type: integer
+    required: true
+    description: meal option to be modified
+    default: 2
+  - in: body
+    name: body
+    schema:
+      id: update_meal_option
+      required:
+        - meal_name
+        - price
+        - user_id
+      properties:
+        meal_name:
+          type: string
+          description: meal name
+          default: katogo
+        price:
+          type: integer
+          description: price for meal
+          default: 3000 
+        meal_type:
+          type: string
+          description: meal type
+          default: breakfast
+responses:
+  400:
+    description: 
+  201:
+    description: Meal Updated
+    schema:
+      id: update_meal
+      properties:
+        id:
+          type: integer
+          description: price for meal
+          default: 3
+        meal_name:
+          type: string
+          description: meal name
+          default: katogo
+        price:
+          type: integer
+          description: price for meal
+          default: 3000 
+        meal_type:
+          type: string
+          description: meal type
+          default: breakfast
+        created_at:
+          type: string
+          description: time created menu
+          default: Fri, 04 May 2018 00:10:06 GMT
+        updated_at:
+          type: string
+          description: time updated menu
+          default: Fri, 04 May 2018 00:10:06 GMT 

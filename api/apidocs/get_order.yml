@@ -1,0 +1,27 @@
+Get all orders
+BOOK-A-MEAL API
+All the orders in the system
+---
+tags:
+  - orders
+responses:
+  400:
+    description:  
+  200:
+    description: All meals returned
+    schema:
+      id: order
+      properties:
+        orders:
+          type: array
+          description: TA ll orders
+          items:
+            type: string
+          default: [{
+                        'id': 1,
+                        'meal_name': "ricebeans",
+                        'price': 3000,
+                        'meal_type': "lunch",
+                        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+                        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
+                    }]

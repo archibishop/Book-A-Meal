@@ -1,0 +1,26 @@
+Get menu for the day
+BOOK-A-MEAL API
+Call this api url and it will return the menu for the day
+---
+tags:
+  - meals
+responses:
+  400:
+    description: 
+  200:
+    description: menu returned
+    schema:
+      id: menu_day
+      properties:
+        menu:
+          type: array
+          description: The awesomeness list
+          items:
+            type: string
+          default: [{
+                        'id': 1,
+                        'meal_ids':[1,2,3],
+                        'user_id': 3,
+                        'created_at': 'Fri, 04 May 2018 00:10:06 GMT',
+                        'updated_at': 'Fri, 04 May 2018 00:10:06 GMT'
+                    }]

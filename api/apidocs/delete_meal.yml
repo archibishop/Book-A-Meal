@@ -1,0 +1,25 @@
+delete meal option
+BOOK-A-MEAL API
+delete meal option
+---
+tags:
+  - meals
+parameters:
+- name: meal_id
+  in: path
+  type: integer
+  required: true
+  description: meal id to be deleted
+  default: 2
+responses:
+  404:
+    description: Meal Not found
+  200:
+    description: Meal Option Deleted
+    schema:
+      id: delete_message_meal
+      properties:
+        message:
+          type: string
+          description: delete message
+          default: Meal Successfully Removed

@@ -20,11 +20,11 @@ def is_loged_in(f):
 def is_user(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'userV' in session:
+        if 'is_user' in session:
             return f(*args, **kwargs)
         else:
             return jsonify({'message': "Unauthorized Access,\
-             You are not an admin"})
+             You are not an user"})
     return wrap
 
 """ Check if Admin """

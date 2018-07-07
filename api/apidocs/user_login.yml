@@ -1,0 +1,43 @@
+Login
+BOOK-A-MEAL API
+Send login credentials to api
+---
+tags:
+  - user
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: login
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: user email
+          default: test@gmail.com
+        password:
+          type: string
+          description: password
+          default: "12345"
+responses:
+  404:
+    description: User Not Found
+  400:
+    description: Wrong Password    
+  200:
+    description: Successfully Login
+    schema:
+      id: awesome
+      properties:
+        message:
+          type: string
+          description: The language name
+          default: Successfully login
+        token:
+          type: string
+          description: The access token
+          default: XIJSDF043-349329594 
+
+        

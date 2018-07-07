@@ -1,0 +1,60 @@
+add meal
+BOOK-A-MEAL API
+Adding meal
+---
+tags:
+  - meals
+parameters:
+  - in: body
+    name: body
+    schema:
+      id: add_meal
+      required:
+        - meal_name
+        - price
+        - meal_type
+      properties:
+        meal_name:
+          type: string
+          description: meal_name
+          default: frenchbeans
+        price:
+          type: integer
+          description: price for meal
+          default: 5000 
+        meal_type:
+          type: string
+          description: meal category
+          default: lunch
+responses:
+  400:
+    description:
+  201:
+    description: Meal Added
+    schema:
+      id: adding_meal_message
+      properties:
+        id:
+          type: integer
+          description: price for meal
+          default: 3
+        meal_name:
+          type: string
+          description: meal_name
+          default: frenchbeans
+        price:
+          type: integer
+          description: price for meal
+          default: 5000 
+        meal_type:
+          type: string
+          description: meal category
+          default: lunch
+        created_at:
+          type: string
+          description: time created
+          default: Fri, 04 May 2018 00:10:06 GMT
+        updated_at:
+          type: string
+          description: time updated
+          default: Fri, 04 May 2018 00:10:06 GMT 

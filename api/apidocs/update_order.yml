@@ -1,0 +1,61 @@
+Modify order
+BOOK-A-MEAL API
+modify order
+---
+tags:
+  - orders
+parameters:
+  - name: order_id
+    in: path
+    type: integer
+    required: true
+    description: oder to be modified
+    default: 2
+  - in: body
+    name: body
+    schema:
+      id: modify_order
+      required:
+        - meal_name
+        - price
+      properties:
+        meal_name:
+          type: string
+          description: meal name
+          default: spinach
+        price:
+          type: integer
+          description: price for meal
+          default: 2500 
+responses:
+  400:
+    description: 
+  201:
+    description: Order Modified
+    schema:
+      id: set_menu_message
+      properties:
+        id:
+          type: integer
+          description: price for meal
+          default: 3
+        meal_name:
+          type: string
+          description: meal name
+          default: katogo
+        price:
+          type: integer
+          description: price for meal
+          default: 3000 
+        user_id:
+          type: integer
+          description: user id
+          default: 1
+        created_at:
+          type: string
+          description: time created menu
+          default: Fri, 04 May 2018 00:10:06 GMT
+        updated_at:
+          type: string
+          description: time updated menu
+          default: Fri, 04 May 2018 00:10:06 GMT
