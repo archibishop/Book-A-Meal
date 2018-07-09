@@ -237,7 +237,6 @@ class api_test_case(unittest.TestCase):
         self.login()
         response = self.app.delete('/bookmealapi/v1.0/meals/1')
         self.assertEqual(response.status_code, 200)
-    
 
     def test_update_meal_option(self):
         """ # missing values """
@@ -313,9 +312,7 @@ class api_test_case(unittest.TestCase):
         }
         response = self.app.put("/bookmealapi/v1.0/orders/1",
                                 data=json.dumps(details), content_type='application/json')
-        # self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
-        # self.assertEqual(data['order']['id'], 2)
         self.assertEqual(data['order']['meal_name'], "katogo")
         self.assertEqual(data['order']['price'], 8000)
 
