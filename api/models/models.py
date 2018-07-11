@@ -5,10 +5,6 @@ import datetime
 from api import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-"""
-Change to persistent data, using sql alchemy 
-"""
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50))

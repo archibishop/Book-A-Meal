@@ -4,26 +4,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
-
 from api import db
-from .models.models import User
-from .models.models import Menu
-from .models.models import Orders
-from .models.models import Meals
-
-from .utils import is_loged_in
-from .utils import is_user
-from .utils import is_admin
-from .utils import token_required
+from .models.models import User, Menu, Orders, Meals
+from .utils import is_loged_in, is_user, is_admin, token_required
 
 api_route = Blueprint("api", __name__)
 
 @api_route.route('/bookmealapi/v1.0/auth/signup', methods=['POST'])
 def sign_up():
-    """
-      file: apidocs/user_signup.yml
-    """
-    """ Regisrering User """
+    """ file: apidocs/user_signup.yml """
     data = request.get_json()
     new_user = User(first_name=data.get('fname'), last_name=data.get('lname'),
                     email=data.get('email'), password=data.get('password'), 
@@ -37,10 +26,7 @@ def sign_up():
 
 @api_route.route('/bookmealapi/v1.0/auth/login', methods=['POST'])
 def login():
-    """
-      file: apidocs/user_login.yml
-    """
-    """ login  """    
+    """ file: apidocs/user_login.yml  """    
     data =  request.get_json()
     user = User.validate_json_login(data)
     if user == "User Not Found":
@@ -59,10 +45,7 @@ def login():
 @is_admin
 @token_required
 def add_meal():
-    """
-    file: apidocs/add_meal.yml    
-    """
-    """ Adding meal  """    
+    """ file: apidocs/add_meal.yml """   
     data = request.get_json()
     meal = Meals(meal_name=data.get('meal_name'), price=data.get('price'),\
                 meal_type=data.get('meal_type'))
@@ -75,9 +58,7 @@ def add_meal():
 @api_route.route('/bookmealapi/v1.0/orders', methods=['POST'])
 @token_required
 def select_meal():
-    """
-    file: apidocs/select_meal.yml
-    """    
+    """ file: apidocs/select_meal.yml """    
     data = request.get_json()
     order = Orders(meal_name=data.get('meal_name'), price=data.get('price'),
      user_id=data.get('user_id'), process_status="pending")
@@ -94,10 +75,7 @@ def select_meal():
 @is_admin
 @token_required
 def set_menu():
-    """
-    file: apidocs/set_menu.yml  
-    """
-    """ Setting menu """
+    """ file: apidocs/set_menu.yml """
     data = request.get_json()
     meal_ids_string = Menu.convert_into_string(data.get('meal_ids'))
     menu = Menu(user_id=data.get('user_id'), meal_ids=meal_ids_string)
@@ -116,15 +94,11 @@ def set_menu():
     return jsonify({'message':'Menu Successfully Created',\
       'menu': menu_info}), 201              
 
-
 @api_route.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
 @is_admin
 @token_required
 def update_meal_option(meal_id):
-    """
-    file: apidocs/update_meal.yml
-    """
-    """ Updating meals """
+    """ file: apidocs/update_meal.yml """
     data = request.get_json()
     meal = Meals.update_meal(meal_id, data.get(
         'meal_name'), data.get('price'), data.get('meal_type'))
@@ -144,10 +118,7 @@ def update_meal_option(meal_id):
 @api_route.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
 @token_required
 def update_order(order_id):
-    """
-    file: apidocs/update_order.yml  
-    """
-    """ Modify Order """    
+    """ file: apidocs/update_order.yml """   
     data = request.get_json()
     message = Orders.validate_json(data)
     if message != "Valid Data Sent":
@@ -170,9 +141,7 @@ def update_order(order_id):
 @is_admin
 @token_required
 def update_menu(menu_id):
-    """
-    file: apidocs/update_menu.yml  
-    """       
+    """ file: apidocs/update_menu.yml """       
     data = request.get_json()
     message = Menu.validate_json(data)
     if message != "Valid Data Sent":
@@ -195,10 +164,7 @@ def update_menu(menu_id):
 @is_admin
 @token_required
 def delete_meal_option(meal_id):
-    """   
-    file: apidocs/delete_meal.yml 
-    """
-    """ Deleting Meal Option """
+    """  file: apidocs/delete_meal.yml """
     meal = Meals.get_meal_by_id(meal_id)
     if not meal:
         return jsonify({'message':'Meal Not Found'}), 404
@@ -209,9 +175,7 @@ def delete_meal_option(meal_id):
 @is_admin
 @token_required
 def get_all_meals():
-    """
-    file: apidocs/get_meal.yml
-    """
+    """ file: apidocs/get_meal.yml """
     meals = Meals.get_all_meals()
     output = []
     for meal in meals:
@@ -229,10 +193,7 @@ def get_all_meals():
 @is_admin
 @token_required
 def get_all_orders():
-    """
-    file: apidocs/get_order.yml
-    """
-    """ Get all orders """
+    """ file: apidocs/get_order.yml """
     orders = Orders.get_all_orders()
     output = []
     for order in orders:
@@ -250,10 +211,7 @@ def get_all_orders():
 @api_route.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @token_required
 def get_menu():
-    """
-    file: apidocs/get_menu.yml
-    """
-    """ Get menu for the day """
+    """ file: apidocs/get_menu.yml """
     menus = Menu.get_all_menus()
     output = []
     for menu in menus:
@@ -268,26 +226,20 @@ def get_menu():
         output.append(menu_info)
     return jsonify({'menu_day': output}), 200
 
-
 @api_route.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
 @token_required
 def delete_order_item(order_id):
-    """
-    file: apidocs/delete_order.yml
-    """
+    """ file: apidocs/delete_order.yml """
     order = Orders.get_order_by_id(order_id)
     if not order:
         return jsonify({'message':'Meal Does Not Exisr'}), 404
     order.delete_order()    
     return jsonify({'message':'Order Removed'}),200
 
-
 @api_route.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
 @token_required
 def delete_menu(menu_id):
-    """ 
-    file: apidocs/delete_menu.yml
-    """
+    """ file: apidocs/delete_menu.yml """
     menu = Menu.get_menu_by_id(menu_id)
     if not menu:
         return jsonify({'message':'Menu Does Not Exist'}), 404
