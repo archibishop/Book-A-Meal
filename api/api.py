@@ -201,7 +201,7 @@ def update_menu(menu_id):
 @is_admin
 def delete_meal_option(meal_id):
     """
-    file: apidocs/delete_mealyml
+    file: apidocs/delete_meal.yml
     """
     """ Deleting Meal Option """            
     meal_id = int(meal_id)
