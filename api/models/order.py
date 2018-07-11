@@ -9,7 +9,10 @@ class Order():
         self.process_status = "pending"
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
-        id = len(Data.orders) + 1
+        if len(Data.menu) > 0:
+            id = Data.menu[-1].id + 1
+        else:
+            id = 1
         self.id = id
 
     def place_order(self):

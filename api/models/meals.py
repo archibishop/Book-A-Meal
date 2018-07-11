@@ -7,8 +7,11 @@ class Meals():
         self.price = price
         self.meal_type = meal_type
         self.availability = availability
-        id = len(Data.meals) + 1
-        self.id = len(Data.meals) + 1
+        if len(Data.meals) > 0:
+            id = Data.meals[-1].id + 1
+        else:
+            id = 1
+        self.id = id
 
         
 

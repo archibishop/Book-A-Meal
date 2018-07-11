@@ -13,7 +13,6 @@ class User():
         self.password = password
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
-        id = len(Data.users) + 1
         if len(Data.users) > 0:
             id = Data.users[-1].id + 1
         else:
