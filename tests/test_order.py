@@ -1,16 +1,13 @@
 from api import create_app
 from api import db
 from flask import current_app
-from api.models.models import User
-from api.models.models import Menu
-from api.models.models import Orders
-from api.models.models import Meals
+from api.models.models import User, Menu, Orders, Meals
 from werkzeug.security import generate_password_hash, check_password_hash
 import unittest
 import json
 
 
-class meal_test_case(unittest.TestCase):
+class order_test_case(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()

@@ -18,9 +18,9 @@ def sign_up():
                     email=data.get('email'), password=data.get('password'), 
                     role_id=data.get('role_id'), business_name=data.get('business_name'),
                     location=data.get('location'))
-    message = new_user.validate()
-    if message != "Valid Data Sent":
-        return jsonify({'message': message}), 400     
+    response = new_user.validate()
+    if response != "Valid Data Sent":
+        return jsonify({'message': response}), 400     
     new_user.save()             
     return jsonify({'message' : 'New user created!'}), 201
 
@@ -28,11 +28,12 @@ def sign_up():
 def login():
     """ file: apidocs/user_login.yml  """    
     data =  request.get_json()
-    user = User.validate_json_login(data)
-    if user == "User Not Found":
-        return jsonify({'message': user}), 404
-    if user == "Wrong Password" or user == "Some values missing in json data sent":
-        return jsonify({'message': user}), 400
+    response = User.validate_json_login(data)
+    if response == "User Not Found":
+        return jsonify({'message': response}), 404
+    if response == "Wrong Password" or response == "Some values missing in json data sent":
+        return jsonify({'message': response}), 400
+    user = response    
     if user.role_id == 2:
         session['is_user'] = True
     else:
@@ -49,9 +50,9 @@ def add_meal():
     data = request.get_json()
     meal = Meals(meal_name=data.get('meal_name'), price=data.get('price'),\
                 meal_type=data.get('meal_type'))
-    message = meal.validate_json()
-    if message != "Valid Data Sent":
-        return jsonify({'message': message}), 400
+    response = meal.validate_json()
+    if response != "Valid Data Sent":
+        return jsonify({'message': response}), 400
     meal.save()
     return jsonify({'message' : 'Meal Successfully Added'}), 201      
 
@@ -62,12 +63,12 @@ def select_meal():
     data = request.get_json()
     order = Orders(meal_name=data.get('meal_name'), price=data.get('price'),
      user_id=data.get('user_id'), process_status="pending")
-    message = order.validate_json_object()
-    if message != "Valid Data Sent":
-        if message == "Meal Does Not Exist":
-            return jsonify({'message', message}), 404
+    response = order.validate_json_object()
+    if response != "Valid Data Sent":
+        if response == "Meal Does Not Exist":
+            return jsonify({'message', response}), 404
         else:    
-            return jsonify({'message': message}), 400
+            return jsonify({'message': response}), 400
     order.save()
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
@@ -100,12 +101,13 @@ def set_menu():
 def update_meal_option(meal_id):
     """ file: apidocs/update_meal.yml """
     data = request.get_json()
-    meal = Meals.update_meal(meal_id, data.get(
+    response = Meals.update_meal(meal_id, data.get(
         'meal_name'), data.get('price'), data.get('meal_type'))
-    if isinstance(meal, str) and meal != "Meal Does Not Exist":
+    if isinstance(response, str) and response != "Meal Does Not Exist":
         return jsonify({'message': "nothing"}), 400
-    if meal == "Meal Does Not Exist":
-        return jsonify({'message':'Meal Does Not Exist'}),404        
+    if response == "Meal Does Not Exist":
+        return jsonify({'message':'Meal Does Not Exist'}),404    
+    meal = response    
     meal_update = {}
     meal_update['id'] = meal.id
     meal_update['meal_name'] = meal.meal_name
@@ -125,16 +127,16 @@ def update_order(order_id):
         return jsonify({'message': message}), 400
     meal_name = data.get('meal_name')
     price = data.get('price')    
-    order = Orders.update_order(order_id, meal_name, price)
-    if order == "Order does not exist":
+    response = Orders.update_order(order_id, meal_name, price)
+    if response == "Order does not exist":
         return jsonify({'message': 'Order Does Not Exist'}), 404
     output = {}
-    output['id'] = order.id
-    output['meal_name'] = order.meal_name
-    output['price'] = order.price
-    output['user_id'] = order.user_id
-    output['created_at'] = order.created_at
-    output['updated_at'] = order.updated_at
+    output['id'] = response.id
+    output['meal_name'] = response.meal_name
+    output['price'] = response.price
+    output['user_id'] = response.user_id
+    output['created_at'] = response.created_at
+    output['updated_at'] = response.updated_at
     return jsonify({'message': 'Order Updated', 'order': output}), 201    
 
 @api_route.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
@@ -146,17 +148,17 @@ def update_menu(menu_id):
     message = Menu.validate_json(data)
     if message != "Valid Data Sent":
         return jsonify({'message': message}), 400
-    menu = Menu.update_menu(menu_id, data.get('meal_ids'))
-    if menu == "No Meal Found":
+    response = Menu.update_menu(menu_id, data.get('meal_ids'))
+    if response == "No Meal Found":
         return jsonify({'message': 'Menu Does Not Exist'}), 404
     menu_info = {}
-    menu_info['id'] = menu.id
-    menu_info['user_id'] = menu.user_id
+    menu_info['id'] = response.id
+    menu_info['user_id'] = response.user_id
     # Converting the meal ids into a list again 
-    converted_meal_ids = Menu.convert_into_list(menu)
+    converted_meal_ids = Menu.convert_into_list(response)
     menu_info['meal_ids'] = converted_meal_ids
-    menu_info['created_at'] = menu.created_at
-    menu_info['updated_at'] = menu.updated_at
+    menu_info['created_at'] = response.created_at
+    menu_info['updated_at'] = response.updated_at
     return jsonify({'message': "Meal has been Updated in the menu",\
           'menu': menu_info}), 201               
 
