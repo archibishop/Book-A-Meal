@@ -19,7 +19,7 @@ class TestingConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-class TestingConfig(Config):
+class ProductionConfig(Config):
     """ Testing Configuration file"""
     TESTING = False
     DEBUG = False
