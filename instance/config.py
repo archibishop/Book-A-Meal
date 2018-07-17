@@ -24,7 +24,7 @@ class ProductionConfig(Config):
     TESTING = False
     DEBUG = False
     SQLALCHEMY_DATABASE_URL = os.environ.get(
-        "DATABASE_URI", "postgresql://postgres:12345@localhost/test_book")
+        "DATABASE_URL", "postgresql://postgres:12345@localhost/test_book")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
