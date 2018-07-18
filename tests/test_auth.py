@@ -54,6 +54,21 @@ class auth_test_case(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.get_data())
         self.assertEqual(data['message'], 'New user created!')
+
+    def test_signup_invalid_email_format(self):
+        """ valid json object, all fields avaiable """
+        user = {
+            "fname": "toast",
+            "lname": "bull",
+            "email": "ttt",
+            "password": "12345",
+            "role_id": 2
+        }
+        response = self.client.post("/bookmealapi/v1.0/auth/signup",
+                                    data=json.dumps(user), content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.get_data())
+        self.assertEqual(data['message'], 'Wrong Email Format Sent')
     
     def test_cannot_signup_same_email(self):
         """ cannot add item with same email again """

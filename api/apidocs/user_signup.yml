@@ -31,6 +31,10 @@ parameters:
           type: string
           description: password
           default: "12345"
+        role_id:
+          type: integer
+          description: role id
+          default: 2  
 responses:
   400:
     description: Email Already Exists

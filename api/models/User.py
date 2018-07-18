@@ -1,9 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify
-from validate_email import validate_email
 import datetime
 from api import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import re
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +47,7 @@ class User(db.Model):
 
     def validate(self):
         message, validation = '', True
+        users = User.query.filter_by(email=self.email).all()
         if not self.first_name or not self.last_name\
                 or not self.email or not self.password:
             message, validation = "Missing Values in Json Data sent", False
@@ -54,6 +55,13 @@ class User(db.Model):
                 or not self.email.strip() or not self.password.strip()\
                 or not isinstance(self.role_id, int):
             message, validation = "Empty values missing in json data sent", False
+        elif len(self.first_name) < 3 or len(self.last_name) < 3 or\
+                len(self.password) < 5:
+            message, validation = "Password/Firstname/lastname provided is too short.", False
+        elif not self.validate_email(self.email):
+            message, validation = "Wrong Email Format Sent", False
+        elif User.query.filter_by(email=self.email).first():
+            message, validation = 'Email Already Exists', False
         elif self.role_id == 1:
             if not self.business_name.strip() or not self.location.strip():
                 message, validation = "Some values missing in json data sent", False
@@ -62,13 +70,6 @@ class User(db.Model):
         elif self.role_id == 2:
             self.business_name = ""
             self.location = ""
-        elif len(self.first_name) < 3 or len(self.last_name) < 3 or\
-                len(self.password) < 5:
-            message, validation = "Password/Firstname/lastname provided is too short.", False
-        elif not validate_email(self.email):
-            message, validation = "Wrong Email Format Sent", False
-        if User.query.filter_by(email=self.email).first() != None:
-            message, validation = 'Email Already Exists', False
         if not validation:
             return message    
         hashed_password = generate_password_hash(
@@ -93,3 +94,12 @@ class User(db.Model):
         if not validation:
             return message    
         return user
+ 
+    @staticmethod
+    def validate_email(email):
+        valid = re.match(
+            r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+        if valid:
+            return True    
+        else:
+            return False
