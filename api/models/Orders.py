@@ -55,26 +55,31 @@ class Orders(db.Model):
         return order
 
     def validate_json_object(self):
+        message, validation = '', True
         if not self.meal_name or not self.price or\
                 not self.user_id:
-            return "Some values missing in json data sent"
-        if self.meal_name.strip() == '' or self.meal_name.strip() == '':
-            return "You sent some empty strings"
-        if not isinstance(self.price, int) or not isinstance(self.user_id, int):
-            return "Price should be an integer"
-        meal_exists = Meals.get_meal_by_name(self.meal_name)
-        if meal_exists == None:
-            return "Meal Does Not Exist"
+            message, validation = "Some values missing in json data sent", False
+        elif self.meal_name.strip() == '' or self.meal_name.strip() == '':
+            message, validation = "You sent some empty strings", False
+        elif not isinstance(self.price, int) or not isinstance(self.user_id, int):
+            message, validation = "Price should be an integer", False
+        elif Meals.get_meal_by_name(self.meal_name) == None:
+            message, validation = "Meal Does Not Exist", False
+        if not validation:
+            return message    
         return "Valid Data Sent"
 
     @staticmethod
     def validate_json(data):
+        message, validation = '', True
         if data is None:
-            return "No JSON DATA sent"
+            message, validation =  "No JSON DATA sent", False
         if 'meal_name' not in data or 'price' not in data:
-            return "Some values missing in json data sent"
+            message, validation = "Some values missing in json data sent", False
         if type(data.get('price')) is not int:
-            return "Price should be Integer"
+            message, validation = "Price should be Integer", False
         if data.get('meal_name') == '':
-            return "Meal Name is Empty"
+            message, validation = "Meal Name is Empty", False
+        if not validation:
+            return message    
         return "Valid Data Sent"

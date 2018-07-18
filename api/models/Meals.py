@@ -57,14 +57,16 @@ class Meals(db.Model):
         return meal
 
     def validate_json(self):
+        message, validation = '', True
         if not self.meal_name or not self.price or\
                 not self.meal_type:
-            return "Some values missing in json data sent"
-        if self.meal_name.strip() == '' or self.meal_type.strip() == '':
-            return "You sent some empty strings"
-        if not isinstance(self.price, int):
-            return "Price should be an integer"
-        meal_exists = Meals.get_meal_by_name(self.meal_name)
-        if meal_exists != None:
-            return "Meal Already Exists"
+            message, validation = "Some values missing in json data sent", False
+        elif self.meal_name.strip() == '' or self.meal_type.strip() == '':
+            message, validation = "You sent some empty strings", False
+        elif not isinstance(self.price, int):
+            message, validation = "Price should be an integer", False
+        elif Meals.get_meal_by_name(self.meal_name) != None:
+            message, validation = "Meal Already Exists", False
+        if not validation:
+            return message    
         return "Valid Data Sent"

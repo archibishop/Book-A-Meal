@@ -46,30 +46,32 @@ class User(db.Model):
         return user
 
     def validate(self):
+        message, validation = '', True
         if not self.first_name or not self.last_name\
                 or not self.email or not self.password:
-            return "Missing Values in Json Data sent"
-        if not self.first_name.strip() or not self.last_name.strip()\
+            message, validation = "Missing Values in Json Data sent", False
+        elif not self.first_name.strip() or not self.last_name.strip()\
                 or not self.email.strip() or not self.password.strip()\
                 or not isinstance(self.role_id, int):
-            return "Empty values missing in json data sent"
-        if self.role_id == 1:
+            message, validation = "Empty values missing in json data sent", False
+        elif self.role_id == 1:
             if not self.business_name.strip() or not self.location.strip():
-                return "Some values missing in json data sent"
+                message, validation = "Some values missing in json data sent", False
             elif len(self.business_name) < 3 or len(self.location) < 3:
-                return "Business name or location too short"
-        else:
+                message, validation = "Business name or location too short", False
+        elif self.role_id == 2:
             self.business_name = ""
             self.location = ""
-        if len(self.first_name) < 3 or len(self.last_name) < 3 or\
+        elif len(self.first_name) < 3 or len(self.last_name) < 3 or\
                 len(self.password) < 5:
-            return "Password/Firstname/lastname provided is too short."
-        is_valid = validate_email(self.email)
-        if not is_valid:
-            return "Wrong Email Format Sent"
+            message, validation = "Password/Firstname/lastname provided is too short.", False
+        elif not validate_email(self.email):
+            message, validation = "Wrong Email Format Sent", True
         email_exists = User.query.filter_by(email=self.email).first()
-        if email_exists != None:
-            return 'Email Already Exists'
+        if User.query.filter_by(email=self.email).first() != None:
+            message, validation = 'Email Already Exists', False
+        if not validation:
+            return message    
         hashed_password = generate_password_hash(
             self.password, method='sha256')
         self.password = hashed_password
@@ -77,15 +79,18 @@ class User(db.Model):
 
     @staticmethod
     def validate_json_login(data):
-        if data is None:
-            return "No Data Sent"
-        if 'email' not in data or 'password' not in data:
-            return "Some values missing in json data sent"
-        if data.get('email').strip() == '' or data.get('password').strip() == '':
-            return "You sent some empty strings"
+        message, validation = '', True
         user = User.get_user_email(data.get('email'))
-        if user == "No User":
-            return 'User Not Found'
-        if not check_password_hash(user.password, data.get('password')):
-            return "Wrong Password"
+        if data is None:
+            message, validation = "No Data Sent", False
+        elif 'email' not in data or 'password' not in data:
+            message, validation = "Some values missing in json data sent", False
+        elif data.get('email').strip() == '' or data.get('password').strip() == '':
+            message, validation = "You sent some empty strings", False
+        elif user == "No User":
+            message, validation = 'User Not Found', False
+        elif not check_password_hash(user.password, data.get('password')):
+            message, validation = "Wrong Password", False
+        if not validation:
+            return message    
         return user

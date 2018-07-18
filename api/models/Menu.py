@@ -55,27 +55,32 @@ class Menu(db.Model):
         return menu
 
     def validate_json_object(self):
+        message, validation = '', True
         if not self.user_id or not self.meal_ids:
-            return "Some values missing in json data sent"
-        if not isinstance(self.user_id, int):
-            return "User Id should be Integer"
-        if not isinstance(self.meal_ids, str):
-            return "Meal ids is Empty"
-        caterer = Menu.get_menu_by_user_id(self.user_id)
-        if caterer is not None:
-            return 'Caterer Already Set Menu For the Day'
+            message, validation = "Some values missing in json data sent", False
+        elif not isinstance(self.user_id, int):
+            message, validation = "User Id should be Integer", False
+        elif not isinstance(self.meal_ids, str):
+            message, validation = "Meal ids is Empty", False 
+        elif Menu.get_menu_by_user_id(self.user_id) is not None:
+            message, validation = 'Caterer Already Set Menu For the Day', False
+        if not validation:
+            return message    
         return "Valid Data Sent"
 
     @staticmethod
     def validate_json(data):
+        message, validation = '', True
         if data is None:
-            return "No JSON DATA sent"
-        if 'meal_ids' not in data or 'user_id' not in data:
-            return "Some values missing in json data sent"
-        if type(data.get('user_id')) is not int:
-            return "User Id should be Integer"
-        if len(data.get('meal_ids')) == 0:
-            return "Meal ids is Empty"
+            message, validation = "No JSON DATA sent", False
+        elif 'meal_ids' not in data or 'user_id' not in data:
+            message, validation = "Some values missing in json data sent", False
+        elif type(data.get('user_id')) is not int:
+            message, validation = "User Id should be Integer", False
+        elif len(data.get('meal_ids')) == 0:
+            message, validation = "Meal ids is Empty", False
+        if not validation:
+            return message    
         return "Valid Data Sent"
 
     @staticmethod
