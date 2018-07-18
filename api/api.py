@@ -210,6 +210,17 @@ def get_all_orders():
         output.append(order_info)
     return jsonify({'transactions': output}), 200    
 
+
+@api_route.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
+@token_required
+def delete_order_item(order_id):
+    """ file: apidocs/delete_order.yml """
+    order = Orders.get_order_by_id(order_id)
+    if not order:
+        return jsonify({'message': 'Meal Does Not Exisr'}), 404
+    order.delete_order()
+    return jsonify({'message': 'Order Removed'}), 200
+    
 @api_route.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @token_required
 def get_menu():
@@ -228,15 +239,6 @@ def get_menu():
         output.append(menu_info)
     return jsonify({'menu_day': output}), 200
 
-@api_route.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
-@token_required
-def delete_order_item(order_id):
-    """ file: apidocs/delete_order.yml """
-    order = Orders.get_order_by_id(order_id)
-    if not order:
-        return jsonify({'message':'Meal Does Not Exisr'}), 404
-    order.delete_order()    
-    return jsonify({'message':'Order Removed'}),200
 
 @api_route.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
 @token_required
