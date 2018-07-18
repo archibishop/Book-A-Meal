@@ -4,6 +4,13 @@ Call this api url and it will return the all the meals in the system
 ---
 tags:
   - meals
+parameters:  
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
 responses:
   500:
     description: Error The language is not awesome!

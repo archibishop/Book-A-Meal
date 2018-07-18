@@ -5,6 +5,12 @@ Update meal
 tags:
   - meals
 parameters:
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
   - name: meal_id
     in: path
     type: integer

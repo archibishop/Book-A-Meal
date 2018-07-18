@@ -66,8 +66,7 @@ class User(db.Model):
                 len(self.password) < 5:
             message, validation = "Password/Firstname/lastname provided is too short.", False
         elif not validate_email(self.email):
-            message, validation = "Wrong Email Format Sent", True
-        email_exists = User.query.filter_by(email=self.email).first()
+            message, validation = "Wrong Email Format Sent", False
         if User.query.filter_by(email=self.email).first() != None:
             message, validation = 'Email Already Exists', False
         if not validation:

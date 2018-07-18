@@ -5,6 +5,12 @@ Selecting meal
 tags:
   - orders
 parameters:
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
   - in: body
     name: body
     schema:
@@ -22,7 +28,7 @@ parameters:
           type: integer
           description: price for meal
           default: 3000 
-        userId:
+        user_id:
           type: integer
           description: user id
           default: 1

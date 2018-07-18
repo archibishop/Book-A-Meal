@@ -4,13 +4,19 @@ delete menu
 ---
 tags:
   - meals
-parameters:
-- name: menu_id
-  in: path
-  type: integer
-  required: true
-  description: menu id to be deleted
-  default: 2
+parameters:  
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
+  - name: menu_id
+    in: path
+    type: integer
+    required: true
+    description: menu id to be deleted
+    default: 2
 responses:
   404:
     description: Menu Not found

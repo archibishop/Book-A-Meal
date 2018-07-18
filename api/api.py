@@ -234,7 +234,7 @@ def delete_order_item(order_id):
     """ file: apidocs/delete_order.yml """
     order = Orders.get_order_by_id(order_id)
     if not order:
-        return jsonify({'message':'Meal Does Not Exisr'}), 404
+        return jsonify({'message':'Meal Does Not Exist'}), 404
     order.delete_order()    
     return jsonify({'message':'Order Removed'}),200
 

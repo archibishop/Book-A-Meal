@@ -4,13 +4,19 @@ delete order
 ---
 tags:
   - orders
-parameters:
-- name: order_id
-  in: path
-  type: integer
-  required: true
-  description: order id to be deleted
-  default: 2
+parameters:  
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
+  - name: order_id
+    in: path
+    type: integer
+    required: true
+    description: order id to be deleted
+    default: 2
 responses:
   404:
     description: Order Not found

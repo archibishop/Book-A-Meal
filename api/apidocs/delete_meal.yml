@@ -4,13 +4,19 @@ delete meal option
 ---
 tags:
   - meals
-parameters:
-- name: meal_id
-  in: path
-  type: integer
-  required: true
-  description: meal id to be deleted
-  default: 2
+parameters:  
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
+  - name: meal_id
+    in: path
+    type: integer
+    required: true
+    description: meal id to be deleted
+    default: 2
 responses:
   404:
     description: Meal Not found

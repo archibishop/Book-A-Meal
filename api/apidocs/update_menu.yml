@@ -5,6 +5,18 @@ update menu
 tags:
   - meals
 parameters:
+  - name: x-access-token
+    in: header
+    type: string
+    required: true
+    description: security token
+    default: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTMxOTAwMDkwfQ.2_lsSEkhLSl3lYaMTsnPShurBXrzdN860hEUa-A3gpc  
+  - name: menu_id
+    in: path
+    type: integer
+    required: true
+    description: meal option to be modified
+    default: 2
   - in: body
     name: body
     schema:
