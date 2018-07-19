@@ -6,7 +6,7 @@ import datetime
 import jwt
 from api import db
 from .models.models import User, Menu, Orders, Meals
-from .utils import is_loged_in, is_user, is_admin, token_required
+from .utils import is_admin, token_required
 
 api_route = Blueprint("api", __name__)
 

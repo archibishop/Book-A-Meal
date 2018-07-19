@@ -2,36 +2,6 @@ from functools import wraps
 from flask import session, jsonify, request, current_app
 import jwt
 
-
-""" Check if user is logged """
-
-def is_loged_in(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        " is user logged in"
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            return jsonify({'message': "Unauthorized Access, Please Login"})
-    return wrap
-
-""" Check if user """
-
-
-def is_user(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        " user "
-        if 'is_user' in session:
-            return f(*args, **kwargs)
-        else:
-            return jsonify({'message': "Unauthorized Access,\
-             You are not an user"})
-    return wrap
-
-""" Check if Admin """
-
-
 def is_admin(f):
     @wraps(f)
     def wrap(*args, **kwargs):
