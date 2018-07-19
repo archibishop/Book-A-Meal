@@ -71,31 +71,43 @@ class Meals():
                 output.append(meal)
         return output
 
+    @staticmethod
+    def meal_exists(mealname):
+        for meal in Data.meals:
+            if meal.meal_name == mealname:
+                return True
+        return False
+
     def validate(self):
+        message, validation = '', True
         if self.meal_name is None or self.price is None or\
             self.meal_type is None:
-            return "Missing Values in Data Sent"
-        if self.meal_name.strip() == '' or self.meal_type.strip() == '':
-            return "You sent some empty strings"
-        if type(self.price) is not int:
-            return "Price Should be Integer"
-        for meal in Data.meals:
-            if meal.meal_name == self.meal_name:
-                return "Meal Name Exists"
+            message, validation = "Missing Values in Data Sent", False
+        elif self.meal_name.strip() == '' or self.meal_type.strip() == '':
+            message, validation = "You sent some empty strings", False
+        elif type(self.price) is not int:
+            message, validation = "Price Should be Integer", False
+        elif self.meal_exists(self.meal_name):
+            message, validation = "Meal Name Exists", False
+        if not validation:
+            return message    
         return "Valid Data Sent"
 
     @staticmethod 
     def validate_json(data):
+        message, validation = '', True 
         if data is None:
-            return "No Data Sent"
-        if 'meal_name' not in data or 'price' not in data \
+            message, validation = "No Data Sent", False
+        elif 'meal_name' not in data or 'price' not in data \
             or 'meal_type' not in data:
-            return "Missing Values in Data Sent"
-        if data.get('meal_name') == '' or data.get('price') == ''\
+            message, validation = "Missing Values in Data Sent", False
+        elif data.get('meal_name') == '' or data.get('price') == ''\
             or data.get('meal_type') == '':
-            return "You sent some empty strings"
-        if type(data.get('price')) is not int:
-            return "Price Should be Integer"  
+            message, validation = "You sent some empty strings", False
+        elif type(data.get('price')) is not int:
+            message, validation = "Price Should be Integer", False  
+        if not validation:
+            return message    
         return "Valid Data Sent" 
 
     

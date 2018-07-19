@@ -57,6 +57,13 @@ class User():
         return "No User Found"
 
     @staticmethod
+    def user_exists(email):
+        for user in Data.users:
+            if user.email == email:
+                return True
+        return False
+
+    @staticmethod
     def update_user(value, data):
         for user in Data.users:
             if user['id'] == value:
@@ -65,36 +72,40 @@ class User():
         return user
 
     def validate_json(self):
+        message, validation = '', True
         if self.first_name is None or self.last_name is None or self.email is None\
             or self.password is None:
-            return "Some values missing in json data sent"
-        if self.first_name.strip() == '' or self.last_name.strip() == '' or\
+            message, validation = "Some values missing in json data sent", False
+        elif self.first_name.strip() == '' or self.last_name.strip() == '' or\
                 self.email.strip() == '' or self.password.strip() == '':
-            return "You sent some empty strings"
-        is_valid = validate_email(self.email)
-        if not is_valid:
-            return "Wrong Email Format Sent"
-        if len(self.password) < 5:
-            return "Password provided is too short.A minimum of 5 characters required"
-        for user in Data.users:
-            if user.email == self.email:
-                return "Email Already Exists"
+            message, validation = "You sent some empty strings", False
+        elif not validate_email(self.email):
+            message, validation = "Wrong Email Format Sent", False
+        elif len(self.password) < 5:
+            message, validation = "Password provided is too short.A minimum of 5 characters required", False
+        elif self.user_exists(self.email):
+            message, validation = "Email Already Exists", False
+        if not validation:
+            return message
         return "Valid Data Sent"
 
     @staticmethod
     def validate_login(data):
+        message, validation = '', True
         if data is None:
-            return "No JSON DATA sent"
-        if 'email' not in data or 'password' not in data:
-            return "Missing Values in Data Sent"
-        if data.get('email').strip() == '' or data.get('password').strip() == '':
-            return "You sent some empty strings"
-        if User.check_user_email_password(
+            message, validation = "No JSON DATA sent", False
+        elif 'email' not in data or 'password' not in data:
+            message, validation = "Missing Values in Data Sent", False
+        elif data.get('email').strip() == '' or data.get('password').strip() == '':
+            message, validation = "You sent some empty strings", False
+        elif User.check_user_email_password(
             data.get('email'), data.get('password')) is True:
-            return "User"
-        if Admin.check_admin_email_password(
+            message, validation = "User", False
+        elif Admin.check_admin_email_password(
             data.get('email'), data.get('password')) is True:
-            return "Admin"
+            message, validation = "Admin", False
+        if not validation:
+            return message
         return "User Not Found"
 
 

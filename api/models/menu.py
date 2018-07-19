@@ -57,22 +57,28 @@ class Menu():
         return menu_item 
 
     def validate(self):
+        message, validation = '', True
         if self.meal_ids is None or self.user_id is None:
-            return "Missing Values in Data Sent"
-        if  len(self.meal_ids) ==  0:
-            return "You sent some empty strings"
-        if not isinstance(self.user_id, int):
-            return "User Id should be Integer"
+            message, validation = "Missing Values in Data Sent", False
+        elif  len(self.meal_ids) ==  0:
+            message, validation = "You sent some empty strings", False
+        elif not isinstance(self.user_id, int):
+            message, validation = "User Id should be Integer", False
+        if not validation:
+            return message    
         return "Valid Data Sent"
 
     @staticmethod
     def validate_json(data):
+        message, validation = '', True
         if data is None:
-            return "No Data Sent"
-        if 'meal_ids' not in data or 'user_id' not in data:
-            return "Missing Values in Data Sent"    
-        if data.get('meal_ids') == '' or data.get('user_id') == '':
-            return "You sent some empty strings"
-        if type(data.get('user_id')) is not int:
-            return "User Id should be Integer"
+            message, validation = "No Data Sent", False
+        elif 'meal_ids' not in data or 'user_id' not in data:
+            message, validation = "Missing Values in Data Sent", False   
+        elif data.get('meal_ids') == '' or data.get('user_id') == '':
+            message, validation = "You sent some empty strings", False
+        elif type(data.get('user_id')) is not int:
+            message, validation = "User Id should be Integer", False
+        if not validation:
+            return message    
         return "Valid Data Sent"    
