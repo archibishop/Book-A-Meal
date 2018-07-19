@@ -30,9 +30,9 @@ def sign_up():
     data = request.get_json()
     user = User(data.get('fname'), data.get(
         'lname'), data.get('email'), data.get('password'))
-    message = user.validate_json()
-    if message != "Valid Data Sent":
-        return jsonify({'message': message}), 400
+    response = user.validate_json()
+    if response != "Valid Data Sent":
+        return jsonify({'message': response}), 400
     user = user.add_user()
     user_data = {
         'id': user.id,
@@ -50,14 +50,14 @@ def login():
     """
     """ login  """
     data = request.get_json()
-    message = User.validate_login(data)
-    if message != "User":
-        if message != "Admin":
-            return jsonify({'message': message}), 400
-    if message == "User":
+    response = User.validate_login(data)
+    if response != "User":
+        if response != "Admin":
+            return jsonify({'message': response}), 400
+    if response == "User":
         session['logged_in'] = True
         return jsonify({'message': "Successfully login"}), 200
-    if message == "Admin":
+    if response == "Admin":
         session['logged_in'] = True
         session['admin'] = True
         return jsonify({'message': "Successfully login"}), 200
@@ -72,9 +72,9 @@ def add_meal():
     data = request.get_json()
     meal = Meals(data.get('meal_name'), data.get(
         'price'), data.get('meal_type'), 0)
-    message = meal.validate()
-    if message != "Valid Data Sent":
-        return jsonify({'message': message}), 400
+    response = meal.validate()
+    if response != "Valid Data Sent":
+        return jsonify({'message': response}), 400
     meal_add = meal.add_meals()
     return jsonify({'message': "Meal Successfully Added"}), 201
        
