@@ -23,16 +23,11 @@ parameters:
       id: modify_order
       required:
         - meal_name
-        - price
       properties:
         meal_name:
           type: string
           description: meal name
           default: spinach
-        price:
-          type: integer
-          description: price for meal
-          default: 2500 
 responses:
   400:
     description: 

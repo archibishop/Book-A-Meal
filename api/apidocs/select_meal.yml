@@ -24,10 +24,6 @@ parameters:
           type: string
           description: meal name
           default: katogo
-        price:
-          type: integer
-          description: price for meal
-          default: 3000 
         user_id:
           type: integer
           description: user id
