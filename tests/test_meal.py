@@ -188,7 +188,6 @@ class meal_test_case(unittest.TestCase):
 
         details = {
             "meal_name": "katogo",
-            "price": 2000,
             "user_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",

@@ -50,8 +50,7 @@ class order_test_case(unittest.TestCase):
         token = data['token']
 
         details = {
-            "meal_name":
-            "katogo"
+            "meal_name":""
         }
         response = self.client.put("/bookmealapi/v1.0/orders/2",
                                    data=json.dumps(details), content_type='application/json',
@@ -73,7 +72,6 @@ class order_test_case(unittest.TestCase):
 
         details = {
             "meal_name": "katogo",
-            "price": "8000"
         }
         response = self.client.put("/bookmealapi/v1.0/orders/2",
                                    data=json.dumps(details), content_type='application/json',
@@ -109,7 +107,6 @@ class order_test_case(unittest.TestCase):
 
         details = {
             "meal_name": "katogo",
-            "price": 8000
         }
         response = self.client.put("/bookmealapi/v1.0/orders/1",
                                    data=json.dumps(details), content_type='application/json',
@@ -118,7 +115,7 @@ class order_test_case(unittest.TestCase):
         data = json.loads(response.get_data())
         # self.assertEqual(data['order']['id'], 2)
         self.assertEqual(data['order']['meal_name'], "katogo")
-        self.assertEqual(data['order']['price'], 8000)
+        self.assertEqual(data['order']['price'], 2000)
 
     def test_delete_order_non_existant_data(self):
         """ Deleting order that doesnt exist """

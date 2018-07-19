@@ -17,13 +17,16 @@ class Orders(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True),
                            onupdate=datetime.datetime.utcnow)
 
-    def __init__(self, meal_name, price, user_id, process_status):
+    def __init__(self, meal_name, user_id, process_status):
         self.meal_name = meal_name
-        self.price = price
         self.user_id = user_id
         self.process_status = process_status
 
     def save(self):
+        meal = Meals.get_meal_by_name(self.meal_name)
+        self.price = meal.price
+        print(self.price)
+        print(self.meal_name)
         db.session.add(self)
         db.session.commit()
 
@@ -41,7 +44,8 @@ class Orders(db.Model):
         return order
 
     @staticmethod
-    def update_order(id, meal_name, price):
+    def update_order(id, meal_name):
+        print(Orders.get_all_orders())
         order = Orders.get_order_by_id(id)
         if not order:
             return "Order does not exist"
@@ -50,13 +54,14 @@ class Orders(db.Model):
         if order.meal_name != meal_name:
             order.meal_name = meal_name
 
-        order.price = price
+        meal = Meals.get_meal_by_name(meal_name)
+        order.price = meal.price
         db.session.commit()
         return order
 
     def validate_json_object(self):
         message, validation = '', True
-        if not self.meal_name or not self.price or\
+        if not self.meal_name or\
                 not self.user_id:
             message, validation = "Some values missing in json data sent", False
         elif self.meal_name.strip() == '' or self.meal_name.strip() == '':
@@ -65,8 +70,8 @@ class Orders(db.Model):
             message, validation = "Meal name is too long", False
         elif len(self.meal_name) < 3:
             message, validation = "Meal name is too short", False
-        elif not isinstance(self.price, int) or not isinstance(self.user_id, int):
-            message, validation = "Price should be an integer", False
+        elif not isinstance(self.user_id, int):
+            message, validation = "User id should be an integer", False
         elif Meals.get_meal_by_name(self.meal_name) == None:
             message, validation = "Meal Does Not Exist", False
         if not validation:
@@ -78,12 +83,12 @@ class Orders(db.Model):
         message, validation = '', True
         if data is None:
             message, validation =  "No JSON DATA sent", False
-        if 'meal_name' not in data or 'price' not in data:
+        elif 'meal_name' not in data :
             message, validation = "Some values missing in json data sent", False
-        if type(data.get('price')) is not int:
-            message, validation = "Price should be Integer", False
-        if data.get('meal_name') == '':
+        elif data.get('meal_name') == '':
             message, validation = "Meal Name is Empty", False
+        elif Meals.get_meal_by_name(data.get('meal_name')) == None:
+            message, validation = "Meal Does Not Exist", False
         if not validation:
             return message    
         return "Valid Data Sent"

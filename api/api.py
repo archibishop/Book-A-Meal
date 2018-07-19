@@ -61,13 +61,13 @@ def add_meal():
 def select_meal():
     """ file: apidocs/select_meal.yml """    
     data = request.get_json()
-    order = Orders(meal_name=data.get('meal_name'), price=data.get('price'),
+    order = Orders(meal_name=data.get('meal_name'),
      user_id=data.get('user_id'), process_status="pending")
     response = order.validate_json_object()
     if response != "Valid Data Sent":
         if response == "Meal Does Not Exist":
             return jsonify({'message', response}), 404
-        else:    
+        else: 
             return jsonify({'message': response}), 400
     order.save()
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
@@ -125,9 +125,8 @@ def update_order(order_id):
     message = Orders.validate_json(data)
     if message != "Valid Data Sent":
         return jsonify({'message': message}), 400
-    meal_name = data.get('meal_name')
-    price = data.get('price')    
-    response = Orders.update_order(order_id, meal_name, price)
+    meal_name = data.get('meal_name')    
+    response = Orders.update_order(order_id, meal_name)
     if response == "Order does not exist":
         return jsonify({'message': 'Order Does Not Exist'}), 404
     output = {}
