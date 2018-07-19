@@ -8,6 +8,7 @@ import jwt
 def is_loged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
+        " is user logged in"
         if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
@@ -20,6 +21,7 @@ def is_loged_in(f):
 def is_user(f):
     @wraps(f)
     def wrap(*args, **kwargs):
+        " user "
         if 'is_user' in session:
             return f(*args, **kwargs)
         else:
@@ -33,6 +35,7 @@ def is_user(f):
 def is_admin(f):
     @wraps(f)
     def wrap(*args, **kwargs):
+        " admin "
         if 'admin' in session:
             return f(*args, **kwargs)
         else:
