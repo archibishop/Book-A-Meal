@@ -60,7 +60,7 @@ class auth_test_case(unittest.TestCase):
         user = {
             "fname": "toast",
             "lname": "bull",
-            "email": "ttt",
+            "email": "tttttt",
             "password": "12345",
             "role_id": 2
         }

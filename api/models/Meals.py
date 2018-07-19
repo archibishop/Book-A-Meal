@@ -65,6 +65,10 @@ class Meals(db.Model):
             message, validation = "You sent some empty strings", False
         elif not isinstance(self.price, int):
             message, validation = "Price should be an integer", False
+        elif len(self.meal_type) < 3 or len(self.meal_name) < 3:
+            message, validation = "Meal name/type is too short", False
+        elif len(self.meal_type) > 30 or len(self.meal_name) > 30:
+            message, validation = "Meal name/type is too short", False
         elif Meals.get_meal_by_name(self.meal_name) != None:
             message, validation = "Meal Already Exists", False
         if not validation:

@@ -56,8 +56,11 @@ class User(db.Model):
                 or not isinstance(self.role_id, int):
             message, validation = "Empty values missing in json data sent", False
         elif len(self.first_name) < 3 or len(self.last_name) < 3 or\
-                len(self.password) < 5:
+                len(self.password) < 5 or len(self.email) < 5:
             message, validation = "Password/Firstname/lastname provided is too short.", False
+        elif len(self.first_name) > 30 or len(self.last_name) > 30 or\
+                len(self.password) > 5 or len(self.email) > 30:
+            message, validation = "Password/Firstname/lastname provided is too long.", False
         elif not self.validate_email(self.email):
             message, validation = "Wrong Email Format Sent", False
         elif User.query.filter_by(email=self.email).first():

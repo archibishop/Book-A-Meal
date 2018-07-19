@@ -79,6 +79,8 @@ class Menu(db.Model):
             message, validation = "User Id should be Integer", False
         elif len(data.get('meal_ids')) == 0:
             message, validation = "Meal ids is Empty", False
+        elif len(data.get('meal_ids')) > 40:
+            message, validation = "Meal ids is too long", False
         if not validation:
             return message    
         return "Valid Data Sent"

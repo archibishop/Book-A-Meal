@@ -82,7 +82,7 @@ def set_menu():
     menu = Menu(user_id=data.get('user_id'), meal_ids=meal_ids_string)
     message = menu.validate_json_object()
     if message != "Valid Data Sent":
-        return jsonify({'message', message}), 400
+        return jsonify({'message': message}), 400
     menu.save()
     menu_info = {}
     menu_info['id'] = menu.id

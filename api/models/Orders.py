@@ -61,6 +61,10 @@ class Orders(db.Model):
             message, validation = "Some values missing in json data sent", False
         elif self.meal_name.strip() == '' or self.meal_name.strip() == '':
             message, validation = "You sent some empty strings", False
+        elif len(self.meal_name) > 30:
+            message, validation = "Meal name is too long", False
+        elif len(self.meal_name) < 3:
+            message, validation = "Meal name is too short", False
         elif not isinstance(self.price, int) or not isinstance(self.user_id, int):
             message, validation = "Price should be an integer", False
         elif Meals.get_meal_by_name(self.meal_name) == None:
