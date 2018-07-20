@@ -66,7 +66,8 @@ def select_meal():
     response = order.validate_json_object()
     if response != "Valid Data Sent":
         if response == "Meal Does Not Exist":
-            return jsonify({'message', response}), 404
+            print(response)
+            return jsonify({'message': response}), 404
         else: 
             return jsonify({'message': response}), 400
     order.save()
