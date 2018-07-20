@@ -18,7 +18,7 @@ class User(db.Model):
                            default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),
                            onupdate=datetime.datetime.utcnow)
-    meal = db.relationship('Orders', backref='user', lazy=True)
+    meal = db.relationship('Order', backref='user', lazy=True)
     menu = db.relationship('Menu', backref='user', lazy=True)
 
     def __init__(self, first_name, last_name, email, password, business_name, location, role_id):

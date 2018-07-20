@@ -1,5 +1,5 @@
-from api.models.User import User
-from api.models.Meals import Meals
-from api.models.Orders import Orders
-from api.models.Menu import Menu
+from api.models.user import User
+from api.models.meal import Meal
+from api.models.order import Order
+from api.models.menu import Menu
      

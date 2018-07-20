@@ -1,7 +1,7 @@
 from api import create_app
 from api import db
 from flask import current_app
-from api.models.models import User, Menu, Orders, Meals
+from api.models.models import User, Menu, Order, Meal
 from werkzeug.security import generate_password_hash, check_password_hash
 import unittest
 import json

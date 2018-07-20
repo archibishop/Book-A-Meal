@@ -3,7 +3,7 @@ from flask import jsonify
 import datetime
 from api import db
 
-class Meals(db.Model):
+class Meal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meal_name = db.Column(db.String(50), unique=True)
     price = db.Column(db.Integer)
@@ -28,25 +28,25 @@ class Meals(db.Model):
 
     @staticmethod
     def get_all_meals():
-        return Meals.query.all()
+        return Meal.query.all()
 
     @staticmethod
     def get_meal_by_name(meal_name):
-        meal = Meals.query.filter_by(meal_name=meal_name).first()
+        meal = Meal.query.filter_by(meal_name=meal_name).first()
         return meal
 
     @staticmethod
     def get_meal_by_id(id):
-        meal = Meals.query.filter_by(id=id).first()
+        meal = Meal.query.filter_by(id=id).first()
         return meal
 
     @staticmethod
     def update_meal(id, meal_name, price, meal_type):
-        meal = Meals(meal_name=meal_name, price=price, meal_type=meal_type)
+        meal = Meal(meal_name=meal_name, price=price, meal_type=meal_type)
         message = meal.validate_json()
         if message != "Valid Data Sent":
             return message
-        meal = Meals.get_meal_by_id(id)
+        meal = Meal.get_meal_by_id(id)
         if not meal:
             return "Meal Does Not Exist"
         if meal.meal_name != meal_name:
@@ -69,7 +69,7 @@ class Meals(db.Model):
             message, validation = "Meal name/type is too short", False
         elif len(self.meal_type) > 30 or len(self.meal_name) > 30:
             message, validation = "Meal name/type is too short", False
-        elif Meals.get_meal_by_name(self.meal_name) != None:
+        elif Meal.get_meal_by_name(self.meal_name) != None:
             message, validation = "Meal Already Exists", False
         if not validation:
             return message    

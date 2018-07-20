@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
 from api import db
-from .models.models import User, Menu, Orders, Meals
+from .models.models import User, Menu, Order, Meal
 from .utils import is_admin, token_required
 
 api_route = Blueprint("api", __name__)
@@ -48,7 +48,7 @@ def login():
 def add_meal():
     """ file: apidocs/add_meal.yml """   
     data = request.get_json()
-    meal = Meals(meal_name=data.get('meal_name'), price=data.get('price'),\
+    meal = Meal(meal_name=data.get('meal_name'), price=data.get('price'),\
                 meal_type=data.get('meal_type'))
     response = meal.validate_json()
     if response != "Valid Data Sent":
@@ -61,7 +61,7 @@ def add_meal():
 def select_meal():
     """ file: apidocs/select_meal.yml """    
     data = request.get_json()
-    order = Orders(meal_name=data.get('meal_name'),
+    order = Order(meal_name=data.get('meal_name'),
      user_id=data.get('user_id'), process_status="pending")
     response = order.validate_json_object()
     if response != "Valid Data Sent":
@@ -102,7 +102,7 @@ def set_menu():
 def update_meal_option(meal_id):
     """ file: apidocs/update_meal.yml """
     data = request.get_json()
-    response = Meals.update_meal(meal_id, data.get(
+    response = Meal.update_meal(meal_id, data.get(
         'meal_name'), data.get('price'), data.get('meal_type'))
     if isinstance(response, str) and response != "Meal Does Not Exist":
         return jsonify({'message': "nothing"}), 400
@@ -123,11 +123,11 @@ def update_meal_option(meal_id):
 def update_order(order_id):
     """ file: apidocs/update_order.yml """   
     data = request.get_json()
-    message = Orders.validate_json(data)
+    message = Order.validate_json(data)
     if message != "Valid Data Sent":
         return jsonify({'message': message}), 400
     meal_name = data.get('meal_name')    
-    response = Orders.update_order(order_id, meal_name)
+    response = Order.update_order(order_id, meal_name)
     if response == "Order does not exist":
         return jsonify({'message': 'Order Does Not Exist'}), 404
     output = {}
@@ -167,7 +167,7 @@ def update_menu(menu_id):
 @token_required
 def delete_meal_option(meal_id):
     """  file: apidocs/delete_meal.yml """
-    meal = Meals.get_meal_by_id(meal_id)
+    meal = Meal.get_meal_by_id(meal_id)
     if not meal:
         return jsonify({'message':'Meal Not Found'}), 404
     meal.delete_meal()    
@@ -178,7 +178,7 @@ def delete_meal_option(meal_id):
 @token_required
 def get_all_meals():
     """ file: apidocs/get_meal.yml """
-    meals = Meals.get_all_meals()
+    meals = Meal.get_all_meals()
     output = []
     for meal in meals:
         meal_info = {}
@@ -196,7 +196,7 @@ def get_all_meals():
 @token_required
 def get_all_orders():
     """ file: apidocs/get_order.yml """
-    orders = Orders.get_all_orders()
+    orders = Order.get_all_orders()
     output = []
     for order in orders:
         order_info = {}
@@ -232,7 +232,7 @@ def get_menu():
 @token_required
 def delete_order_item(order_id):
     """ file: apidocs/delete_order.yml """
-    order = Orders.get_order_by_id(order_id)
+    order = Order.get_order_by_id(order_id)
     if not order:
         return jsonify({'message':'Meal Does Not Exist'}), 404
     order.delete_order()    

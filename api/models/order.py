@@ -4,9 +4,9 @@ from validate_email import validate_email
 import datetime
 from api import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from api.models.Meals import Meals
+from api.models.meal import Meal
 
-class Orders(db.Model):
+class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meal_name = db.Column(db.String(50))
     price = db.Column(db.Integer)
@@ -23,7 +23,7 @@ class Orders(db.Model):
         self.process_status = process_status
 
     def save(self):
-        meal = Meals.get_meal_by_name(self.meal_name)
+        meal = Meal.get_meal_by_name(self.meal_name)
         self.price = meal.price
         db.session.add(self)
         db.session.commit()
@@ -34,17 +34,17 @@ class Orders(db.Model):
 
     @staticmethod
     def get_all_orders():
-        return Orders.query.all()
+        return Order.query.all()
 
     @staticmethod
     def get_order_by_id(id):
-        order = Orders.query.filter_by(id=id).first()
+        order = Order.query.filter_by(id=id).first()
         return order
 
     @staticmethod
     def update_order(id, meal_name):
-        print(Orders.get_all_orders())
-        order = Orders.get_order_by_id(id)
+        print(Order.get_all_orders())
+        order = Order.get_order_by_id(id)
         if not order:
             return "Order does not exist"
 
@@ -52,7 +52,7 @@ class Orders(db.Model):
         if order.meal_name != meal_name:
             order.meal_name = meal_name
 
-        meal = Meals.get_meal_by_name(meal_name)
+        meal = Meal.get_meal_by_name(meal_name)
         order.price = meal.price
         db.session.commit()
         return order
@@ -70,7 +70,7 @@ class Orders(db.Model):
             message, validation = "Meal name is too short", False
         elif not isinstance(self.user_id, int):
             message, validation = "User id should be an integer", False
-        elif Meals.get_meal_by_name(self.meal_name) == None:
+        elif Meal.get_meal_by_name(self.meal_name) == None:
             message, validation = "Meal Does Not Exist", False
         if not validation:
             return message    
@@ -85,7 +85,7 @@ class Orders(db.Model):
             message, validation = "Some values missing in json data sent", False
         elif data.get('meal_name') == '':
             message, validation = "Meal Name is Empty", False
-        elif Meals.get_meal_by_name(data.get('meal_name')) == None:
+        elif Meal.get_meal_by_name(data.get('meal_name')) == None:
             message, validation = "Meal Does Not Exist", False
         if not validation:
             return message    
