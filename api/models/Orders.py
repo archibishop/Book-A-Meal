@@ -25,8 +25,6 @@ class Orders(db.Model):
     def save(self):
         meal = Meals.get_meal_by_name(self.meal_name)
         self.price = meal.price
-        print(self.price)
-        print(self.meal_name)
         db.session.add(self)
         db.session.commit()
 
