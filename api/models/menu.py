@@ -99,3 +99,6 @@ class Menu(db.Model):
         for ids in meal_ids:
             meal_ids_string += ';%s' % ids
         return meal_ids_string
+
+
+        
