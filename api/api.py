@@ -46,8 +46,8 @@ def login():
     return jsonify({'message':'Successfully login','token': token.decode('UTF-8'), 'role': role, 'id': user.id}), 200                 
 
 @api_route.route('/bookmealapi/v1.0/meals', methods=['POST'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def add_meal():
     """ file: apidocs/add_meal.yml """   
     data = request.get_json()
@@ -60,7 +60,7 @@ def add_meal():
     return jsonify({'message' : 'Meal Successfully Added'}), 201      
 
 @api_route.route('/bookmealapi/v1.0/orders', methods=['POST'])
-# @token_required
+@token_required
 def select_meal():
     """ file: apidocs/select_meal.yml """    
     data = request.get_json()
@@ -76,8 +76,8 @@ def select_meal():
     return jsonify({'message': "Transacrtion Successfully Made"}), 201
 
 @api_route.route('/bookmealapi/v1.0/menu', methods=['POST'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def set_menu():
     """ file: apidocs/set_menu.yml """
     data = request.get_json()
@@ -101,8 +101,8 @@ def set_menu():
       'menu': menu_info}), 201              
 
 @api_route.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['PUT'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def update_meal_option(meal_id):
     """ file: apidocs/update_meal.yml """
     data = request.get_json()
@@ -123,7 +123,7 @@ def update_meal_option(meal_id):
     return jsonify({'message':'Meal Option Updated', 'meal':meal_update}), 201       
 
 @api_route.route('/bookmealapi/v1.0/orders/<order_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_order(order_id):
     """ file: apidocs/update_order.yml """   
     data = request.get_json()
@@ -144,8 +144,8 @@ def update_order(order_id):
     return jsonify({'message': 'Order Updated', 'order': output}), 201    
 
 @api_route.route('/bookmealapi/v1.0/menu/<menu_id>', methods=['PUT'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def update_menu(menu_id):
     """ file: apidocs/update_menu.yml """       
     data = request.get_json()
@@ -167,8 +167,8 @@ def update_menu(menu_id):
           'menu': menu_info}), 201               
 
 @api_route.route('/bookmealapi/v1.0/meals/<meal_id>', methods=['DELETE'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def delete_meal_option(meal_id):
     """  file: apidocs/delete_meal.yml """
     meal = Meal.get_meal_by_id(meal_id)
@@ -178,8 +178,8 @@ def delete_meal_option(meal_id):
     return jsonify({'id': meal_id, 'message':'Meal Successfully Removed'}), 200    
 
 @api_route.route('/bookmealapi/v1.0/meals', methods=['GET'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def get_all_meals():
     """ file: apidocs/get_meal.yml """
     meals = Meal.get_all_meals()
@@ -199,7 +199,7 @@ def get_all_meals():
 
 @api_route.route('/bookmealapi/v1.0/meals/<caterer_id>', methods=['GET'])
 # @is_admin
-# @token_required
+@token_required
 def get_meals_caterer(caterer_id):
     """ file: apidocs/get_meal.yml """
     meals = Meal.get_meals_by_admin_id(int(caterer_id))
@@ -217,8 +217,8 @@ def get_meals_caterer(caterer_id):
     return jsonify({'meals': output}), 200
     
 @api_route.route('/bookmealapi/v1.0/orders', methods=['GET'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def get_all_orders():
     """ file: apidocs/get_order.yml """
     orders = Order.get_all_orders()
@@ -237,8 +237,8 @@ def get_all_orders():
 
 
 @api_route.route('/bookmealapi/v1.0/orders/caterer/<caterer_id>', methods=['GET'])
-# @is_admin
-# @token_required
+@is_admin
+@token_required
 def get_orders_caterer(caterer_id):
     """ file: apidocs/get_order.yml """
     orders, total = Order.get_orders_by_admin_id(int(caterer_id))
@@ -256,7 +256,7 @@ def get_orders_caterer(caterer_id):
     return jsonify({'transactions': output, 'total': total}), 200
 
 @api_route.route('/bookmealapi/v1.0/orders/<user_id>', methods=['GET']) 
-# @token_required
+@token_required
 def get_orders_user(user_id):
     orders= Order.get_order_by_user_id(user_id)  
     output = [] 
@@ -277,7 +277,7 @@ def get_orders_user(user_id):
 
 
 @api_route.route('/bookmealapi/v1.0/menu', methods=['GET'])
-# @token_required
+@token_required
 def get_menu():
     """ file: apidocs/get_menu.yml """
     menus = Menu.get_all_menus()
@@ -295,7 +295,7 @@ def get_menu():
     return jsonify({'menu_day': output}), 200
 
 @api_route.route("/bookmealapi/v1.0/orders/<order_id>", methods=['DELETE'])
-# @token_required
+@token_required
 def delete_order_item(order_id):
     """ file: apidocs/delete_order.yml """
     order = Order.get_order_by_id(order_id)
@@ -305,7 +305,7 @@ def delete_order_item(order_id):
     return jsonify({'message':'Order Removed'}),200
 
 @api_route.route("/bookmealapi/v1.0/menu/<menu_id>", methods=['DELETE'])
-# @token_required
+@token_required
 def delete_menu(menu_id):
     """ file: apidocs/delete_menu.yml """
     """ Delete menu """
@@ -317,7 +317,7 @@ def delete_menu(menu_id):
 
 
 @api_route.route("/bookmealapi/v1.0/caterers", methods=['GET'])  
-# @token_required  
+@token_required  
 def get_caterers():
     """ Get Caterers """
     caterers = User.get_caterers()
@@ -330,7 +330,7 @@ def get_caterers():
     return jsonify({'Caterers': output}), 200
 
 @api_route.route("/bookamealapi/v1.0/caterers/<caterer_id>", methods=['GET'])
-# @token_required
+@token_required
 def get_caterers_menu(caterer_id):
     """ Get caterers menu"""
     meals = Menu.get_menu_by_user_id(caterer_id)
@@ -367,7 +367,7 @@ def get_days():
     
 
 @api_route.route("/bookamealapi/v1.0/menu/day/<day_val>", methods=['POST'])
-# @token_required
+@token_required
 def get_menu_day(day_val):
     """ Get menu by day"""
     data = request.get_json()
@@ -386,7 +386,7 @@ def get_menu_day(day_val):
 
 
 @api_route.route("/bookamealapi/v1.0/menu/days/<caterer_id>", methods=['GET'])
-# @token_required
+@token_required
 def get_menu_days(caterer_id):
     """ Get menu by day"""
     days = Menu.get_menu_days(caterer_id)
