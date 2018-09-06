@@ -31,7 +31,8 @@ class meal_test_case(unittest.TestCase):
         self.vaild_meal = {
             "meal_name": "katogo",
             "price": 2000,
-            "meal_type": "breakfast"
+            "meal_type": "breakfast",
+            "admin_id": 1,
         }
         with self.app.app_context():
             db.create_all()
@@ -188,7 +189,8 @@ class meal_test_case(unittest.TestCase):
 
         details = {
             "meal_name": "katogo",
-            "user_id": 1
+            "user_id": 1,
+            "admin_id": 1
         }
         response = self.client.post("/bookmealapi/v1.0/orders",
                                     data=json.dumps(details), content_type='application/json',
@@ -299,7 +301,8 @@ class meal_test_case(unittest.TestCase):
         details = {
             "meal_name": "rolex",
             "price": 8000,
-            "meal_type": "breakfast"
+            "meal_type": "breakfast",
+            "admin_id": 1
         }
         response = self.client.put("/bookmealapi/v1.0/meals/1",
                                    data=json.dumps(details), content_type='application/json',

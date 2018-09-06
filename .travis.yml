@@ -11,7 +11,7 @@ install:
 
 # creating db
 before_script:
-  - psql -c 'create database test_book;' -U postgres
+  - psql -c 'create database test_book6;' -U postgres
   # - psql -c "create user postgres with password '12345';" -U postgres
 
 script:  

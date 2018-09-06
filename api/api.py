@@ -33,14 +33,17 @@ def login():
         return jsonify({'message': response}), 404
     if response == "Wrong Password" or response == "Some values missing in json data sent":
         return jsonify({'message': response}), 400
-    user = response    
+    user = response  
+    role = ''  
     if user.role_id == 2:
         session['is_user'] = True
+        role = 'user'
     else:
         session['admin'] = True
-    token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow(
+        role = 'admin'
+    token = jwt.encode({'id': user.id, 'role': role, 'exp': datetime.datetime.utcnow(
     ) + datetime.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
-    return jsonify({'message':'Successfully login','token': token.decode('UTF-8')}), 200                 
+    return jsonify({'message':'Successfully login','token': token.decode('UTF-8'), 'role': role, 'id': user.id}), 200                 
 
 @api_route.route('/bookmealapi/v1.0/meals', methods=['POST'])
 @is_admin
@@ -49,7 +52,7 @@ def add_meal():
     """ file: apidocs/add_meal.yml """   
     data = request.get_json()
     meal = Meal(meal_name=data.get('meal_name'), price=data.get('price'),\
-                meal_type=data.get('meal_type'))
+                meal_type=data.get('meal_type'), admin_id=data.get('admin_id'))
     response = meal.validate_json()
     if response != "Valid Data Sent":
         return jsonify({'message': response}), 400
@@ -62,11 +65,10 @@ def select_meal():
     """ file: apidocs/select_meal.yml """    
     data = request.get_json()
     order = Order(meal_name=data.get('meal_name'),
-     user_id=data.get('user_id'), process_status="pending")
+      user_id=data.get('user_id'), process_status="pending", admin_id=data.get('admin_id'))
     response = order.validate_json_object()
     if response != "Valid Data Sent":
         if response == "Meal Does Not Exist":
-            print(response)
             return jsonify({'message': response}), 404
         else: 
             return jsonify({'message': response}), 400
@@ -80,7 +82,8 @@ def set_menu():
     """ file: apidocs/set_menu.yml """
     data = request.get_json()
     meal_ids_string = Menu.convert_into_string(data.get('meal_ids'))
-    menu = Menu(user_id=data.get('user_id'), meal_ids=meal_ids_string)
+    menu = Menu(user_id=data.get('user_id'),
+                meal_ids=meal_ids_string, menu_date=data.get('menu_date'))
     message = menu.validate_json_object()
     if message != "Valid Data Sent":
         return jsonify({'message': message}), 400
@@ -93,6 +96,7 @@ def set_menu():
     menu_info['meal_ids'] = converted_meal_ids
     menu_info['created_at'] = menu.created_at
     menu_info['updated_at'] = menu.updated_at
+    menu_info['menu_date'] = menu.menu_date
     return jsonify({'message':'Menu Successfully Created',\
       'menu': menu_info}), 201              
 
@@ -103,7 +107,7 @@ def update_meal_option(meal_id):
     """ file: apidocs/update_meal.yml """
     data = request.get_json()
     response = Meal.update_meal(meal_id, data.get(
-        'meal_name'), data.get('price'), data.get('meal_type'))
+        'meal_name'), data.get('price'), data.get('meal_type'), data.get('admin_id'))   
     if isinstance(response, str) and response != "Meal Does Not Exist":
         return jsonify({'message': "nothing"}), 400
     if response == "Meal Does Not Exist":
@@ -188,7 +192,28 @@ def get_all_meals():
         meal_info['meal_type'] =  meal.meal_type
         meal_info['created_at'] =  meal.created_at
         meal_info['updated_at'] =  meal.updated_at
+        meal_info['admin_id'] = meal.admin_id
         output.append(meal_info)    
+    return jsonify({'meals': output}), 200
+
+
+@api_route.route('/bookmealapi/v1.0/meals/<caterer_id>', methods=['GET'])
+@is_admin
+@token_required
+def get_meals_caterer(caterer_id):
+    """ file: apidocs/get_meal.yml """
+    meals = Meal.get_meals_by_admin_id(int(caterer_id))
+    output = []
+    for meal in meals:
+        meal_info = {}
+        meal_info['id'] = meal.id
+        meal_info['meal_name'] = meal.meal_name
+        meal_info['price'] = meal.price
+        meal_info['meal_type'] = meal.meal_type
+        meal_info['created_at'] = meal.created_at
+        meal_info['updated_at'] = meal.updated_at
+        meal_info['admin_id'] = meal.admin_id
+        output.append(meal_info)
     return jsonify({'meals': output}), 200
     
 @api_route.route('/bookmealapi/v1.0/orders', methods=['GET'])
@@ -208,7 +233,47 @@ def get_all_orders():
         order_info['created_at'] =  order.created_at
         order_info['updated_at'] =  order.updated_at
         output.append(order_info)
-    return jsonify({'transactions': output}), 200    
+    return jsonify({'transactions': output}), 200  
+
+
+@api_route.route('/bookmealapi/v1.0/orders/caterer/<caterer_id>', methods=['GET'])
+@is_admin
+@token_required
+def get_orders_caterer(caterer_id):
+    """ file: apidocs/get_order.yml """
+    orders, total = Order.get_orders_by_admin_id(int(caterer_id))
+    output = []
+    for order in orders:
+        order_info = {}
+        order_info['id'] = order.id
+        order_info['meal_name'] = order.meal_name
+        order_info['price'] = order.price
+        order_info['user_id'] = order.user_id
+        order_info['process_status'] = order.process_status
+        order_info['created_at'] = order.created_at
+        order_info['updated_at'] = order.updated_at
+        output.append(order_info)
+    return jsonify({'transactions': output, 'total': total}), 200
+
+@api_route.route('/bookmealapi/v1.0/orders/<user_id>', methods=['GET']) 
+@token_required
+def get_orders_user(user_id):
+    orders= Order.get_order_by_user_id(user_id)  
+    output = [] 
+    for order in orders:
+        order_info = {}
+        order_info['id'] =  order.id
+        order_info['meal_name'] =  order.meal_name
+        order_info['price'] =  order.price
+        order_info['user_id'] =  order.user_id
+        order_info['process_status'] =  order.process_status
+        order_info['created_at'] =  order.created_at
+        order_info['updated_at'] =  order.updated_at
+        order_info['time_stamp'] = (int(order.created_at.timestamp()) * 1000)
+        output.append(order_info)
+    return jsonify({'transactions': output }), 200  
+ 
+
 
 @api_route.route('/bookmealapi/v1.0/menu', methods=['GET'])
 @token_required
@@ -250,5 +315,79 @@ def delete_menu(menu_id):
     return jsonify({'message':'Menu Successfully removed'}), 200
 
 
+@api_route.route("/bookmealapi/v1.0/caterers", methods=['GET'])  
+@token_required  
+def get_caterers():
+    """ Get Caterers """
+    caterers = User.get_caterers()
+    output = []
+    for user in caterers:
+        user_info = {}
+        user_info['id'] = user.id
+        user_info['business_name'] = user.business_name
+        output.append(user_info)
+    return jsonify({'Caterers': output}), 200
 
+@api_route.route("/bookamealapi/v1.0/caterers/<caterer_id>", methods=['GET'])
+@ token_required
+def get_caterers_menu(caterer_id):
+    """ Get caterers menu"""
+    meals = Menu.get_menu_by_user_id(caterer_id)
+    output = []
+    if len(meals) > 0:
+        for meal in meals:    
+            item_info = {}
+            item_info['id'] = meal.id
+            item_info['meal_name'] = meal.meal_name
+            item_info['meal_type'] = meal.meal_type
+            item_info['price'] = meal.price
+            item_info['admin_id'] = meal.admin_id
+            output.append(item_info)
+    return jsonify({'Menu': output}), 200
+    # return jsonify({'Menu': output}), 404
+
+
+@api_route.route("/bookamealapi/v1.0/days_of_week", methods=['GET'])
+def get_days():
+    """ Get days of week"""
+    date_list = []
+    date_count = datetime.date.today().weekday()
+    for count in range(0, 7):        
+        if count >= date_count:
+            diff = (6 - count) + date_count
+            date = datetime.date.today() + datetime.timedelta(6-count)
+            day = date.strftime("%A")
+            day_data = {
+                "val": diff,
+                "day": day
+            }
+            date_list.append(day_data)
+    return jsonify({'days': date_list}), 200
+    
+
+@api_route.route("/bookamealapi/v1.0/menu/day/<day_val>", methods=['POST'])
+@ token_required
+def get_menu_day(day_val):
+    """ Get menu by day"""
+    data = request.get_json()
+    meals, date_list, menu_id = Menu.get_menu_by_day(int(day_val), data.get('value'))
+    output = []
+    if len(meals) > 0:
+        for meal in meals:
+            item_info = {}
+            item_info['id'] = meal.id
+            item_info['meal_name'] = meal.meal_name
+            item_info['meal_type'] = meal.meal_type
+            item_info['price'] = meal.price
+            item_info['admin_id'] = meal.admin_id
+            output.append(item_info)
+    return jsonify({'menu_day': output, 'date_list': date_list, 'menu_id': menu_id}), 200
+
+
+@api_route.route("/bookamealapi/v1.0/menu/days/<caterer_id>", methods=['GET'])
+@ token_required
+def get_menu_days(caterer_id):
+    """ Get menu by day"""
+    days = Menu.get_menu_days(caterer_id)
+    return jsonify({'days_list': days}), 200
     

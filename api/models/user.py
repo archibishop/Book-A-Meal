@@ -107,4 +107,9 @@ class User(db.Model):
         else:
             return False
 
+    @staticmethod
+    def get_caterers():
+        caterers = User.query.filter_by(role_id=1)
+        return caterers       
+
 

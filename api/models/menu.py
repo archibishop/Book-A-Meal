@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify
 import datetime
+from datetime import timedelta, timezone
 from api import db
+from api.models.meal import Meal
 
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,10 +13,15 @@ class Menu(db.Model):
                            default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),
                            onupdate=datetime.datetime.utcnow)
+    menu_date = db.Column(db.DateTime(timezone=True),
+                           nullable=True)
 
-    def __init__(self, user_id, meal_ids):
+    def __init__(self, user_id, meal_ids, menu_date):
         self.user_id = user_id
         self.meal_ids = meal_ids
+        self.value = menu_date
+        diff = (self.value - datetime.date.today().weekday())
+        self.menu_date = datetime.date.today() + datetime.timedelta(diff)
 
     def save(self):
         db.session.add(self)
@@ -34,8 +41,69 @@ class Menu(db.Model):
         return menu
 
     @staticmethod
+    def get_menu_days(id):
+        menus = Menu.query.filter_by(user_id=id).all()
+        date_list = []
+        dates = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        if menus:
+            for menu in menus:
+                date = menu.menu_date
+                if date.date() >= datetime.datetime.now(timezone.utc).date():
+                    day = date.strftime("%A")
+                    if day in dates:
+                        index = dates.index(day)
+                        data = {
+                            'id': menu.id,
+                            'day': index
+                        }
+                    date_list.append(data) 
+
+        return date_list
+
+
+    @staticmethod
+    def get_menu_by_day(val, user_id):
+        diff = (val - datetime.date.today().weekday())
+        date = datetime.date.today() + datetime.timedelta(diff)
+        menu = Menu.query.filter_by(menu_date=date, user_id=user_id).first()
+        output_meals = []
+        menu_id = False
+        if menu:
+            if menu.menu_date.date() >= datetime.datetime.now(timezone.utc).date():
+                if menu:
+                    menu_id = menu.id
+                    converted_meal_ids = Menu.convert_into_list(menu)
+                    meals = Meal.get_all_meals()
+                    for meal in meals:
+                        if meal.id in converted_meal_ids:
+                            output_meals.append(meal)
+        date_list = Menu.get_menu_days(user_id)
+        return output_meals, date_list, menu_id
+
+    @staticmethod
     def get_menu_by_user_id(user_id):
+        today = datetime.date.today()
+        menu = Menu.query.filter_by(
+            user_id=user_id, menu_date=datetime.date.today()).first()
+        output_meals = []
+        if menu:
+            converted_meal_ids = Menu.convert_into_list(menu)
+            meals = Meal.get_all_meals()
+            for meal in meals:
+                if meal.id in converted_meal_ids:
+                    output_meals.append(meal)
+        return output_meals
+
+    @staticmethod
+    def get_menu_by_user_id_exists(user_id):
         menu = Menu.query.filter_by(user_id=user_id).first()
+        return menu
+            
+    @staticmethod
+    def get_menu_by_day_exists(val, user_id):
+        diff = (val - datetime.date.today().weekday())
+        date = datetime.date.today() + datetime.timedelta(diff)
+        menu = Menu.query.filter_by(menu_date=date, user_id=user_id).first()
         return menu
 
     @staticmethod
@@ -56,13 +124,14 @@ class Menu(db.Model):
 
     def validate_json_object(self):
         message, validation = '', True
-        if not self.user_id or not self.meal_ids:
+        if not self.user_id or not self.meal_ids or not self.menu_date:
             message, validation = "Some values missing in json data sent", False
         elif not isinstance(self.user_id, int):
             message, validation = "User Id should be Integer", False
         elif not isinstance(self.meal_ids, str):
             message, validation = "Meal ids is Empty", False 
-        elif Menu.get_menu_by_user_id(self.user_id) is not None:
+        elif Menu.get_menu_by_day_exists(self.value, self.user_id) is not None:
+            value = Menu.get_menu_by_day_exists(self.value, self.user_id)
             message, validation = 'Caterer Already Set Menu For the Day', False
         if not validation:
             return message    

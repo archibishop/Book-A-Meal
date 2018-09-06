@@ -16,11 +16,14 @@ class Order(db.Model):
                            default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),
                            onupdate=datetime.datetime.utcnow)
+    admin_id = db.Column(db.Integer)
+    
 
-    def __init__(self, meal_name, user_id, process_status):
+    def __init__(self, meal_name, user_id, process_status, admin_id):
         self.meal_name = meal_name
         self.user_id = user_id
         self.process_status = process_status
+        self.admin_id = admin_id
 
     def save(self):
         meal = Meal.get_meal_by_name(self.meal_name)
@@ -42,13 +45,30 @@ class Order(db.Model):
         return order
 
     @staticmethod
+    def get_orders_by_admin_id(id):
+        orders = Order.query.filter_by(
+            admin_id=id).order_by(Order.created_at.desc())
+        sum = 0
+        if orders:
+            for order in orders:
+                if order.created_at.date() == datetime.datetime.utcnow().date():
+                    sum = sum + order.price
+        order_sum_today = sum
+        return orders, order_sum_today
+
+    @staticmethod
+    def get_order_by_user_id(id):
+        order = Order.query.filter_by(
+            user_id=id).order_by(Order.created_at.desc())
+        return order
+
+    @staticmethod
     def update_order(id, meal_name):
-        print(Order.get_all_orders())
         order = Order.get_order_by_id(id)
         if not order:
             return "Order does not exist"
 
-        #Since mealName should be unqiue in the database Updating the same name causes Integrity Error
+        #Since meal Name should be unqiue in the database Updating the same name causes Integrity Error
         if order.meal_name != meal_name:
             order.meal_name = meal_name
 
@@ -68,7 +88,7 @@ class Order(db.Model):
             message, validation = "Meal name is too long", False
         elif len(self.meal_name) < 3:
             message, validation = "Meal name is too short", False
-        elif not isinstance(self.user_id, int):
+        elif not isinstance(self.user_id, int) or not isinstance(self.admin_id, int):
             message, validation = "User id should be an integer", False
         elif Meal.get_meal_by_name(self.meal_name) == None:
             message, validation = "Meal Does Not Exist", False

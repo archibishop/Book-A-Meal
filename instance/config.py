@@ -6,7 +6,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     """ Development Configuration file"""
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI", "postgresql://postgres:12345@localhost/book")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI", "postgresql://postgres:12345@localhost/book6")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
 
@@ -15,7 +15,7 @@ class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URI", "postgresql://postgres:12345@localhost/test_book")
+        "DATABASE_URI", "postgresql://postgres:12345@localhost/test_book6")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

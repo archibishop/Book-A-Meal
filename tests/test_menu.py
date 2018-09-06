@@ -5,6 +5,7 @@ from api.models.models import User, Menu, Order, Meal
 from werkzeug.security import generate_password_hash, check_password_hash
 import unittest
 import json
+import datetime
 
 
 class menu_test_case(unittest.TestCase):
@@ -27,7 +28,8 @@ class menu_test_case(unittest.TestCase):
         }
         self.valid_menu = {
             "meal_ids": [1, 2, 3, 4],
-            "user_id": 1
+            "user_id": 1,
+            "menu_date": 2
         }
 
         with self.app.app_context():

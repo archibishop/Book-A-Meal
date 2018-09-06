@@ -12,11 +12,13 @@ class Meal(db.Model):
                            default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True),
                            onupdate=datetime.datetime.utcnow)
+    admin_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
-    def __init__(self, meal_name, price, meal_type):
+    def __init__(self, meal_name, price, meal_type, admin_id):
         self.meal_name = meal_name
         self.price = price
         self.meal_type = meal_type
+        self.admin_id = admin_id
 
     def save(self):
         db.session.add(self)
@@ -31,6 +33,11 @@ class Meal(db.Model):
         return Meal.query.all()
 
     @staticmethod
+    def get_meals_by_admin_id(id):
+        meals = Meal.query.filter_by(admin_id=id)
+        return meals
+
+    @staticmethod
     def get_meal_by_name(meal_name):
         meal = Meal.query.filter_by(meal_name=meal_name).first()
         return meal
@@ -41,8 +48,8 @@ class Meal(db.Model):
         return meal
 
     @staticmethod
-    def update_meal(id, meal_name, price, meal_type):
-        meal = Meal(meal_name=meal_name, price=price, meal_type=meal_type)
+    def update_meal(id, meal_name, price, meal_type, admin_id):
+        meal = Meal(meal_name=meal_name, price=price, meal_type=meal_type, admin_id=admin_id)
         message = meal.validate_json()
         if message != "Valid Data Sent":
             return message
@@ -63,7 +70,7 @@ class Meal(db.Model):
             message, validation = "Some values missing in json data sent", False
         elif self.meal_name.strip() == '' or self.meal_type.strip() == '':
             message, validation = "You sent some empty strings", False
-        elif not isinstance(self.price, int):
+        elif not isinstance(self.price, int) or not isinstance(self.admin_id, int):
             message, validation = "Price should be an integer", False
         elif len(self.meal_type) < 3 or len(self.meal_name) < 3:
             message, validation = "Meal name/type is too short", False
