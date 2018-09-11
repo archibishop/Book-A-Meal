@@ -22,6 +22,12 @@ def create_app(config_name):
 
     """ Putting importation on because db instance had not been created before """
     from api.api import api_route
+    from api.api_auth import api_auth
+    from api.api_meal import api_meal
+    from api.api_order import api_order
+    app.register_blueprint(api_auth)
+    app.register_blueprint(api_meal)
+    app.register_blueprint(api_order)
     app.register_blueprint(api_route)
 
     return app

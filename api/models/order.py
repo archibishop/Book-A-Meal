@@ -20,8 +20,8 @@ class Order(db.Model):
     
 
     def __init__(self, meal_name, user_id, process_status, admin_id):
-        self.meal_name = meal_name
-        self.user_id = user_id
+        self.meal_name, self.user_id = meal_name, user_id
+        # self.user_id = user_id
         self.process_status = process_status
         self.admin_id = admin_id
 

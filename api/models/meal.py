@@ -15,6 +15,7 @@ class Meal(db.Model):
     admin_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
     def __init__(self, meal_name, price, meal_type, admin_id):
+        # meal model constructor.
         self.meal_name = meal_name
         self.price = price
         self.meal_type = meal_type
